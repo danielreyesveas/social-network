@@ -3,11 +3,18 @@ import { Request, Response, Router } from "express";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
 
-import { User } from "../entities/User";
+import User from "../entities/User";
 
 import auth from "../middleware/auth";
 
 import bcrypt from "bcrypt";
+
+const mapErrors = (errors: Object[]) => {
+	return errors.reduce((prev: any, err: any) => {
+		prev[err.property] = Object.entries(err.constraints)[0][1];
+		return prev;
+	}, {});
+};
 
 const register = async (request: Request, response: Response) => {
 	const { email, username, password } = request.body;
@@ -27,7 +34,9 @@ const register = async (request: Request, response: Response) => {
 		const user = new User({ email, username, password });
 
 		errors = await validate(user);
-		if (errors.length > 0) return response.status(400).json({ errors });
+		if (errors.length > 0) {
+			return response.status(400).json(mapErrors(errors));
+		}
 
 		await user.save();
 
@@ -45,8 +54,8 @@ const login = async (request: Request, response: Response) => {
 	try {
 		let errors: any = {};
 
-		if (isEmpty(username)) errors.username = "Username must not be empty.";
-		if (isEmpty(password)) errors.password = "Password must not be empty.";
+		if (isEmpty(username)) errors.username = "Must not be empty.";
+		if (isEmpty(password)) errors.password = "Must not be empty.";
 
 		if (Object.keys(errors).length > 0)
 			return response.status(400).json(errors);
@@ -54,14 +63,14 @@ const login = async (request: Request, response: Response) => {
 		const user = await User.findOne({ username });
 
 		if (!user)
-			return response.status(404).json({ error: "User not found." });
+			return response.status(404).json({ general: "Wrong credentials." });
 
 		const passwordMatches = await bcrypt.compare(password, user.password);
 
 		if (!passwordMatches)
 			return response.status(401).json({ general: "Wrong credentials." });
 
-		const token = jwt.sign({ username }, process.env.JWT_SECRET);
+		const token = jwt.sign({ username }, process.env.JWT_SECRET!);
 
 		response.set(
 			"Set-Cookie",
@@ -75,7 +84,10 @@ const login = async (request: Request, response: Response) => {
 		);
 
 		return response.json(user);
-	} catch (error) {}
+	} catch (error) {
+		console.error(error);
+		return response.json({ error: "Something weng wrong." });
+	}
 };
 
 const me = (_: Request, response: Response) => {

@@ -1,6 +1,7 @@
 .idea/
 .vscode/
 node_modules/
+client/node_modules/
 build/
 tmp/
 temp/
