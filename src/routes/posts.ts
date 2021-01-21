@@ -49,6 +49,7 @@ const getPosts = async (_: Request, response: Response) => {
 
 const getPost = async (request: Request, response: Response) => {
 	const { identifier, slug } = request.params;
+	const user = response.locals.user;
 
 	try {
 		const post = await Post.findOneOrFail(
@@ -57,9 +58,13 @@ const getPost = async (request: Request, response: Response) => {
 				slug,
 			},
 			{
-				relations: ["sub"],
+				relations: ["sub", "votes", "comments"],
 			}
 		);
+
+		if (user) {
+			post.setUserVote(user);
+		}
 
 		return response.json(post);
 	} catch (error) {
@@ -94,7 +99,7 @@ const router = Router();
 
 router.post("/", user, auth, createPost);
 router.get("/", user, getPosts);
-router.get("/:identifier/:slug", getPost);
+router.get("/:identifier/:slug", user, getPost);
 router.post("/:identifier/:slug/comments", user, auth, commentOnPost);
 
 export default router;

@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import InputGroup from "../components/InputGroup";
 
+import { useAuthState } from "../context/auth";
+
 export default function Register() {
 	const [email, setEmail] = useState("");
 	const [username, setUsername] = useState("");
@@ -12,7 +14,11 @@ export default function Register() {
 	const [agreement, setAgreement] = useState(false);
 	const [errors, setErrors] = useState<any>({});
 
+	const { authenticated } = useAuthState();
+
 	const router = useRouter();
+
+	if (authenticated) router.push("/");
 
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();

@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import InputGroup from "../components/InputGroup";
 
+import { useAuthState, useAuthDispatch } from "../context/auth";
+
 export default function Login() {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
@@ -12,16 +14,23 @@ export default function Login() {
 
 	const router = useRouter();
 
+	const { authenticated } = useAuthState();
+	const dispatch = useAuthDispatch();
+
+	if (authenticated) router.push("/");
+
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 
 		try {
-			await axios.post("/auth/login", {
+			const response = await axios.post("/auth/login", {
 				username,
 				password,
 			});
 
-			router.push("/");
+			dispatch("LOGIN", response.data);
+
+			router.back();
 		} catch (error) {
 			console.log(error);
 			setErrors(error.response.data);

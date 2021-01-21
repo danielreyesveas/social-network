@@ -29,6 +29,8 @@ app.use(
 	})
 );
 
+app.use(express.static("public"));
+
 app.get("/", (_, response) => response.send("Hello friend..."));
 
 app.use("/api/auth", authRoutes);
