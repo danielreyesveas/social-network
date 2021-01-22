@@ -95,11 +95,34 @@ const commentOnPost = async (request: Request, response: Response) => {
 	}
 };
 
+const getPostComments = async (request: Request, response: Response) => {
+	const user = response.locals.user;
+	const { identifier, slug } = request.params;
+	try {
+		const post = await Post.findOneOrFail({ identifier, slug });
+		const comments = await Comment.find({
+			where: { post },
+			order: { createdAt: "DESC" },
+			relations: ["votes"],
+		});
+
+		if (user) {
+			comments.forEach((c) => c.setUserVote(user));
+		}
+
+		return response.json(comments);
+	} catch (error) {
+		console.error(error);
+		return response.status(500).json({ error: "Something went wrong." });
+	}
+};
+
 const router = Router();
 
 router.post("/", user, auth, createPost);
 router.get("/", user, getPosts);
 router.get("/:identifier/:slug", user, getPost);
 router.post("/:identifier/:slug/comments", user, auth, commentOnPost);
+router.get("/:identifier/:slug/comments", user, getPostComments);
 
 export default router;
