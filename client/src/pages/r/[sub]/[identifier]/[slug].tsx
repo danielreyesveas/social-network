@@ -12,13 +12,15 @@ import Sidebar from "../../../../components/Sidebar";
 import Axios from "axios";
 import { useAuthState } from "../../../../context/auth";
 import ActionButton from "../../../../components/ActionButton";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import axios from "axios";
 
 dayjs.extend(relativeTime);
 
 export default function PostPage() {
 	// Local state
+	const [title, setTitle] = useState("");
+	const [description, setDescription] = useState("");
 	const [newComment, setNewComment] = useState("");
 
 	// Global state
@@ -37,6 +39,13 @@ export default function PostPage() {
 	);
 
 	if (error) router.push("/");
+
+	useEffect(() => {
+		if (!post) return;
+		let desc = post.body || post.title;
+		desc = desc.substr(0, 158).concat("..");
+		setDescription(desc);
+	}, [post]);
 
 	const vote = async (value: number, comment?: Comment) => {
 		// If not logged in go to login
@@ -81,6 +90,11 @@ export default function PostPage() {
 		<>
 			<Head>
 				<title>{post?.title}</title>
+				<meta name="description" content={description} />
+				<meta property="og:description" content={description} />
+				<meta property="og:title" content={post?.title} />
+				<meta property="twitter:description" content={description} />
+				<meta property="twitter:title" content={post?.title} />
 			</Head>
 			<Link href={`/r/${sub}`}>
 				<a>
@@ -104,7 +118,7 @@ export default function PostPage() {
 			</Link>
 			<div className="container flex pt-5">
 				{/* Post */}
-				<div className="w-160">
+				<div className="w-full px-4 md:w-160 md:p-0">
 					<div className="bg-white rounded">
 						{post && (
 							<>

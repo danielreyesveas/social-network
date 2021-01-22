@@ -28,12 +28,17 @@ const createPost = async (request: Request, response: Response) => {
 	}
 };
 
-const getPosts = async (_: Request, response: Response) => {
+const getPosts = async (request: Request, response: Response) => {
+	const currentPage: number = (request.query.page || 0) as number;
+	const postsPerPage: number = (request.query.count || 8) as number;
+
 	try {
 		const user = response.locals.user;
 		const posts = await Post.find({
 			order: { createdAt: "DESC" },
 			relations: ["comments", "votes", "sub"],
+			skip: currentPage * postsPerPage,
+			take: postsPerPage,
 		});
 
 		if (user) {

@@ -66,7 +66,11 @@ export default function SubPage() {
 		);
 	} else {
 		postsMarkup = sub.posts.map((post) => (
-			<PostCard key={post.identifier} post={post} />
+			<PostCard
+				key={post.identifier}
+				post={post}
+				revalidate={revalidate}
+			/>
 		));
 	}
 
@@ -77,7 +81,7 @@ export default function SubPage() {
 			</Head>
 
 			{sub && (
-				<Fragment>
+				<>
 					<input
 						type="file"
 						hidden={true}
@@ -137,13 +141,12 @@ export default function SubPage() {
 					</div>
 					{/* Posts & Sidebar */}
 					<div className="container flex pt-5">
-						<div className="w-160">{postsMarkup}</div>
+						<div className="w-full px-4 md:w-160 md:p-0160">
+							{postsMarkup}
+						</div>
 						<Sidebar sub={sub} />
 					</div>
-					<div className="container flex pt-5">
-						<div className="w-160">{postsMarkup}</div>
-					</div>
-				</Fragment>
+				</>
 			)}
 		</div>
 	);
