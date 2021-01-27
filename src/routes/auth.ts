@@ -77,7 +77,7 @@ const login = async (request: Request, response: Response) => {
 			"Set-Cookie",
 			cookie.serialize("token", token, {
 				httpOnly: true, // Can´t be access by JS.
-				secure: process.env.NODE_ENV === "production", // Can´t be access without https.
+				// secure: process.env.NODE_ENV === "production", // Can´t be access without https.
 				sameSite: "strict",
 				maxAge: 3600,
 				path: "/",
@@ -100,7 +100,7 @@ const logout = (_: Request, response: Response) => {
 		"Set-Cookie",
 		cookie.serialize("token", "", {
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
+			//secure: process.env.NODE_ENV === "production",
 			sameSite: "strict",
 			expires: new Date(0),
 			path: "/",
