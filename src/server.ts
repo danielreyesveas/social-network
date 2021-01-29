@@ -17,15 +17,21 @@ import trim from "./middleware/trim";
 
 const app = express();
 const PORT = process.env.PORT;
+const origins = [
+	"https://localhost:3000",
+	"https://www.social-network.reciclatusanimales.com",
+	"https://social-network.reciclatusanimales.com",
+];
 
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(trim);
 app.use(cookieParser());
+
 app.use(
 	cors({
 		credentials: true,
-		origin: process.env.ORIGIN,
+		origin: origins,
 		optionsSuccessStatus: 200,
 	})
 );
