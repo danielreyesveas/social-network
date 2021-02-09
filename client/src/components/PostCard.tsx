@@ -125,12 +125,18 @@ export default function PostCard({
 						</Link>
 					</p>
 				</div>
-				<Link href={url}>
-					<a className="my-1 text-lg font-medium">{title}</a>
-				</Link>
-				{body && <p className="my-1 text-sm">{body}</p>}
 
-				<div className="flex">
+				<div className="mt-3">
+					<Link href={url}>
+						<a className="my-1 text-lg font-medium">{title}</a>
+					</Link>
+				</div>
+
+				<div className="mb-3">
+					{body && <p className="my-1 text-sm linebreaks">{body}</p>}
+				</div>
+
+				<div className="flex mt-3">
 					<Link href={url}>
 						<a>
 							<ActionButton>

@@ -26,8 +26,9 @@ const register = async (request: Request, response: Response) => {
 		const emailUser = await User.findOne({ email });
 		const usernameUser = await User.findOne({ username });
 
-		if (emailUser) errors.email = "Email is already taken";
-		if (usernameUser) errors.username = "Username is already taken";
+		if (emailUser) errors.email = "El correo ya tiene una cuenta asociada.";
+		if (usernameUser)
+			errors.username = "El nombre de usuario ya ha sido utilizado.";
 
 		if (Object.keys(errors).length > 0)
 			return response.status(400).json(errors);
@@ -40,36 +41,6 @@ const register = async (request: Request, response: Response) => {
 		}
 
 		await user.save();
-
-		return response.json(user);
-	} catch (error) {
-		console.error(error);
-
-		return response.status(500).json(error);
-	}
-};
-
-const login = async (request: Request, response: Response) => {
-	const { username, password } = request.body;
-
-	try {
-		let errors: any = {};
-
-		if (isEmpty(username)) errors.username = "Must not be empty.";
-		if (isEmpty(password)) errors.password = "Must not be empty.";
-
-		if (Object.keys(errors).length > 0)
-			return response.status(400).json(errors);
-
-		const user = await User.findOne({ username });
-
-		if (!user)
-			return response.status(404).json({ general: "Wrong credentials." });
-
-		const passwordMatches = await bcrypt.compare(password, user.password);
-
-		if (!passwordMatches)
-			return response.status(401).json({ general: "Wrong credentials." });
 
 		const token = jwt.sign({ username }, process.env.JWT_SECRET!);
 
@@ -87,7 +58,54 @@ const login = async (request: Request, response: Response) => {
 		return response.json(user);
 	} catch (error) {
 		console.error(error);
-		return response.json({ error: "Something weng wrong." });
+
+		return response.status(500).json(error);
+	}
+};
+
+const login = async (request: Request, response: Response) => {
+	const { username, password } = request.body;
+
+	try {
+		let errors: any = {};
+
+		if (isEmpty(username)) errors.username = "Campo requerido.";
+		if (isEmpty(password)) errors.password = "Campo requerido.";
+
+		if (Object.keys(errors).length > 0)
+			return response.status(400).json(errors);
+
+		const user = await User.findOne({ username });
+
+		if (!user)
+			return response.status(404).json({
+				general: "Nombre de usuario y/o contraseña incorrectos.",
+			});
+
+		const passwordMatches = await bcrypt.compare(password, user.password);
+
+		if (!passwordMatches)
+			return response.status(401).json({
+				general: "Nombre de usuario y/o contraseña incorrectos.",
+			});
+
+		const token = jwt.sign({ username }, process.env.JWT_SECRET!);
+
+		response.set(
+			"Set-Cookie",
+			cookie.serialize("token", token, {
+				httpOnly: true, // Can´t be access by JS.
+				secure: process.env.NODE_ENV === "production", // Can´t be access without https.
+				sameSite: "strict",
+				maxAge: 3600,
+				path: "/",
+			})
+		);
+
+		return response.json(user);
+	} catch (error) {
+		console.error(error);
+		return response.json({ error: "Algo no ha salido bien..." });
 	}
 };
 

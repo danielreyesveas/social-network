@@ -42,7 +42,9 @@ const getUserSubmissions = async (request: Request, response: Response) => {
 		return response.json({ user, submissions });
 	} catch (error) {
 		console.error(error);
-		return response.status(500).json({ error: "Something went wrong." });
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
 	}
 };
 

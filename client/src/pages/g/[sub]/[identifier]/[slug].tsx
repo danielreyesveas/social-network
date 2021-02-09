@@ -181,15 +181,15 @@ export default function PostPage() {
 											</p>
 										</div>
 										{/* Post title */}
-										<h1 className="my-1 text-xl font-medium">
+										<h1 className="my-1 mt-3 text-xl font-medium">
 											{post.title}
 										</h1>
 										{/* Post body */}
-										<p className="my-3 text-sm">
+										<p className="my-3 mt-3 text-sm linebreaks">
 											{post.body}
 										</p>
 										{/* Actions */}
-										<div className="flex">
+										<div className="flex mt-3">
 											<Link href={post.url}>
 												<a>
 													<ActionButton>

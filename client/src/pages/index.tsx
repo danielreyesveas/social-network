@@ -98,7 +98,7 @@ export default function Home() {
 								Destacados
 							</p>
 						</div>
-						<div>
+						<div className="border-b-2">
 							{topSubs?.map((sub) => (
 								<div
 									key={sub.name}
@@ -128,10 +128,10 @@ export default function Home() {
 						</div>
 
 						{authenticated && (
-							<div className="p-4 border-t-2">
+							<div className="p-4">
 								<Link href="/subs/create">
 									<a className="w-full px-2 py-1 blue button">
-										Crear un grupo
+										Crea un grupo
 									</a>
 								</Link>
 							</div>

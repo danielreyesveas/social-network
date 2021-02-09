@@ -90,14 +90,14 @@ export default function SubPage() {
 					<div>
 						{/* Banner image */}
 						<div
-							className={classNames("bg-blue-500", {
+							className={classNames("bg-primary-1", {
 								"cursor-pointer": ownSub,
 							})}
 							onClick={() => openFileInput("banner")}
 						>
 							{sub.bannerUrl ? (
 								<div
-									className="h-56 bg-blue-500"
+									className="h-14 sm:h-28 md:h-56 bg-primary-1"
 									style={{
 										backgroundImage: `url(${sub.bannerUrl})`,
 										backgroundRepeat: "no-repeat",
@@ -106,11 +106,11 @@ export default function SubPage() {
 									}}
 								></div>
 							) : (
-								<div className="h-20 bg-blue-500"></div>
+								<div className="h-20 bg-dark-3"></div>
 							)}
 						</div>
 						{/* Sub meta data */}
-						<div className="h-20 bg-white">
+						<div className="h-20 bg-primary-5">
 							<div className="container relative flex">
 								<div className="absolute" style={{ top: -15 }}>
 									<Image

@@ -17,7 +17,7 @@ const vote = async (request: Request, response: Response) => {
 	if (!voteTypes.includes(value)) {
 		return response
 			.status(400)
-			.json({ value: "Value must be -1, 0, or 1." });
+			.json({ value: "El valor del voto debe ser -1, 0, o 1." });
 	}
 
 	try {
@@ -37,7 +37,9 @@ const vote = async (request: Request, response: Response) => {
 
 		if (!vote && value === 0) {
 			// If no vote and value = 0, return error (no vote to reset)
-			return response.status(400).json({ error: "Vote not found." });
+			return response
+				.status(400)
+				.json({ error: "El voto no ha sido encontrado." });
 		} else if (!vote) {
 			// If no vote, create a new vote
 			vote = new Vote({ user, value });
@@ -65,7 +67,9 @@ const vote = async (request: Request, response: Response) => {
 
 		return response.json(post);
 	} catch (error) {
-		return response.status(500).json({ error: "Something went wrong." });
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
 	}
 };
 
@@ -85,7 +89,9 @@ const topSubs = async (_: Request, response: Response) => {
 			.execute();
 		return response.json(subs);
 	} catch (error) {
-		return response.status(500).json({ error: "Something went wrong." });
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
 	}
 };
 

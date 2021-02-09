@@ -4,18 +4,34 @@
 
 @layer components {
 	.button {
-		@apply inline-block w-32 py-1 text-xs font-bold leading-5 text-center uppercase border rounded;
+		@apply inline-block w-32 py-1 text-xs font-bold leading-5 text-center uppercase border rounded text-primary-1;
 	}
 
-	.button.blue {
-		@apply text-white bg-blue-500 border-blue-500 hover:bg-blue-300 hover:border-blue-300 disabled:bg-blue-300 disabled:border-blue-300;
+	.button.primary {
+		@apply text-white bg-primary-1 border-primary-1 hover:bg-primary-2 hover:border-primary-2 disabled:bg-primary-2 disabled:border-primary-2;
 	}
 
-	.button.blue:hover {
-		@apply bg-blue-300 border-blue-300;
+	.button.primary:hover {
+		@apply bg-primary-2 border-primary-2;
 	}
 
-	.button.blue.hollow {
-		@apply text-blue-500 bg-transparent border-blue-500;
+	.button.primary.hollow {
+		@apply bg-transparent text-primary-1 border-primary-1;
+	}
+
+	.button.dark {
+		@apply text-white bg-dark-3 border-dark-3 hover:bg-dark-4 hover:border-dark-4 disabled:bg-dark-4 disabled:border-dark-4;
+	}
+
+	.button.dark:hover {
+		@apply bg-dark-4 border-dark-4;
+	}
+
+	.button.dark.hollow {
+		@apply bg-transparent text-dark-3 border-dark-3;
+	}
+
+	.linebreaks {
+		white-space: pre-wrap;
 	}
 }

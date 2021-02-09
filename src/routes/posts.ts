@@ -13,7 +13,7 @@ const createPost = async (request: Request, response: Response) => {
 	const user: User = response.locals.user;
 
 	if (title.trim() === "")
-		return response.status(400).json({ title: "Must not be empty." });
+		return response.status(400).json({ title: "Campo requerido." });
 
 	try {
 		const subRecord = await Sub.findOneOrFail({ name: sub });
@@ -24,7 +24,9 @@ const createPost = async (request: Request, response: Response) => {
 		return response.json(post);
 	} catch (error) {
 		console.error(error);
-		return response.status(500).json({ error: "Something went wrong." });
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
 	}
 };
 
@@ -48,7 +50,9 @@ const getPosts = async (request: Request, response: Response) => {
 		return response.json(posts);
 	} catch (error) {
 		console.error(error);
-		return response.status(500).json({ error: "Something went wrong." });
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
 	}
 };
 
@@ -74,7 +78,9 @@ const getPost = async (request: Request, response: Response) => {
 		return response.json(post);
 	} catch (error) {
 		console.error(error);
-		return response.status(404).json({ error: "Post not found." });
+		return response
+			.status(404)
+			.json({ error: "El Post no ha sido encontrado." });
 	}
 };
 
@@ -96,7 +102,9 @@ const commentOnPost = async (request: Request, response: Response) => {
 		return response.json(comment);
 	} catch (error) {
 		console.error(error);
-		return response.status(404).json({ error: "Post not found." });
+		return response
+			.status(404)
+			.json({ error: "El Post no ha sido encontrado." });
 	}
 };
 
@@ -118,7 +126,9 @@ const getPostComments = async (request: Request, response: Response) => {
 		return response.json(comments);
 	} catch (error) {
 		console.error(error);
-		return response.status(500).json({ error: "Something went wrong." });
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
 	}
 };
 

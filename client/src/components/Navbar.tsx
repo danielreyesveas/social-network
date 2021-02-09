@@ -85,6 +85,7 @@ const Navbar: React.FC = () => {
 					>
 						{subs?.map((sub) => (
 							<div
+								key={sub.name}
 								className="flex items-center px-4 py-3 cursor-pointer hover:bg-gray-200"
 								onClick={() => goToSub(sub.name)}
 							>
