@@ -16,9 +16,9 @@ class MyDocument extends Document {
 		return (
 			<Html>
 				<Head>
-					<title>Reddit</title>
-					<link rel="icon" type="image/svg+xml" href="/reddit.svg" />
-					<meta property="og:site_name" content="reddit" />
+					<title>Clics</title>
+					<link rel="icon" type="image/svg+xml" href="/clics-b.svg" />
+					<meta property="og:site_name" content="clics" />
 					<meta property="og:type" content="website" />
 					<meta
 						property="og:url"
@@ -26,13 +26,13 @@ class MyDocument extends Document {
 					/>
 					<meta
 						property="og:image"
-						content={`${process.env.NEXT_PUBLIC_CLIENT_BASE_URL}/reddit.svg`}
+						content={`${process.env.NEXT_PUBLIC_CLIENT_BASE_URL}/clics.svg`}
 					/>
 					<meta
 						property="twitter:image"
-						content={`${process.env.NEXT_PUBLIC_CLIENT_BASE_URL}/reddit.svg`}
+						content={`${process.env.NEXT_PUBLIC_CLIENT_BASE_URL}/clics.svg`}
 					/>
-					<meta property="twitter:site" content="@reddit" />
+					<meta property="twitter:site" content="@clics" />
 					<meta property="twitter:card" content="summary" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" />
 					<link

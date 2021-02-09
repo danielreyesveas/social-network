@@ -2,7 +2,7 @@ import axios from "axios";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { FormEvent, useState } from "react";
-import classNames from "classnames";
+import classNames from "../g/node_modules/classnames";
 import { useRouter } from "next/router";
 
 export default function CreateSub() {
@@ -22,7 +22,7 @@ export default function CreateSub() {
 				title,
 				description,
 			});
-			router.push(`/r/${response.data.name}`);
+			router.push(`/g/${response.data.name}`);
 		} catch (error) {
 			console.error(error);
 			setErrors(error.response.data);
@@ -32,7 +32,7 @@ export default function CreateSub() {
 	return (
 		<div className="flex bg-white">
 			<Head>
-				<title>Create a Community</title>
+				<title>Crea un grupo</title>
 			</Head>
 
 			<div
@@ -42,18 +42,15 @@ export default function CreateSub() {
 
 			<div className="flex flex-col justify-center pl-6">
 				<div className="w-98">
-					<h1 className="mb-2 text-lg font-medium">
-						Create a Community
-					</h1>
+					<h1 className="mb-2 text-lg font-medium">Crea un Grupo</h1>
 
 					<hr />
 
 					<form onSubmit={submitCreate}>
 						<div className="my-6">
-							<p className="font-medium">Name</p>
+							<p className="font-medium">Nombre</p>
 							<p className="mb-2 text-xs text-gray-500">
-								Community names including capitalization cannot
-								be changed.
+								Los nombres de los grupos no podrán modificarse.
 							</p>
 							<input
 								type="text"
@@ -70,10 +67,10 @@ export default function CreateSub() {
 						</div>
 
 						<div className="my-6">
-							<p className="font-medium">Title</p>
+							<p className="font-medium">Título</p>
 							<p className="mb-2 text-xs text-gray-500">
-								Community title represents the topic and you can
-								change it at any time.
+								El título representa todo lo que este grupo
+								representa para ti.
 							</p>
 							<input
 								type="text"
@@ -90,10 +87,9 @@ export default function CreateSub() {
 						</div>
 
 						<div className="my-6">
-							<p className="font-medium">Description</p>
+							<p className="font-medium">Descripción</p>
 							<p className="mb-2 text-xs text-gray-500">
-								This is how new members come to understand your
-								community.
+								Ayúdanos a entender tu grupo.
 							</p>
 							<textarea
 								className={classNames(
@@ -110,7 +106,7 @@ export default function CreateSub() {
 
 						<div className="flex justify-end">
 							<button className="px-4 py-1 text-sm font-semibold blue button">
-								Create
+								Crear
 							</button>
 						</div>
 					</form>

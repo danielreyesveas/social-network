@@ -16,8 +16,8 @@ dayjs.extend(relativeTime);
 
 export default function Home() {
 	const description =
-		"Reddit is a network of communities based on people's interests. Find communities you're interested in, and become part of an online community!";
-	const title = "Reddit: The front page of the internerd.";
+		"Clics is a network of communities based on people's interests. Find communities you're interested in, and become part of an online community!";
+	const title = "Clics: Leseras musicales.";
 
 	const [observedPost, setObservedPost] = useState("");
 	// const { data: posts } = useSWR<Post[]>("/posts");
@@ -77,7 +77,7 @@ export default function Home() {
 			<div className="container flex pt-4">
 				<div className="w-full px-4 md:w-160 md:p-0">
 					{isInitialLoading && (
-						<p className="text-lg text-center">Loading...</p>
+						<p className="text-lg text-center">Cargando...</p>
 					)}
 					{posts?.map((post) => (
 						<PostCard
@@ -87,7 +87,7 @@ export default function Home() {
 						/>
 					))}
 					{isInitialLoading && posts.length > 0 && (
-						<p className="text-lg text-center">Loading more...</p>
+						<p className="text-lg text-center">Cargando más...</p>
 					)}
 				</div>
 
@@ -95,7 +95,7 @@ export default function Home() {
 					<div className="bg-white rounded">
 						<div className="p-4 border-b-2">
 							<p className="text-lg font-semibold text-center">
-								Top Communities
+								Destacados
 							</p>
 						</div>
 						<div>
@@ -104,7 +104,7 @@ export default function Home() {
 									key={sub.name}
 									className="flex items-center px-4 py-2 text-xs border-b"
 								>
-									<Link href={`/r/${sub.name}`}>
+									<Link href={`/g/${sub.name}`}>
 										<a>
 											<Image
 												src={sub.imageUrl}
@@ -115,9 +115,9 @@ export default function Home() {
 											/>
 										</a>
 									</Link>
-									<Link href={`/r/${sub.name}`}>
+									<Link href={`/g/${sub.name}`}>
 										<a className="ml-2 font-bold hover:cursor-pointer">
-											/r/{sub.name}
+											/g/{sub.name}
 										</a>
 									</Link>
 									<p className="ml-auto font-med">
@@ -131,7 +131,7 @@ export default function Home() {
 							<div className="p-4 border-t-2">
 								<Link href="/subs/create">
 									<a className="w-full px-2 py-1 blue button">
-										Create Community
+										Crear un grupo
 									</a>
 								</Link>
 							</div>

@@ -18,6 +18,7 @@ import trim from "./middleware/trim";
 const app = express();
 const PORT = process.env.PORT;
 const origins = [
+	"http://localhost:3000",
 	"https://localhost:3000",
 	"https://www.social-network.reciclatusanimales.com",
 	"https://social-network.reciclatusanimales.com",

@@ -43,7 +43,7 @@ export default function Register() {
 	return (
 		<div className="flex bg-white">
 			<Head>
-				<title>Register</title>
+				<title>Registro</title>
 			</Head>
 
 			<div
@@ -53,11 +53,10 @@ export default function Register() {
 
 			<div className="flex flex-col justify-center pl-6">
 				<div className="w-70">
-					<h1 className="mb-2 text-lg font-medium">Sign Up</h1>
+					<h1 className="mb-2 text-lg font-medium">Registro</h1>
 
 					<p className="mb-10 text-xs">
-						By continuing, you agree to our User Agreement and
-						Privacy Policy
+						Al continuar aceptas nuestros Términos y Condiciones.
 					</p>
 
 					<form onSubmit={handleSubmit}>
@@ -73,7 +72,7 @@ export default function Register() {
 								htmlFor="agreement"
 								className="text-xs cursor-pointer"
 							>
-								I agree to get emails about cool stuff on Reddit
+								Acepto recibir leseras de Clics
 							</label>
 							<small className="block font-medium text-red-600">
 								{errors.agreement}
@@ -85,7 +84,7 @@ export default function Register() {
 							type="email"
 							value={email}
 							setValue={setEmail}
-							placeholder="Email"
+							placeholder="Correo"
 							error={errors.email}
 						/>
 
@@ -94,7 +93,7 @@ export default function Register() {
 							type="text"
 							value={username}
 							setValue={setUsername}
-							placeholder="Username"
+							placeholder="Nombre de Usuario"
 							error={errors.username}
 						/>
 
@@ -103,7 +102,7 @@ export default function Register() {
 							type="password"
 							value={password}
 							setValue={setPassword}
-							placeholder="Password"
+							placeholder="Contraseña"
 							error={errors.password}
 						/>
 
@@ -113,10 +112,10 @@ export default function Register() {
 					</form>
 
 					<small>
-						Already a reeditor?
+						¿Ya eres de Clics?
 						<Link href="/login">
 							<a className="ml-1 font-bold text-blue-500 uppercase">
-								Log In
+								Entra
 							</a>
 						</Link>
 					</small>

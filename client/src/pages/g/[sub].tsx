@@ -59,11 +59,9 @@ export default function SubPage() {
 
 	let postsMarkup;
 	if (!sub) {
-		postsMarkup = <p className="text-lg text-center">Loading..</p>;
+		postsMarkup = <p className="text-lg text-center">Cargando..</p>;
 	} else if (sub.posts.length === 0) {
-		postsMarkup = (
-			<p className="text-lg text-center">No posts submitted yet</p>
-		);
+		postsMarkup = <p className="text-lg text-center">Nada todavía...</p>;
 	} else {
 		postsMarkup = sub.posts.map((post) => (
 			<PostCard
@@ -133,7 +131,7 @@ export default function SubPage() {
 										</h1>
 									</div>
 									<p className="text-sm font-bold text-gray-500">
-										/r/{sub.name}
+										/g/{sub.name}
 									</p>
 								</div>
 							</div>

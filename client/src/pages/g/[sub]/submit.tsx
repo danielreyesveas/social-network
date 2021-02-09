@@ -32,7 +32,7 @@ export default function Submit() {
 				sub: subName,
 			});
 
-			router.push(`/r/${sub.name}/${post.identifier}/${post.slug}`);
+			router.push(`/g/${sub.name}/${post.identifier}/${post.slug}`);
 		} catch (error) {
 			console.error(error);
 		}
@@ -41,19 +41,19 @@ export default function Submit() {
 	return (
 		<div className="container flex pt-5">
 			<Head>
-				<title>Submit to Reddit</title>
+				<title>Aporta a Clics</title>
 			</Head>
 			<div className="w-160">
 				<div className="p-4 bg-white rounded">
 					<h1 className="mb-3 text-lg">
-						Submit a post to /r/{subName}
+						Nueva entrada en /g/{subName}
 					</h1>
 					<form onSubmit={submitPost}>
 						<div className="relative mb-2">
 							<input
 								type="text"
 								className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-600"
-								placeholder="Title"
+								placeholder="Título"
 								maxLength={300}
 								value={title}
 								onChange={(e) => setTitle(e.target.value)}
@@ -69,7 +69,7 @@ export default function Submit() {
 						<textarea
 							className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-gray-600"
 							value={body}
-							placeholder="Text (optional)"
+							placeholder="Contenido (opcional)"
 							rows={4}
 							onChange={(e) => setBody(e.target.value)}
 						></textarea>
@@ -80,7 +80,7 @@ export default function Submit() {
 								type="submit"
 								disabled={title.trim().length === 0}
 							>
-								Submit
+								Guardar
 							</button>
 						</div>
 					</form>

@@ -96,7 +96,7 @@ export default function PostPage() {
 				<meta property="twitter:description" content={description} />
 				<meta property="twitter:title" content={post?.title} />
 			</Head>
-			<Link href={`/r/${sub}`}>
+			<Link href={`/g/${sub}`}>
 				<a>
 					<div className="flex items-center w-full h-20 p-8 bg-blue-500">
 						<div className="container flex">
@@ -110,7 +110,7 @@ export default function PostPage() {
 								</div>
 							)}
 							<p className="text-xl font-semibold text-white">
-								/r/{sub}
+								/g/{sub}
 							</p>
 						</div>
 					</div>
@@ -196,7 +196,7 @@ export default function PostPage() {
 														<i className="mr-1 fas fa-comment-alt fa-xs"></i>
 														<span className="font-bold">
 															{post.commentCount}{" "}
-															Comments
+															Comentarios
 														</span>
 													</ActionButton>
 												</a>
@@ -204,13 +204,13 @@ export default function PostPage() {
 											<ActionButton>
 												<i className="mr-1 fas fa-share fa-xs"></i>
 												<span className="font-bold">
-													Share
+													Compartir
 												</span>
 											</ActionButton>
 											<ActionButton>
 												<i className="mr-1 fas fa-bookmark fa-xs"></i>
 												<span className="font-bold">
-													Save
+													Marcar
 												</span>
 											</ActionButton>
 										</div>
@@ -222,7 +222,7 @@ export default function PostPage() {
 									{authenticated ? (
 										<div>
 											<p className="mb-1 text-xs">
-												Comment as{" "}
+												Comenta como{" "}
 												<Link
 													href={`/u/${user.username}`}
 												>
@@ -249,7 +249,7 @@ export default function PostPage() {
 															""
 														}
 													>
-														Comment
+														Comentar
 													</button>
 												</div>
 											</form>
@@ -257,20 +257,20 @@ export default function PostPage() {
 									) : (
 										<div className="flex items-center justify-between px-2 py-4 border border-gray-200 rounded">
 											<p className="font-semibold text-gray-400">
-												Log in or sign up to leave a
-												comment
+												Debes entrar para poder
+												comentar.
 											</p>
 											<div>
 												<Link href="/login">
 													<a className="px-4 py-1 mr-4 hollow blue button">
-														Login
+														entrar
 													</a>
 												</Link>
-												<Link href="/register">
+												{/* <Link href="/register">
 													<a className="px-4 py-1 blue button">
-														Sign Up
+														registro
 													</a>
-												</Link>
+												</Link> */}
 											</div>
 										</div>
 									)}

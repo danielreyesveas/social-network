@@ -37,7 +37,7 @@ export default function PostCard({
 
 	const router = useRouter();
 
-	const isInSubPage = router.pathname === "/r/[sub]";
+	const isInSubPage = router.pathname === "/g/[sub]";
 
 	const vote = async (value: number) => {
 		if (!authenticated) return router.push("/login");
@@ -94,15 +94,15 @@ export default function PostCard({
 				<div className="flex items-center">
 					{!isInSubPage && (
 						<>
-							<Link href={`/r/${subName}`}>
+							<Link href={`/g/${subName}`}>
 								<img
 									src={sub.imageUrl}
 									className="w-6 h-6 mr-1 rounded-full cursor-pointer"
 								/>
 							</Link>
-							<Link href={`/r/${subName}`}>
+							<Link href={`/g/${subName}`}>
 								<a className="text-xs font-bold cursor-pointer hover:underline">
-									/r/{subName}
+									/g/{subName}
 								</a>
 							</Link>
 							<span className="mx-1 text-xs text-gray-500">
@@ -136,18 +136,18 @@ export default function PostCard({
 							<ActionButton>
 								<i className="mr-1 fas fa-comment-alt fa-xs"></i>
 								<span className="font-bold">
-									{commentCount} Comments
+									{commentCount} Commentarios
 								</span>
 							</ActionButton>
 						</a>
 					</Link>
 					<ActionButton>
 						<i className="mr-1 fas fa-share fa-xs"></i>
-						<span className="font-bold">Share</span>
+						<span className="font-bold">Compartir</span>
 					</ActionButton>
 					<ActionButton>
 						<i className="mr-1 fas fa-bookmark fa-xs"></i>
-						<span className="font-bold">Save</span>
+						<span className="font-bold">Marcar</span>
 					</ActionButton>
 				</div>
 			</div>

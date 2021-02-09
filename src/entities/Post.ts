@@ -72,7 +72,7 @@ export default class Post extends Entity {
 	}
 
 	@Expose() get url(): string {
-		return `/r/${this.subName}/${this.identifier}/${this.slug}`;
+		return `/g/${this.subName}/${this.identifier}/${this.slug}`;
 	}
 
 	protected userVote: number;

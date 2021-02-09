@@ -48,7 +48,7 @@ export default function UserPage() {
 										<div className="w-full p-2">
 											<p className="mb-2 text-xs text-gray-500">
 												{comment.username}
-												<span> commented on </span>
+												<span> ha comentado en </span>
 												<Link href={comment.post.url}>
 													<a className="font-semibold cursor-pointer hover:underline">
 														{comment.post.title}
@@ -56,10 +56,10 @@ export default function UserPage() {
 												</Link>
 												<span className="mx-1">•</span>
 												<Link
-													href={`/r/${comment.post.subName}`}
+													href={`/g/${comment.post.subName}`}
 												>
 													<a className="text-black cursor-pointer hover:underline">
-														/r/
+														/g/
 														{comment.post.subName}
 													</a>
 												</Link>

@@ -39,17 +39,17 @@ export default function Login() {
 	return (
 		<div className="flex bg-white">
 			<Head>
-				<title>Login</title>
+				<title>Entrar</title>
 			</Head>
 
 			<div
-				className="h-screen bg-center bg-cover w-36"
-				style={{ backgroundImage: "url('/images/bricks.jpg')" }}
+				className="w-1/3 h-screen bg-right bg-cover"
+				style={{ backgroundImage: "url('/images/clics.jpg')" }}
 			></div>
 
-			<div className="flex flex-col justify-center pl-6">
-				<div className="w-70">
-					<h1 className="mb-2 text-lg font-medium">Login</h1>
+			<div className="flex flex-col justify-center pl-6 pr-2">
+				<div className="xs:w-50 sm:w-70">
+					<h1 className="mb-2 text-lg font-medium">Entrar</h1>
 
 					<form onSubmit={handleSubmit}>
 						<InputGroup
@@ -57,7 +57,7 @@ export default function Login() {
 							type="text"
 							value={username}
 							setValue={setUsername}
-							placeholder="Username"
+							placeholder="Nombre de usuario"
 							error={errors.username}
 						/>
 
@@ -66,7 +66,7 @@ export default function Login() {
 							type="password"
 							value={password}
 							setValue={setPassword}
-							placeholder="Password"
+							placeholder="Contraseña"
 							error={errors.password}
 						/>
 
@@ -75,15 +75,15 @@ export default function Login() {
 						</small>
 
 						<button className="w-full py-2 mb-4 text-xs font-bold text-white uppercase bg-blue-500 border border-blue-500 rounded">
-							Login
+							Entrar
 						</button>
 					</form>
 
 					<small>
-						New to Reddit?
+						¿Eres nuevo en Clics?
 						<Link href="/register">
 							<a className="ml-1 font-bold text-blue-500 uppercase">
-								Register
+								Regístrate
 							</a>
 						</Link>
 					</small>

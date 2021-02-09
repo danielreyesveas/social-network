@@ -1,5 +1,5 @@
 import Link from "next/link";
-import RedditLogo from "../images/reddit.svg";
+import Logo from "../images/clics-b.svg";
 
 import { useAuthState, useAuthDispatch } from "../context/auth";
 import axios from "axios";
@@ -51,7 +51,7 @@ const Navbar: React.FC = () => {
 	};
 
 	const goToSub = (subName: string) => {
-		router.push(`/r/${subName}`);
+		router.push(`/g/${subName}`);
 		setSearch("");
 	};
 
@@ -61,11 +61,11 @@ const Navbar: React.FC = () => {
 			<div className="flex items-center">
 				<Link href="/">
 					<a>
-						<RedditLogo className="w-8 h-8 mr-2" />
+						<Logo className="w-10 h-10" />
 					</a>
 				</Link>
 				<span className="hidden text-2xl font-semibold lg:block">
-					<Link href="/">readit</Link>
+					<Link href="/">clics</Link>
 				</span>
 			</div>
 			{/* Serach Input */}
@@ -75,7 +75,7 @@ const Navbar: React.FC = () => {
 					<input
 						type="text"
 						className="py-1 pr-3 bg-transparent rounded focus:outline-none"
-						placeholder="Search"
+						placeholder="¿Qué buscas?"
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
 					/>
@@ -113,20 +113,20 @@ const Navbar: React.FC = () => {
 							className="hidden w-20 py-1 mr-4 leading-5 sm:block lg:w-32 hollow blue button"
 							onClick={handleLogout}
 						>
-							Logout
+							salir
 						</button>
 					) : (
 						<>
 							<Link href="/login">
 								<a className="hidden w-20 py-1 mr-4 leading-5 sm:block lg:w-32 hollow blue button">
-									log in
+									entrar
 								</a>
 							</Link>
-							<Link href="/register">
+							{/* <Link href="/register">
 								<a className="hidden w-20 py-1 leading-5 sm:block lg:w-32 blue button">
-									sign up
+									registro
 								</a>
-							</Link>
+							</Link> */}
 						</>
 					))}
 			</div>
