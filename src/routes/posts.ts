@@ -99,6 +99,8 @@ const commentOnPost = async (request: Request, response: Response) => {
 
 		await comment.save();
 
+		comment.voteScore;
+
 		return response.json(comment);
 	} catch (error) {
 		console.error(error);

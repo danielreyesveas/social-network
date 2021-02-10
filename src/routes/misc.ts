@@ -57,15 +57,23 @@ const vote = async (request: Request, response: Response) => {
 			await vote.save();
 		}
 
-		post = await Post.findOneOrFail(
-			{ identifier, slug },
-			{ relations: ["comments", "comments.votes", "sub", "votes"] }
-		);
+		if (comment) {
+			comment = await Comment.findOneOrFail(
+				{ identifier: commentIdentifier },
+				{ relations: ["votes"] }
+			);
 
-		post.setUserVote(user);
-		post.comments.forEach((c) => c.setUserVote(user));
+			comment.setUserVote(user);
+			return response.json(comment);
+		} else {
+			post = await Post.findOneOrFail(
+				{ identifier, slug },
+				{ relations: ["comments", "comments.votes", "sub", "votes"] }
+			);
 
-		return response.json(post);
+			post.setUserVote(user);
+			return response.json(post);
+		}
 	} catch (error) {
 		return response
 			.status(500)

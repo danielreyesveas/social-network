@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Sub } from "../types";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import ProfileMenu from "./ProfileMenu";
 
 const Navbar: React.FC = () => {
 	const [search, setSearch] = useState("");
@@ -14,7 +15,6 @@ const Navbar: React.FC = () => {
 	const [timer, setTimer] = useState(null);
 
 	const { authenticated, loading } = useAuthState();
-	const dispatch = useAuthDispatch();
 
 	const router = useRouter();
 
@@ -25,16 +25,6 @@ const Navbar: React.FC = () => {
 		}
 		searchSubs();
 	}, [search]);
-
-	const handleLogout = () => {
-		axios
-			.get("/auth/logout")
-			.then(() => {
-				dispatch("LOGOUT");
-				window.location.reload();
-			})
-			.catch((error) => console.error(error));
-	};
 
 	const searchSubs = async () => {
 		clearTimeout(timer);
@@ -56,12 +46,12 @@ const Navbar: React.FC = () => {
 	};
 
 	return (
-		<div className="fixed inset-x-0 top-0 z-10 flex items-center justify-between h-12 px-5 bg-white">
+		<div className="fixed inset-x-0 top-0 z-10 flex items-center justify-between h-12 px-2 bg-white sm:px-5">
 			{/* Logo and title */}
 			<div className="flex items-center">
 				<Link href="/">
 					<a>
-						<Logo className="w-10 h-10" />
+						<Logo className="w-8 h-8 sm:w-10 sm:h-10" />
 					</a>
 				</Link>
 				<span className="hidden text-2xl font-semibold lg:block">
@@ -69,12 +59,12 @@ const Navbar: React.FC = () => {
 				</span>
 			</div>
 			{/* Serach Input */}
-			<div className="max-w-full px-4 w-160">
+			<div className="max-w-full px-2 sm-px-4 w-50 sm:w-160">
 				<div className="relative flex items-center bg-gray-100 border rounded hover:border-blue-500 hover:bg-white">
-					<i className="pl-4 pr-3 text-gray-500 fas fa-search "></i>
+					<i className="pl-4 pr-3 text-gray-500 fas fa-search"></i>
 					<input
 						type="text"
-						className="py-1 pr-3 bg-transparent rounded focus:outline-none"
+						className="w-full py-1 pr-3 bg-transparent rounded focus:outline-none"
 						placeholder="¿Qué buscas?"
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
@@ -109,13 +99,7 @@ const Navbar: React.FC = () => {
 			<div className="flex">
 				{!loading &&
 					(authenticated ? (
-						// Show logout
-						<button
-							className="hidden w-20 py-1 mr-4 leading-5 sm:block lg:w-32 hollow blue button"
-							onClick={handleLogout}
-						>
-							salir
-						</button>
+						<ProfileMenu />
 					) : (
 						<>
 							<Link href="/login">

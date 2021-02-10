@@ -1,7 +1,4 @@
 import Head from "next/head";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import useSWR, { useSWRInfinite } from "swr";
 // import { GetServerSideProps } from "next";
 
 import { Post, Sub } from "../types";
@@ -11,32 +8,23 @@ import Link from "next/link";
 
 import { useAuthState } from "../context/auth";
 import { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { useGetSubs, useGetPosts } from "../hooks";
 
-dayjs.extend(relativeTime);
-
-export default function Home() {
-	const description =
-		"Clics is a network of communities based on people's interests. Find communities you're interested in, and become part of an online community!";
+const Home = ({ posts, subs }) => {
+	const description = "Clics es una red social para músicos y sus leseras";
 	const title = "Clics: Leseras musicales.";
 
 	const [observedPost, setObservedPost] = useState("");
 	// const { data: posts } = useSWR<Post[]>("/posts");
-	const { data: topSubs } = useSWR<Sub[]>("/misc/top-subs");
 
 	const { authenticated } = useAuthState();
 
-	const {
-		data,
-		error,
-		size: page,
-		setSize: setPage,
-		isValidating,
-		revalidate,
-	} = useSWRInfinite((index) => `/posts?page=${index}`);
+	const { data, error, page, setPage, revalidate } = useGetPosts();
 
 	const isInitialLoading = !data && !error;
 
-	const posts: Post[] = data ? [].concat(...data) : [];
+	useGetSubs();
 
 	useEffect(() => {
 		if (!posts || posts.length === 0) return;
@@ -99,7 +87,7 @@ export default function Home() {
 							</p>
 						</div>
 						<div className="border-b-2">
-							{topSubs?.map((sub) => (
+							{subs?.map((sub) => (
 								<div
 									key={sub.name}
 									className="flex items-center px-4 py-2 text-xs border-b"
@@ -141,7 +129,14 @@ export default function Home() {
 			</div>
 		</>
 	);
-}
+};
+
+const mapStateToProps = (state: any) => ({
+	posts: state.data.posts,
+	subs: state.data.subs,
+});
+
+export default connect(mapStateToProps)(Home);
 
 // Server side render
 // export const getServerSideProps: GetServerSideProps = async (_) => {

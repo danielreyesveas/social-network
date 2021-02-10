@@ -50,7 +50,7 @@ const register = async (request: Request, response: Response) => {
 				httpOnly: true, // Can´t be access by JS.
 				secure: process.env.NODE_ENV === "production", // Can´t be access without https.
 				sameSite: "strict",
-				maxAge: 3600,
+				maxAge: 5 * 60 * 1000,
 				path: "/",
 			})
 		);
@@ -97,7 +97,7 @@ const login = async (request: Request, response: Response) => {
 				httpOnly: true, // Can´t be access by JS.
 				secure: process.env.NODE_ENV === "production", // Can´t be access without https.
 				sameSite: "strict",
-				maxAge: 3600,
+				maxAge: 5 * 60 * 1000,
 				path: "/",
 			})
 		);

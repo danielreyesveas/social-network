@@ -4,8 +4,12 @@ import { AppProps } from "next/app";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { SWRConfig } from "swr";
-
-import { AuthProvider } from "../context/auth";
+import "dayjs/locale/es";
+import dayjs from "dayjs";
+dayjs.locale("es");
+import { AuthProvider, UIProvider } from "../context";
+import { Provider } from "react-redux";
+import store from "../redux/store";
 
 import Navbar from "../components/Navbar";
 
@@ -22,7 +26,7 @@ const fetcher = async (url: string) => {
 	}
 };
 
-function App({ Component, pageProps }: AppProps) {
+const App = ({ Component, pageProps }: AppProps) => {
 	const { pathname } = useRouter();
 	const authRoutes = ["/register", "/login"];
 	const authRoute = authRoutes.includes(pathname);
@@ -34,14 +38,18 @@ function App({ Component, pageProps }: AppProps) {
 				dedupingInterval: 10000,
 			}}
 		>
-			<AuthProvider>
-				{!authRoute && <Navbar />}
-				<div className={authRoute ? "" : "pt-12"}>
-					<Component {...pageProps} />
-				</div>
-			</AuthProvider>
+			<Provider store={store}>
+				<UIProvider>
+					<AuthProvider>
+						{!authRoute && <Navbar />}
+						<div className={authRoute ? "" : "pt-12"}>
+							<Component {...pageProps} />
+						</div>
+					</AuthProvider>
+				</UIProvider>
+			</Provider>
 		</SWRConfig>
 	);
-}
+};
 
 export default App;

@@ -3,39 +3,40 @@ import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FormEvent, useState } from "react";
-import useSWR from "swr";
 import Sidebar from "../../../components/Sidebar";
 import { Post, Sub } from "../../../types";
+import { useGetSub } from "../../../hooks";
+import { connect } from "react-redux";
+import { addPost } from "../../../redux/actions/dataActions";
 
-export default function Submit() {
+const Submit = ({ sub, addPost }) => {
 	const [title, setTitle] = useState("");
 	const [body, setBody] = useState("");
 
 	const router = useRouter();
 	const { sub: subName } = router.query;
 
-	const { data: sub, error } = useSWR<Sub>(
-		subName ? `/subs/${subName}` : null
-	);
+	const { error } = useGetSub(subName);
 
 	if (error) router.push("/");
 
-	const submitPost = async (event: FormEvent) => {
+	const submitPost = (event: FormEvent) => {
 		event.preventDefault();
 
 		if (title.trim() == "") return;
 
-		try {
-			const { data: post } = await axios.post<Post>("/posts", {
-				title: title.trim(),
-				body,
-				sub: subName,
-			});
+		const postData = {
+			title: title.trim(),
+			body,
+			sub: subName,
+		};
 
-			router.push(`/g/${sub.name}/${post.identifier}/${post.slug}`);
-		} catch (error) {
-			console.error(error);
-		}
+		addPost(postData).then((response) => {
+			console.log(response);
+			router.push(
+				`/g/${sub.name}/${response.identifier}/${response.slug}`
+			);
+		});
 	};
 
 	return (
@@ -90,7 +91,17 @@ export default function Submit() {
 			{sub && <Sidebar sub={sub} />}
 		</div>
 	);
-}
+};
+
+const mapStateToProps = (state: any) => ({
+	sub: state.data.sub,
+});
+
+const mapActionsToProps = (dispatch) => ({
+	addPost: (postData) => dispatch(addPost(postData)),
+});
+
+export default connect(mapStateToProps, mapActionsToProps)(Submit);
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 	try {
