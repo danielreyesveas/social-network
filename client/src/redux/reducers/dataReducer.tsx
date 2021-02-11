@@ -1,7 +1,9 @@
 import {
 	SET_POSTS,
 	SET_SUBS,
+	ADD_SUB,
 	SET_SUB,
+	UPDATE_SUB,
 	SET_POST,
 	ADD_POST,
 	SET_COMMENTS,
@@ -60,7 +62,6 @@ export default function Reducer(
 				sub: payload,
 			};
 		case SET_POST:
-		case ADD_POST:
 			return {
 				...state,
 				post: payload,

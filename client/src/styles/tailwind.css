@@ -32,6 +32,6 @@
 	}
 
 	.linebreaks {
-		white-space: normal;
+		white-space: pre-wrap;
 	}
 }

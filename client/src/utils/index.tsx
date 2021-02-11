@@ -30,3 +30,19 @@ export const tempo = (time: string) => {
 
 export const pluralize = (count: number, noun: string, suffix: string = "s") =>
 	`${count} ${noun}${count !== 1 ? suffix : ""}`;
+
+export const string_trunc = (
+	content: string,
+	length: number = 100,
+	suffix: string = "..."
+) => {
+	if (content.length > length) {
+		var trimmedString = content.substr(0, length);
+		content =
+			trimmedString.substr(
+				0,
+				Math.min(trimmedString.length, trimmedString.lastIndexOf(" "))
+			) + "...";
+	}
+	return content;
+};

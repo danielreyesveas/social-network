@@ -126,6 +126,24 @@ const upload = multer({
 	},
 });
 
+const updateSub = async (request: Request, response: Response) => {
+	const sub: Sub = response.locals.sub;
+
+	try {
+		const { title, description } = request.body;
+		sub.title = title;
+		sub.description = description;
+		await sub.save();
+
+		return response.json(sub);
+	} catch (error) {
+		console.error(error);
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
+	}
+};
+
 const uploadSubImage = async (request: Request, response: Response) => {
 	const sub: Sub = response.locals.sub;
 
@@ -191,6 +209,7 @@ const searchSubs = async (request: Request, response: Response) => {
 const router = Router();
 
 router.post("/", user, auth, createSub);
+router.post("/:name/update", user, auth, ownSub, updateSub);
 router.get("/:name", user, getSub);
 router.get("/search/:name", searchSubs);
 router.post(

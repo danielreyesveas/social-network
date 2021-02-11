@@ -1,9 +1,33 @@
-import { ADD_COMMENT, ADD_POST, VOTE } from "../types";
+import { ADD_SUB, UPDATE_SUB, ADD_COMMENT, ADD_POST, VOTE } from "../types";
 import { Dispatch } from "redux";
 import { Post, Sub, Comment } from "../../types";
 import axios from "axios";
 
-export const addPost = (postData: Post) => (dispatch: Dispatch) => {
+export const addSub = (subData: Sub) => async (dispatch: Dispatch) => {
+	return axios
+		.post<Sub>("/subs", subData)
+		.then((response) => {
+			dispatch({ type: ADD_SUB, payload: response.data });
+			return response.data;
+		})
+		.catch((error) => {
+			console.error(error);
+		});
+};
+
+export const updateSub = (subData: Sub) => async (dispatch: Dispatch) => {
+	return axios
+		.post<Sub>(`/subs/${subData.name}/update`, subData)
+		.then((response) => {
+			dispatch({ type: UPDATE_SUB, payload: response.data });
+			return response.data;
+		})
+		.catch((error) => {
+			console.error(error);
+		});
+};
+
+export const addPost = (postData: Post) => async (dispatch: Dispatch) => {
 	return axios
 		.post<Post>("/posts", postData)
 		.then((response) => {
@@ -15,7 +39,7 @@ export const addPost = (postData: Post) => (dispatch: Dispatch) => {
 		});
 };
 
-export const addComment = ({ identifier, slug, comment }) => (
+export const addComment = ({ identifier, slug, comment }) => async (
 	dispatch: Dispatch
 ) => {
 	axios
@@ -28,9 +52,12 @@ export const addComment = ({ identifier, slug, comment }) => (
 		});
 };
 
-export const vote = ({ identifier, slug, commentIdentifier = null, value }) => (
-	dispatch: Dispatch
-) => {
+export const vote = ({
+	identifier,
+	slug,
+	commentIdentifier = null,
+	value,
+}) => async (dispatch: Dispatch) => {
 	axios
 		.post("/misc/vote", {
 			identifier,

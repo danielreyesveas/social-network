@@ -1,12 +1,11 @@
 import Link from "next/link";
-import Axios from "axios";
 import classNames from "classnames";
 
 import { Post } from "../types";
 import ActionButton from "./ActionButton";
 import { useAuthState } from "../context/auth";
 import { useRouter } from "next/router";
-import { tempo, pluralize } from "../utils";
+import { tempo, pluralize, string_trunc } from "../utils";
 import { vote } from "../redux/actions/dataActions";
 import { connect } from "react-redux";
 
@@ -126,7 +125,11 @@ const PostCard = ({
 				</div>
 
 				<div className="mb-3">
-					{body && <p className="my-1 text-sm linebreaks">{body}</p>}
+					{body && (
+						<p className="my-1 text-sm">
+							{string_trunc(body, 500)}
+						</p>
+					)}
 				</div>
 
 				<div className="flex mt-3">
