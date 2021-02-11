@@ -1,25 +1,22 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import Image from "next/image";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import classNames from "classnames";
-
-import { Post, Comment } from "../../../../types";
+import { Comment } from "../../../../types";
 import Sidebar from "../../../../components/Sidebar";
 import Axios from "axios";
 import { useAuthState } from "../../../../context/auth";
+
 import ActionButton from "../../../../components/ActionButton";
 import { FormEvent, useEffect, useState } from "react";
-import axios from "axios";
+import { tempo, pluralize } from "../../../../utils";
+import { connect } from "react-redux";
+import { useGetPost, useGetComments } from "../../../../hooks";
+import { addComment, vote } from "../../../../redux/actions/dataActions";
 
-dayjs.extend(relativeTime);
-
-export default function PostPage() {
+const PostPage = ({ post, comments, addComment, vote }) => {
 	// Local state
-	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
 	const [newComment, setNewComment] = useState("");
 
@@ -30,13 +27,8 @@ export default function PostPage() {
 	const router = useRouter();
 	const { identifier, sub, slug } = router.query;
 
-	const { data: post, error } = useSWR<Post>(
-		identifier && slug ? `/posts/${identifier}/${slug}` : null
-	);
-
-	const { data: comments, revalidate } = useSWR<Comment[]>(
-		identifier && slug ? `/posts/${identifier}/${slug}/comments` : null
-	);
+	const { error } = useGetPost(identifier, slug);
+	useGetComments(identifier, slug);
 
 	if (error) router.push("/");
 
@@ -47,7 +39,7 @@ export default function PostPage() {
 		setDescription(desc);
 	}, [post]);
 
-	const vote = async (value: number, comment?: Comment) => {
+	const handleVote = async (value: number, comment?: Comment) => {
 		// If not logged in go to login
 		if (!authenticated) router.push("/login");
 
@@ -58,17 +50,12 @@ export default function PostPage() {
 		)
 			value = 0;
 
-		try {
-			await Axios.post("/misc/vote", {
-				identifier,
-				slug,
-				commentIdentifier: comment?.identifier,
-				value,
-			});
-			revalidate();
-		} catch (err) {
-			console.log(err);
-		}
+		vote({
+			identifier,
+			commentIdentifier: comment?.identifier,
+			slug,
+			value,
+		});
 	};
 
 	const submitComment = async (event: FormEvent) => {
@@ -76,11 +63,8 @@ export default function PostPage() {
 		if (newComment.trim() === "") return;
 
 		try {
-			await axios.post(`/posts/${identifier}/${slug}/comments`, {
-				body: newComment,
-			});
+			addComment({ identifier, slug, comment: { body: newComment } });
 			setNewComment("");
-			revalidate();
 		} catch (error) {
 			console.error(error);
 		}
@@ -128,7 +112,7 @@ export default function PostPage() {
 										{/* Upvote */}
 										<div
 											className="w-6 mx-auto text-gray-400 rounded cursor-pointer hover:bg-gray-300 hover:text-red-500"
-											onClick={() => vote(1)}
+											onClick={() => handleVote(1)}
 										>
 											<i
 												className={classNames(
@@ -146,7 +130,7 @@ export default function PostPage() {
 										{/* Downvote */}
 										<div
 											className="w-6 mx-auto text-gray-400 rounded cursor-pointer hover:bg-gray-300 hover:text-blue-600"
-											onClick={() => vote(-1)}
+											onClick={() => handleVote(-1)}
 										>
 											<i
 												className={classNames(
@@ -163,7 +147,7 @@ export default function PostPage() {
 									<div className="py-2 pr-2">
 										<div className="flex items-center">
 											<p className="text-xs text-gray-500">
-												Posted by
+												Por
 												<Link
 													href={`/u/${post.username}`}
 												>
@@ -173,30 +157,30 @@ export default function PostPage() {
 												</Link>
 												<Link href={post.url}>
 													<a className="mx-1 hover:underline">
-														{dayjs(
-															post.createdAt
-														).fromNow()}
+														{tempo(post.createdAt)}
 													</a>
 												</Link>
 											</p>
 										</div>
 										{/* Post title */}
-										<h1 className="my-1 text-xl font-medium">
+										<h1 className="my-1 mt-3 text-xl font-medium">
 											{post.title}
 										</h1>
 										{/* Post body */}
-										<p className="my-3 text-sm">
+										<p className="my-3 mt-3 text-sm linebreaks">
 											{post.body}
 										</p>
 										{/* Actions */}
-										<div className="flex">
+										<div className="flex mt-3">
 											<Link href={post.url}>
 												<a>
 													<ActionButton>
 														<i className="mr-1 fas fa-comment-alt fa-xs"></i>
 														<span className="font-bold">
-															{post.commentCount}{" "}
-															Comentarios
+															{pluralize(
+																post.commentCount,
+																"Comentario"
+															)}
 														</span>
 													</ActionButton>
 												</a>
@@ -290,7 +274,9 @@ export default function PostPage() {
 											{/* Upvote */}
 											<div
 												className="w-6 mx-auto text-gray-400 rounded cursor-pointer hover:bg-gray-300 hover:text-red-500"
-												onClick={() => vote(1, comment)}
+												onClick={() =>
+													handleVote(1, comment)
+												}
 											>
 												<i
 													className={classNames(
@@ -310,7 +296,7 @@ export default function PostPage() {
 											<div
 												className="w-6 mx-auto text-gray-400 rounded cursor-pointer hover:bg-gray-300 hover:text-blue-600"
 												onClick={() =>
-													vote(-1, comment)
+													handleVote(-1, comment)
 												}
 											>
 												<i
@@ -335,9 +321,9 @@ export default function PostPage() {
 												</Link>
 												<span className="text-gray-600">
 													{`
-															${comment.voteScore}
-															points •
-															${dayjs(comment.createdAt).fromNow()}
+															${pluralize(comment.voteScore, "voto")}
+															 •
+															${tempo(comment.createdAt)}
 														`}
 												</span>
 											</p>
@@ -354,4 +340,16 @@ export default function PostPage() {
 			</div>
 		</>
 	);
-}
+};
+
+const mapStateToProps = (state: any) => ({
+	post: state.data.post,
+	comments: state.data.comments,
+});
+
+const mapActionsToProps = {
+	addComment,
+	vote,
+};
+
+export default connect(mapStateToProps, mapActionsToProps)(PostPage);

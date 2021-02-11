@@ -12,6 +12,7 @@ interface Action {
 	type: string;
 	payload: any;
 }
+
 const StateContext = createContext<State>({
 	authenticated: false,
 	user: null,

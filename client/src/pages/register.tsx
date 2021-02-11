@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import InputGroup from "../components/InputGroup";
 
-import { useAuthState } from "../context/auth";
+import { useAuthState, useAuthDispatch } from "../context/auth";
 
 export default function Register() {
 	const [email, setEmail] = useState("");
@@ -13,6 +13,8 @@ export default function Register() {
 	const [password, setPassword] = useState("");
 	const [agreement, setAgreement] = useState(false);
 	const [errors, setErrors] = useState<any>({});
+
+	const dispatch = useAuthDispatch();
 
 	const { authenticated } = useAuthState();
 
@@ -24,42 +26,47 @@ export default function Register() {
 		event.preventDefault();
 
 		if (!agreement) {
-			setErrors({ ...errors, agreement: "You must agree to Terms." });
+			setErrors({
+				...errors,
+				agreement: "Debes aceptar los términos y condiciones.",
+			});
 			return;
 		}
 		try {
-			await axios.post("/auth/register", {
+			const response = await axios.post("/auth/register", {
 				email,
 				username,
 				password,
 			});
 
-			router.push("/login");
+			dispatch("LOGIN", response.data);
+
+			router.push("/");
 		} catch (error) {
 			console.log(error);
 			setErrors(error.response.data);
 		}
 	};
 	return (
-		<div className="flex bg-white">
+		<div className="flex bg-primary-5">
 			<Head>
 				<title>Registro</title>
 			</Head>
 
 			<div
-				className="h-screen bg-center bg-cover w-36"
-				style={{ backgroundImage: "url('/images/bricks.jpg')" }}
+				className="w-1/3 h-screen bg-center bg-cover"
+				style={{ backgroundImage: "url('/images/clics.jpg')" }}
 			></div>
 
-			<div className="flex flex-col justify-center pl-6">
-				<div className="w-70">
+			<div className="flex flex-col justify-center pl-6 pr-2">
+				<div className="xs:w-50 sm:w-70">
 					<h1 className="mb-2 text-lg font-medium">Registro</h1>
 
 					<p className="mb-10 text-xs">
 						Al continuar aceptas nuestros Términos y Condiciones.
 					</p>
 
-					<form onSubmit={handleSubmit}>
+					<form onSubmit={handleSubmit} noValidate>
 						<div className="mb-6">
 							<input
 								type="checkbox"
@@ -74,7 +81,7 @@ export default function Register() {
 							>
 								Acepto recibir leseras de Clics
 							</label>
-							<small className="block font-medium text-red-600">
+							<small className="block font-medium text-primary-4">
 								{errors.agreement}
 							</small>
 						</div>
@@ -106,15 +113,15 @@ export default function Register() {
 							error={errors.password}
 						/>
 
-						<button className="w-full py-2 mb-4 text-xs font-bold text-white uppercase bg-blue-500 border border-blue-500 rounded">
-							Sign Up
+						<button className="w-full py-2 mb-4 text-xs font-bold text-white uppercase border rounded bg-primary-1 border-primary-1">
+							Registrarse
 						</button>
 					</form>
 
 					<small>
 						¿Ya eres de Clics?
 						<Link href="/login">
-							<a className="ml-1 font-bold text-blue-500 uppercase">
+							<a className="ml-1 font-bold uppercase text-primary-1">
 								Entra
 							</a>
 						</Link>

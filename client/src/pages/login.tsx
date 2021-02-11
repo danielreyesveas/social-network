@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import InputGroup from "../components/InputGroup";
 
-import { useAuthState, useAuthDispatch } from "../context/auth";
+import { useAuthState, useAuthDispatch } from "../context";
 
 export default function Login() {
 	const [username, setUsername] = useState("");
@@ -37,7 +37,7 @@ export default function Login() {
 		}
 	};
 	return (
-		<div className="flex bg-white">
+		<div className="flex bg-primary-5">
 			<Head>
 				<title>Entrar</title>
 			</Head>
@@ -51,7 +51,7 @@ export default function Login() {
 				<div className="xs:w-50 sm:w-70">
 					<h1 className="mb-2 text-lg font-medium">Entrar</h1>
 
-					<form onSubmit={handleSubmit}>
+					<form onSubmit={handleSubmit} noValidate>
 						<InputGroup
 							className="mb-2"
 							type="text"
@@ -70,11 +70,11 @@ export default function Login() {
 							error={errors.password}
 						/>
 
-						<small className="font-medium text-red-600">
+						<small className="font-medium text-primary-4">
 							{errors.general}
 						</small>
 
-						<button className="w-full py-2 mb-4 text-xs font-bold text-white uppercase bg-blue-500 border border-blue-500 rounded">
+						<button className="w-full py-2 mb-4 text-xs font-bold text-white uppercase border rounded border-primary-1 bg-primary-1">
 							Entrar
 						</button>
 					</form>
@@ -82,7 +82,7 @@ export default function Login() {
 					<small>
 						¿Eres nuevo en Clics?
 						<Link href="/register">
-							<a className="ml-1 font-bold text-blue-500 uppercase">
+							<a className="ml-1 font-bold uppercase text-primary-1">
 								Regístrate
 							</a>
 						</Link>

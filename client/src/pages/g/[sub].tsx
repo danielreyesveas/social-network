@@ -1,17 +1,18 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { ChangeEvent, createRef, Fragment, useEffect, useState } from "react";
-import useSWR from "swr";
+import { ChangeEvent, createRef, useEffect, useState } from "react";
 import PostCard from "../../components/PostCard";
 import Image from "next/image";
 import classNames from "classnames";
 
-import { Sub } from "../../types";
-import { useAuthState } from "../../context/auth";
-import Axios from "axios";
+import { Post, Sub } from "../../types";
+import { useAuthState } from "../../context";
+import axios from "axios";
 import Sidebar from "../../components/Sidebar";
+import { connect } from "react-redux";
+import { useGetSub } from "../../hooks";
 
-export default function SubPage() {
+const SubPage = ({ sub }) => {
 	// Local state
 	const [ownSub, setOwnSub] = useState(false);
 	// Global state
@@ -22,9 +23,7 @@ export default function SubPage() {
 
 	const subName = router.query.sub;
 
-	const { data: sub, error, revalidate } = useSWR<Sub>(
-		subName ? `/subs/${subName}` : null
-	);
+	const { error } = useGetSub(subName);
 
 	useEffect(() => {
 		if (!sub) return;
@@ -45,11 +44,9 @@ export default function SubPage() {
 		formData.append("type", fileInputRef.current.name);
 
 		try {
-			await Axios.post<Sub>(`/subs/${sub.name}/image`, formData, {
+			await axios.post<Sub>(`/subs/${sub.name}/image`, formData, {
 				headers: { "Content-Type": "multipart/form-data" },
 			});
-
-			revalidate();
 		} catch (err) {
 			console.log(err);
 		}
@@ -63,12 +60,8 @@ export default function SubPage() {
 	} else if (sub.posts.length === 0) {
 		postsMarkup = <p className="text-lg text-center">Nada todavía...</p>;
 	} else {
-		postsMarkup = sub.posts.map((post) => (
-			<PostCard
-				key={post.identifier}
-				post={post}
-				revalidate={revalidate}
-			/>
+		postsMarkup = sub.posts.map((post: Post) => (
+			<PostCard key={post.identifier} post={post} />
 		));
 	}
 
@@ -90,14 +83,14 @@ export default function SubPage() {
 					<div>
 						{/* Banner image */}
 						<div
-							className={classNames("bg-blue-500", {
+							className={classNames("bg-primary-1", {
 								"cursor-pointer": ownSub,
 							})}
 							onClick={() => openFileInput("banner")}
 						>
 							{sub.bannerUrl ? (
 								<div
-									className="h-56 bg-blue-500"
+									className="h-14 sm:h-28 md:h-56 bg-primary-1"
 									style={{
 										backgroundImage: `url(${sub.bannerUrl})`,
 										backgroundRepeat: "no-repeat",
@@ -106,11 +99,11 @@ export default function SubPage() {
 									}}
 								></div>
 							) : (
-								<div className="h-20 bg-blue-500"></div>
+								<div className="h-20 bg-dark-3"></div>
 							)}
 						</div>
 						{/* Sub meta data */}
-						<div className="h-20 bg-white">
+						<div className="h-20 bg-primary-5">
 							<div className="container relative flex">
 								<div className="absolute" style={{ top: -15 }}>
 									<Image
@@ -148,4 +141,10 @@ export default function SubPage() {
 			)}
 		</div>
 	);
-}
+};
+
+const mapStateToProps = (state: any) => ({
+	sub: state.data.sub,
+});
+
+export default connect(mapStateToProps)(SubPage);
