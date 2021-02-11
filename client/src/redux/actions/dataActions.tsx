@@ -5,6 +5,7 @@ import {
 	UPLOAD_SUB_IMAGE,
 	ADD_COMMENT,
 	ADD_POST,
+	UPDATE_POST,
 	SET_POST,
 	VOTE,
 } from "../types";
@@ -58,6 +59,19 @@ export const addPost = (postData: Post) => async (dispatch: Dispatch) => {
 		.post<Post>("/posts", postData)
 		.then((response) => {
 			dispatch({ type: ADD_POST, payload: response.data });
+			return response.data;
+		})
+		.catch((error) => {
+			console.error(error);
+		});
+};
+
+export const updatePost = (postData: Post) => async (dispatch: Dispatch) => {
+	const { identifier, slug } = postData;
+	return axios
+		.post<Post>(`/posts/${identifier}/${slug}/update`, postData)
+		.then((response) => {
+			dispatch({ type: UPDATE_POST, payload: response.data });
 			return response.data;
 		})
 		.catch((error) => {

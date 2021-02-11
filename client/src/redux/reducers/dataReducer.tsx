@@ -7,6 +7,7 @@ import {
 	UPLOAD_SUB_IMAGE,
 	SET_POST,
 	ADD_POST,
+	UPDATE_POST,
 	SET_COMMENTS,
 	ADD_COMMENT,
 	SET_USER_DATA,
@@ -80,7 +81,14 @@ export default function Reducer(
 					}),
 				};
 			}
-
+		case UPDATE_POST:
+			return {
+				...state,
+				post: Object.assign({}, state.post, {
+					title: payload.title,
+					body: payload.body,
+				}),
+			};
 		case SET_POST:
 			return {
 				...state,

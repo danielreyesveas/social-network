@@ -84,6 +84,27 @@ const getPost = async (request: Request, response: Response) => {
 	}
 };
 
+const updatePost = async (request: Request, response: Response) => {
+	const { identifier, slug } = request.params;
+	const { title, body } = request.body;
+
+	try {
+		const post = await Post.findOneOrFail({ identifier, slug });
+
+		post.title = title;
+		post.body = body;
+
+		await post.save();
+
+		return response.json(post);
+	} catch (error) {
+		console.error(error);
+		return response
+			.status(404)
+			.json({ error: "El Post no ha sido encontrado." });
+	}
+};
+
 const commentOnPost = async (request: Request, response: Response) => {
 	const { identifier, slug } = request.params;
 	const { body } = request.body;
@@ -139,6 +160,7 @@ const router = Router();
 router.post("/", user, auth, createPost);
 router.get("/", user, getPosts);
 router.get("/:identifier/:slug", user, getPost);
+router.post("/:identifier/:slug/update", user, auth, updatePost);
 router.post("/:identifier/:slug/comments", user, auth, commentOnPost);
 router.get("/:identifier/:slug/comments", user, getPostComments);
 

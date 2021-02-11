@@ -2,36 +2,49 @@ import axios from "axios";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { FormEvent, useState } from "react";
-import Sidebar from "../../../components/Sidebar";
-import { Post, Sub } from "../../../types";
-import { useGetSub } from "../../../hooks";
+import { FormEvent, useEffect, useState } from "react";
+import Sidebar from "../../../../../components/Sidebar";
+import { Post, Sub } from "../../../../../types";
+import { useAuthState } from "../../../../../context/auth";
+import { useGetSub, useGetPost } from "../../../../../hooks";
 import { connect } from "react-redux";
-import { addPost } from "../../../redux/actions/dataActions";
+import { updatePost } from "../../../../../redux/actions/dataActions";
 
-const Submit = ({ sub, addPost }) => {
+const EditPost = ({ sub, post, updatePost }) => {
 	const [title, setTitle] = useState("");
 	const [body, setBody] = useState("");
 
-	const router = useRouter();
-	const { sub: subName } = router.query;
+	const { authenticated, user } = useAuthState();
 
-	const { error } = useGetSub(subName);
+	const router = useRouter();
+	const { sub: subName, identifier, slug } = router.query;
+
+	const { error } = useGetPost(identifier, slug);
+
+	useGetSub(subName);
 
 	if (error) router.push("/");
 
-	const handleAddPost = (event: FormEvent) => {
+	useEffect(() => {
+		if (!post) return;
+		setTitle(post.title);
+		setBody(post.body);
+	}, [post]);
+
+	const handleUpdatePost = (event: FormEvent) => {
 		event.preventDefault();
 
 		if (title.trim() == "") return;
 
 		const postData = {
+			identifier,
+			slug,
 			title: title.trim(),
 			body,
 			sub: subName,
 		};
 
-		addPost(postData).then((response) => {
+		updatePost(postData).then((response) => {
 			console.log(response);
 			router.push(
 				`/g/${sub.name}/${response.identifier}/${response.slug}`
@@ -47,9 +60,9 @@ const Submit = ({ sub, addPost }) => {
 			<div className="w-160">
 				<div className="p-4 bg-white rounded">
 					<h1 className="mb-3 text-lg">
-						Nueva entrada en /g/{subName}
+						Editar entrada en /g/{subName}
 					</h1>
-					<form onSubmit={handleAddPost}>
+					<form onSubmit={handleUpdatePost}>
 						<div className="relative mb-2">
 							<input
 								type="text"
@@ -95,22 +108,11 @@ const Submit = ({ sub, addPost }) => {
 
 const mapStateToProps = (state: any) => ({
 	sub: state.data.sub,
+	post: state.data.post,
 });
 
 const mapActionsToProps = (dispatch) => ({
-	addPost: (postData) => dispatch(addPost(postData)),
+	updatePost: (postData) => dispatch(updatePost(postData)),
 });
 
-export default connect(mapStateToProps, mapActionsToProps)(Submit);
-
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-	try {
-		const cookie = req.headers.cookie;
-		if (!cookie) throw new Error("Missing auth token cookie.");
-		await axios.get("/auth/me", { headers: { cookie } });
-		return { props: {} };
-	} catch (error) {
-		console.error(error);
-		res.writeHead(307, { Location: "/login" }).end();
-	}
-};
+export default connect(mapStateToProps, mapActionsToProps)(EditPost);

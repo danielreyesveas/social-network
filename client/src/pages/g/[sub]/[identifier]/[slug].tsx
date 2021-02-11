@@ -5,7 +5,6 @@ import Image from "next/image";
 import classNames from "classnames";
 import { Comment } from "../../../../types";
 import Sidebar from "../../../../components/Sidebar";
-import Axios from "axios";
 import { useAuthState } from "../../../../context/auth";
 
 import ActionButton from "../../../../components/ActionButton";
@@ -166,6 +165,11 @@ const PostPage = ({ post, comments, addComment, vote }) => {
 										<h1 className="my-1 mt-3 text-xl font-medium">
 											{post.title}
 										</h1>
+										<Link href={`${post.url}/edit`}>
+											<a className="px-4 py-1 mr-4 hollow blue button">
+												editar
+											</a>
+										</Link>
 										{/* Post body */}
 										<p className="my-3 mt-3 text-sm linebreaks">
 											{post.body}
