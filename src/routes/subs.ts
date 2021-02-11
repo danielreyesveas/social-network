@@ -21,15 +21,15 @@ const createSub = async (request: Request, response: Response) => {
 	try {
 		let errors: any = {};
 
-		if (isEmpty(name)) errors.name = "Name must not be empty.";
-		if (isEmpty(title)) errors.title = "Title must not be empty.";
+		if (isEmpty(name)) errors.name = "Campo requerido.";
+		if (isEmpty(title)) errors.title = "Campo requerido.";
 
 		const sub = await getRepository(Sub)
 			.createQueryBuilder("sub")
 			.where("lower(sub.name) = :name", { name: name.toLowerCase() })
 			.getOne();
 
-		if (sub) errors.name = "Sub exists already";
+		if (sub) errors.name = "El grupo ya existe.";
 
 		if (Object.keys(errors).length > 0) {
 			throw errors;
@@ -47,7 +47,9 @@ const createSub = async (request: Request, response: Response) => {
 		return response.json(sub);
 	} catch (error) {
 		console.error(error);
-		return response.status(500).json({ error: "Something went wrong." });
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
 	}
 };
 
@@ -73,7 +75,9 @@ const getSub = async (request: Request, response: Response) => {
 		return response.json(sub);
 	} catch (error) {
 		console.error(error);
-		return response.status(404).json({ error: "Sub not found." });
+		return response
+			.status(404)
+			.json({ error: "El Grupo no ha sido encontrado." });
 	}
 };
 
@@ -91,7 +95,7 @@ const ownSub = async (
 		if (sub.username !== user.username) {
 			return response
 				.status(403)
-				.json({ error: "You don't own this sub." });
+				.json({ error: "No perteneces a este grupo." });
 		}
 
 		response.locals.sub = sub;
@@ -99,7 +103,9 @@ const ownSub = async (
 		return next();
 	} catch (error) {
 		console.error(error);
-		return response.status(500).json({ error: "Something went wrong." });
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
 	}
 };
 
@@ -115,7 +121,7 @@ const upload = multer({
 		if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
 			callback(null, true); // Accept file
 		} else {
-			callback(new Error("File not an image."));
+			callback(new Error("El archivo no es una imagen."));
 		}
 	},
 });
@@ -128,7 +134,9 @@ const uploadSubImage = async (request: Request, response: Response) => {
 
 		if (type !== "image" && type !== "banner") {
 			fs.unlinkSync(request.file.path);
-			return response.status(400).json({ error: "Invalid type." });
+			return response
+				.status(400)
+				.json({ error: "Tipo de archivo no permitido." });
 		}
 
 		let oldImageUrn: string = "";
@@ -149,7 +157,9 @@ const uploadSubImage = async (request: Request, response: Response) => {
 		return response.json(sub);
 	} catch (error) {
 		console.error(error);
-		return response.status(500).json({ error: "Something went wrong." });
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
 	}
 };
 
@@ -159,7 +169,7 @@ const searchSubs = async (request: Request, response: Response) => {
 		if (isEmpty(name)) {
 			return response
 				.status(400)
-				.json({ error: "Search must not be empty." });
+				.json({ error: "La búsqueda no puede estar vacía." });
 		}
 
 		const subs = await getRepository(Sub)
@@ -172,7 +182,9 @@ const searchSubs = async (request: Request, response: Response) => {
 		return response.json(subs);
 	} catch (error) {
 		console.error(error);
-		return response.status(500).json({ error: "Something went wrong." });
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
 	}
 };
 

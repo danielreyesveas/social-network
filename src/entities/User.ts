@@ -1,3 +1,4 @@
+import { Expose } from "class-transformer";
 import { IsEmail, Length } from "class-validator";
 import {
 	Entity as TOEntity,
@@ -22,7 +23,7 @@ export default class User extends Entity {
 	}
 
 	@Index()
-	@IsEmail(undefined, { message: "Must be a valid email address." })
+	@IsEmail(undefined, { message: "Email no válido." })
 	@Length(1, 255, {
 		message: "Must not be empty.",
 	})
@@ -31,7 +32,7 @@ export default class User extends Entity {
 
 	@Index()
 	@Length(3, 255, {
-		message: "Must be at least 3 characacters long.",
+		message: "Debe ser de al menos 3 caracteres.",
 	})
 	@Column({ unique: true })
 	username: string;
@@ -39,9 +40,19 @@ export default class User extends Entity {
 	@Exclude()
 	@Column()
 	@Length(6, 255, {
-		message: "Must be at least 6 characacters long.",
+		message: "Debe ser de al menos 6 caracteres.",
 	})
 	password: string;
+
+	@Column({ nullable: true })
+	imageUrn: string;
+
+	@Expose()
+	get imageUrl(): string {
+		return this.imageUrn
+			? `${process.env.APP_URL}/images/profiles/${this.imageUrn}`
+			: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+	}
 
 	@OneToMany(() => Post, (post) => post.user)
 	posts: Post[];
