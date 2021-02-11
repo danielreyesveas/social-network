@@ -21,6 +21,8 @@ export interface User {
 	email: string;
 	createdAt: string;
 	updatedAt: string;
+	imageUrn?: string;
+	imageUrl: string;
 }
 
 export interface Sub {
