@@ -9,8 +9,8 @@ export default function Sidebar({ sub }: { sub: Sub }) {
 
 	return (
 		<div className="hidden ml-6 md:block w-80">
-			<div className="bg-white rounded">
-				<div className="p-3 bg-blue-500 rounded-t">
+			<div className="rounded bg-primary-5">
+				<div className="p-3 rounded-t bg-dark-3">
 					<p className="font-semibold text-white">Sobre nosotros</p>
 				</div>
 				<div className="p-3">
@@ -31,7 +31,7 @@ export default function Sidebar({ sub }: { sub: Sub }) {
 					</p>
 					{authenticated && (
 						<Link href={`/g/${sub.name}/submit`}>
-							<a className="w-full py-1 text-sm blue button">
+							<a className="w-full py-1 dark button">
 								Nueva entrada
 							</a>
 						</Link>

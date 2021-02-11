@@ -1,22 +1,21 @@
 import Link from "next/link";
 import Axios from "axios";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import classNames from "classnames";
 
 import { Post } from "../types";
 import ActionButton from "./ActionButton";
 import { useAuthState } from "../context/auth";
 import { useRouter } from "next/router";
-
-dayjs.extend(relativeTime);
+import { tempo, pluralize } from "../utils";
+import { vote } from "../redux/actions/dataActions";
+import { connect } from "react-redux";
 
 interface PostCardProps {
 	post: Post;
-	revalidate?: Function;
+	vote: Function;
 }
 
-export default function PostCard({
+const PostCard = ({
 	post: {
 		identifier,
 		slug,
@@ -31,30 +30,24 @@ export default function PostCard({
 		username,
 		sub,
 	},
-	revalidate,
-}: PostCardProps) {
+	vote,
+}: PostCardProps) => {
 	const { authenticated } = useAuthState();
 
 	const router = useRouter();
 
 	const isInSubPage = router.pathname === "/g/[sub]";
 
-	const vote = async (value: number) => {
+	const handleVote = async (value: number) => {
 		if (!authenticated) return router.push("/login");
 
 		if (value === userVote) value = 0;
 
-		try {
-			await Axios.post("/misc/vote", {
-				identifier,
-				slug,
-				value,
-			});
-
-			if (revalidate) revalidate();
-		} catch (err) {
-			console.log(err);
-		}
+		vote({
+			identifier,
+			slug,
+			value,
+		});
 	};
 
 	return (
@@ -68,7 +61,7 @@ export default function PostCard({
 				{/* Upvote */}
 				<div
 					className="w-6 mx-auto text-gray-400 rounded cursor-pointer hover:bg-gray-300 hover:text-red-500"
-					onClick={() => vote(1)}
+					onClick={() => handleVote(1)}
 				>
 					<i
 						className={classNames("icon-arrow-up", {
@@ -80,7 +73,7 @@ export default function PostCard({
 				{/* Downvote */}
 				<div
 					className="w-6 mx-auto text-gray-400 rounded cursor-pointer hover:bg-gray-300 hover:text-blue-600"
-					onClick={() => vote(-1)}
+					onClick={() => handleVote(-1)}
 				>
 					<i
 						className={classNames("icon-arrow-down", {
@@ -91,9 +84,9 @@ export default function PostCard({
 			</div>
 			{/* Post data section */}
 			<div className="w-full p-2">
-				<div className="flex items-center">
+				<div className="items-center md:flex">
 					{!isInSubPage && (
-						<>
+						<div className="flex items-center md:flex-shrink-0">
 							<Link href={`/g/${subName}`}>
 								<img
 									src={sub.imageUrl}
@@ -108,11 +101,11 @@ export default function PostCard({
 							<span className="mx-1 text-xs text-gray-500">
 								•
 							</span>
-						</>
+						</div>
 					)}
 
 					<p className="text-xs text-gray-500">
-						Posted by
+						Por
 						<Link href={`/u/${username}`}>
 							<a className="mx-1 hover:underline">
 								/u/{username}
@@ -120,23 +113,27 @@ export default function PostCard({
 						</Link>
 						<Link href={url}>
 							<a className="mx-1 hover:underline">
-								{dayjs(createdAt).fromNow()}
+								{tempo(createdAt)}
 							</a>
 						</Link>
 					</p>
 				</div>
-				<Link href={url}>
-					<a className="my-1 text-lg font-medium">{title}</a>
-				</Link>
+
+				<div className="mt-3">
+					<Link href={url}>
+						<a className="my-1 text-lg font-medium">{title}</a>
+					</Link>
+				</div>
+
 				{body && <p className="my-1 text-sm">{body}</p>}
 
-				<div className="flex">
+				<div className="flex mt-3">
 					<Link href={url}>
 						<a>
 							<ActionButton>
 								<i className="mr-1 fas fa-comment-alt fa-xs"></i>
 								<span className="font-bold">
-									{commentCount} Commentarios
+									{pluralize(commentCount, "Commentario")}
 								</span>
 							</ActionButton>
 						</a>
@@ -153,4 +150,10 @@ export default function PostCard({
 			</div>
 		</div>
 	);
-}
+};
+
+const mapActionsToProps = {
+	vote,
+};
+
+export default connect(null, mapActionsToProps)(PostCard);
