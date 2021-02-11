@@ -129,16 +129,16 @@ const mapActionsToProps = (dispatch) => ({
 	addSub: (subData) => dispatch(addSub(subData)),
 });
 
-export default connect(null, mapActionsToProps)(CreateSub);
+// export default connect(null, mapActionsToProps)(CreateSub);
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-	try {
-		const cookie = req.headers.cookie;
-		if (!cookie) throw new Error("Missing auth token cookie.");
-		await axios.get("/auth/me", { headers: { cookie } });
-		return { props: {} };
-	} catch (error) {
-		console.error(error);
-		res.writeHead(307, { Location: "/login" }).end();
-	}
-};
+// export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+// 	try {
+// 		const cookie = req.headers.cookie;
+// 		if (!cookie) throw new Error("Missing auth token cookie.");
+// 		await axios.get("/auth/me", { headers: { cookie } });
+// 		return { props: {} };
+// 	} catch (error) {
+// 		console.error(error);
+// 		res.writeHead(307, { Location: "/login" }).end();
+// 	}
+// };

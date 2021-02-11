@@ -6,6 +6,7 @@ import Image from "next/image";
 import classNames from "classnames";
 
 import { Post, Sub } from "../../types";
+import { uploadSubImage } from "../../redux/actions/dataActions";
 import { useAuthState } from "../../context";
 import axios from "axios";
 import Sidebar from "../../components/Sidebar";
@@ -13,7 +14,7 @@ import { connect } from "react-redux";
 import { useGetSub } from "../../hooks";
 import Link from "next/link";
 
-const SubPage = ({ sub }) => {
+const SubPage = ({ sub, uploadSubImage }) => {
 	// Local state
 	const [ownSub, setOwnSub] = useState(false);
 	// Global state
@@ -43,14 +44,9 @@ const SubPage = ({ sub }) => {
 		const formData = new FormData();
 		formData.append("file", file);
 		formData.append("type", fileInputRef.current.name);
+		formData.append("subName", sub.name);
 
-		try {
-			await axios.post<Sub>(`/subs/${sub.name}/image`, formData, {
-				headers: { "Content-Type": "multipart/form-data" },
-			});
-		} catch (err) {
-			console.log(err);
-		}
+		uploadSubImage(formData);
 	};
 
 	if (error) router.push("/");
@@ -153,4 +149,8 @@ const mapStateToProps = (state: any) => ({
 	sub: state.data.sub,
 });
 
-export default connect(mapStateToProps)(SubPage);
+const mapActionsToProps = {
+	uploadSubImage,
+};
+
+export default connect(mapStateToProps, mapActionsToProps)(SubPage);

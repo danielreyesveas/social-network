@@ -4,6 +4,7 @@ import {
 	ADD_SUB,
 	SET_SUB,
 	UPDATE_SUB,
+	UPLOAD_SUB_IMAGE,
 	SET_POST,
 	ADD_POST,
 	SET_COMMENTS,
@@ -38,7 +39,7 @@ interface Action {
 	payload: any;
 }
 
-let modifiedComments, modifiedPosts;
+let index, modifiedComments, modifiedPosts;
 
 export default function Reducer(
 	state: State = initialState,
@@ -61,6 +62,25 @@ export default function Reducer(
 				...state,
 				sub: payload,
 			};
+		case UPLOAD_SUB_IMAGE:
+			if (payload.type === "image") {
+				return {
+					...state,
+					sub: Object.assign({}, state.sub, {
+						imageUrl: payload.data.imageUrl,
+						imageUrn: payload.data.imageUrn,
+					}),
+				};
+			} else {
+				return {
+					...state,
+					sub: Object.assign({}, state.sub, {
+						bannerUrl: payload.data.bannerUrl,
+						bannerUrn: payload.data.bannerUrn,
+					}),
+				};
+			}
+
 		case SET_POST:
 			return {
 				...state,
@@ -105,23 +125,17 @@ export default function Reducer(
 						}),
 					};
 				} else {
-					modifiedPosts = state.posts.map((post) => {
-						if (post.identifier === payload.identifier) {
-							post.voteScore = payload.voteScore;
-							post.userVote = payload.userVote;
-							console.log(post);
-						}
-						return post;
-					});
-					console.log(modifiedPosts);
-					console.log(
-						Object.assign({}, state, {
-							posts: modifiedPosts,
-						})
+					var newState = Object.assign(
+						{},
+						JSON.parse(JSON.stringify(state))
 					);
-					return Object.assign({}, state, {
-						posts: modifiedPosts,
-					});
+					index = state.posts.findIndex(
+						(post) => post.identifier === payload.identifier
+					);
+					console.log(index);
+					newState.posts[index].voteScore = payload.voteScore;
+					newState.posts[index].userVote = payload.userVote;
+					return newState;
 				}
 			}
 		default:
