@@ -3,8 +3,9 @@ import {
 	SET_SUBS,
 	ADD_SUB,
 	SET_SUB,
+	UPDATE_USER_IMAGE,
 	UPDATE_SUB,
-	UPLOAD_SUB_IMAGE,
+	UPDATE_SUB_IMAGE,
 	SET_POST,
 	ADD_POST,
 	UPDATE_POST,
@@ -63,7 +64,7 @@ export default function Reducer(
 				...state,
 				sub: payload,
 			};
-		case UPLOAD_SUB_IMAGE:
+		case UPDATE_SUB_IMAGE:
 			if (payload.type === "image") {
 				return {
 					...state,
@@ -81,6 +82,12 @@ export default function Reducer(
 					}),
 				};
 			}
+		case UPDATE_USER_IMAGE:
+			return Object.assign({}, state, {
+				userData: Object.assign({}, state.userData, {
+					user: payload,
+				}),
+			});
 		case UPDATE_POST:
 			return {
 				...state,

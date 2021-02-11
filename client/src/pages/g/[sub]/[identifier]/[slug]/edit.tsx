@@ -101,7 +101,7 @@ const EditPost = ({ sub, post, updatePost }) => {
 				</div>
 			</div>
 
-			{sub && <Sidebar sub={sub} />}
+			{sub && <Sidebar sub={sub} hideCreate={true} />}
 		</div>
 	);
 };

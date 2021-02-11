@@ -2,15 +2,16 @@ import {
 	ADD_SUB,
 	UPDATE_SUB,
 	SET_SUB,
-	UPLOAD_SUB_IMAGE,
+	UPDATE_SUB_IMAGE,
 	ADD_COMMENT,
 	ADD_POST,
+	UPDATE_USER_IMAGE,
 	UPDATE_POST,
 	SET_POST,
 	VOTE,
 } from "../types";
 import { Dispatch } from "redux";
-import { Post, Sub, Comment } from "../../types";
+import { Post, Sub, Comment, User } from "../../types";
 import axios from "axios";
 
 export const addSub = (subData: Sub) => async (dispatch: Dispatch) => {
@@ -44,8 +45,27 @@ export const uploadSubImage = (formData: any) => async (dispatch: Dispatch) => {
 		})
 		.then((response) => {
 			dispatch({
-				type: UPLOAD_SUB_IMAGE,
+				type: UPDATE_SUB_IMAGE,
 				payload: { type: formData.get("type"), data: response.data },
+			});
+			return response.data;
+		})
+		.catch((error) => {
+			console.error(error);
+		});
+};
+
+export const uploadUserImage = (formData: any) => async (
+	dispatch: Dispatch
+) => {
+	await axios
+		.post<User>(`/users/${formData.get("username")}/image`, formData, {
+			headers: { "Content-Type": "multipart/form-data" },
+		})
+		.then((response) => {
+			dispatch({
+				type: UPDATE_USER_IMAGE,
+				payload: response.data,
 			});
 			return response.data;
 		})

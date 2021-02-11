@@ -4,7 +4,12 @@ import { Sub } from "../types";
 import { useAuthState } from "../context/auth";
 import Link from "next/link";
 
-export default function Sidebar({ sub }: { sub: Sub }) {
+interface SidebarProps {
+	sub: Sub;
+	hideCreate?: boolean;
+}
+
+export default function Sidebar({ sub, hideCreate = false }: SidebarProps) {
 	const { authenticated } = useAuthState();
 
 	return (
@@ -29,7 +34,7 @@ export default function Sidebar({ sub }: { sub: Sub }) {
 						<i className="mr-2 fas fa-birthday-cake"></i>
 						Creado el {dayjs(sub.createdAt).format("D MMM YYYY")}
 					</p>
-					{authenticated && (
+					{authenticated && !hideCreate && (
 						<Link href={`/g/${sub.name}/submit`}>
 							<a className="w-full py-1 dark button">
 								Nueva entrada

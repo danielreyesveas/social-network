@@ -88,7 +88,7 @@ const Submit = ({ sub, addPost }) => {
 				</div>
 			</div>
 
-			{sub && <Sidebar sub={sub} />}
+			{sub && <Sidebar sub={sub} hideCreate={true} />}
 		</div>
 	);
 };

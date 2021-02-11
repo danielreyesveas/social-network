@@ -9,11 +9,12 @@ import axios from "axios";
 import { ChangeEvent, createRef, useEffect, useState } from "react";
 import { useAuthState } from "../../context";
 import { useGetUserData } from "../../hooks";
+import { uploadUserImage } from "../../redux/actions/dataActions";
 
 import dayjs from "dayjs";
 import { connect } from "react-redux";
 
-const UserPage = ({ userData }) => {
+const UserPage = ({ userData, uploadUserImage }) => {
 	const router = useRouter();
 	const username = router.query.username;
 	const [ownProfile, setOwnProfile] = useState(false);
@@ -35,26 +36,15 @@ const UserPage = ({ userData }) => {
 		if (!ownProfile) return;
 		fileInputRef.current.click();
 	};
-
+	console.log(userData);
 	const uploadImage = async (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files[0];
 
 		const formData = new FormData();
 		formData.append("file", file);
+		formData.append("username", user.username);
 
-		try {
-			await axios.post<User>(
-				`/users/${userData.user.username}/image`,
-				formData,
-				{
-					headers: { "Content-Type": "multipart/form-data" },
-				}
-			);
-
-			revalidate();
-		} catch (err) {
-			console.log(err);
-		}
+		uploadUserImage(formData);
 	};
 
 	let submissionsMarkup;
@@ -171,4 +161,8 @@ const mapStateToProps = (state: any) => ({
 	userData: state.data.userData,
 });
 
-export default connect(mapStateToProps)(UserPage);
+const mapActionsToProps = {
+	uploadUserImage,
+};
+
+export default connect(mapStateToProps, mapActionsToProps)(UserPage);
