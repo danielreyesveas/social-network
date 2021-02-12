@@ -9,12 +9,15 @@ import { useRouter } from "next/router";
 import ProfileMenu from "./ProfileMenu";
 import { connect } from "react-redux";
 
-const Navbar: React.FC = ({ user }) => {
+interface NavbarProps {
+	loading?: boolean;
+	authenticated?: boolean;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ loading, authenticated }) => {
 	const [search, setSearch] = useState("");
 	const [subs, setSubs] = useState<Sub[]>([]);
 	const [timer, setTimer] = useState(null);
-
-	const { loading, authenticated } = user;
 
 	const router = useRouter();
 
