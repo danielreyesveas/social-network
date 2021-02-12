@@ -106,7 +106,7 @@ const Navbar: React.FC<NavbarProps> = ({ loading, authenticated }) => {
 					) : (
 						<>
 							<Link href="/login">
-								<a className="hidden w-20 py-1 mr-4 leading-5 sm:block lg:w-32 hollow blue button">
+								<a className="w-20 py-1 mr-4 leading-5 sm:block lg:w-32 hollow blue button">
 									entrar
 								</a>
 							</Link>

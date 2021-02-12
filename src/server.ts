@@ -22,6 +22,8 @@ const origins = [
 	"https://localhost:3000",
 	"https://www.social-network.reciclatusanimales.com",
 	"https://social-network.reciclatusanimales.com",
+	"https://www.clics.reciclatusanimales.com",
+	"https://clics.reciclatusanimales.com",
 ];
 
 app.use(express.json());
