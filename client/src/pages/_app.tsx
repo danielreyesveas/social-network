@@ -13,7 +13,6 @@ import { AuthProvider, UIProvider } from "../context";
 import { Provider } from "react-redux";
 import store from "../redux/store";
 import Navbar from "../components/Navbar";
-import { useEffect } from "react";
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_SERVER_BASE_URL + "/api";
 axios.defaults.withCredentials = true;

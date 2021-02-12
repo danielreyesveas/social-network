@@ -46,7 +46,7 @@ export const string_trunc = (
 			trimmedString.substr(
 				0,
 				Math.min(trimmedString.length, trimmedString.lastIndexOf(" "))
-			) + "...";
+			) + suffix;
 	}
 	return content;
 };
