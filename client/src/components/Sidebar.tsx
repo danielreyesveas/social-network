@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { Sub } from "../types";
 import { useAuthState } from "../context/auth";
 import Link from "next/link";
+import { pluralize } from "../utils";
 
 interface SidebarProps {
 	sub: Sub;
@@ -16,18 +17,20 @@ export default function Sidebar({ sub, hideCreate = false }: SidebarProps) {
 		<div className="hidden ml-6 md:block w-80">
 			<div className="rounded bg-primary-5">
 				<div className="p-3 rounded-t bg-dark-3">
-					<p className="font-semibold text-white">Sobre nosotros</p>
+					<p className="font-semibold text-white">Nosotros</p>
 				</div>
 				<div className="p-3">
-					<p className="mb-3 text-md">{sub.description}</p>
+					<p className="mb-3 text-md linebreaks">{sub.description}</p>
 					<div className="flex mb-3 text-sm font-medium">
 						<div className="w-1/2">
-							<p>5.2k</p>
-							<p>miembros</p>
+							<p>{sub.postCount}</p>
+							<p>{pluralize(sub.postCount, "entrada", false)}</p>
 						</div>
 						<div className="w-1/2">
-							<p>150</p>
-							<p>en línea</p>
+							<p>{sub.followerCount}</p>
+							<p>
+								{pluralize(sub.followerCount, "grupi", false)}
+							</p>
 						</div>
 					</div>
 					<p className="my-3">

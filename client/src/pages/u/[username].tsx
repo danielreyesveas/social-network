@@ -14,6 +14,7 @@ import { uploadUserImage, follow } from "../../redux/actions/dataActions";
 import dayjs from "dayjs";
 import { connect } from "react-redux";
 import ActionButton from "../../components/ActionButton";
+import { pluralize } from "../../utils";
 
 const UserPage = ({ userData, uploadUserImage, follow }) => {
 	const router = useRouter();
@@ -154,6 +155,32 @@ const UserPage = ({ userData, uploadUserImage, follow }) => {
 										{userData.user.email}
 									</p>
 
+									<p className="mb-3 text-md linebreaks">
+										{userData.user.bio}
+									</p>
+									<div className="flex mb-3 text-sm font-medium">
+										<div className="w-1/2">
+											<p>{userData.user.postCount}</p>
+											<p>
+												{pluralize(
+													userData.user.postCount,
+													"entrada",
+													false
+												)}
+											</p>
+										</div>
+										<div className="w-1/2">
+											<p>{userData.user.followerCount}</p>
+											<p>
+												{pluralize(
+													userData.user.followerCount,
+													"grupi",
+													false
+												)}
+											</p>
+										</div>
+									</div>
+
 									<p className="my-3">
 										<i className="mr-2 fas fa-birthday-cake"></i>
 										Se unió el{" "}
@@ -167,7 +194,9 @@ const UserPage = ({ userData, uploadUserImage, follow }) => {
 										className="px-4 py-1 mr-4 hollow blue button"
 										onClick={handleFollow}
 									>
-										seguir
+										{!!userData.user.userFollow
+											? "dejar"
+											: "seguir"}
 									</a>
 								</ActionButton>
 							</div>

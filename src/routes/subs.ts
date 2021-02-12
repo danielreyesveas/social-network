@@ -53,6 +53,64 @@ const createSub = async (request: Request, response: Response) => {
 	}
 };
 
+// const getSub = async (request: Request, response: Response) => {
+// 	const name = request.params.name;
+
+// 	try {
+// 		const sub = await Sub.findOneOrFail(
+// 			{ name },
+// 			{ relations: ["followers"] }
+// 		);
+
+// 		const user = response.locals.user;
+
+// 		if (user) {
+// 			sub.setUserFollow(user);
+// 		}
+
+// 		return response.json(sub);
+// 	} catch (error) {
+// 		console.error(error);
+// 		return response
+// 			.status(404)
+// 			.json({ error: "El Grupo no ha sido encontrado." });
+// 	}
+// };
+
+// const getSubPosts = async (request: Request, response: Response) => {
+// 	const name = request.params.name;
+// 	const currentPage: number = (request.query.page || 0) as number;
+// 	const postsPerPage: number = (request.query.count || 8) as number;
+
+// 	try {
+// 		// const posts = await Post.find({
+// 		// 	where: { sub },
+// 		// 	order: { createdAt: "DESC" },
+// 		// 	relations: ["comments", "votes", "sub"],
+// 		// });
+
+// 		const posts = await Post.find({
+// 			order: { createdAt: "DESC" },
+// 			relations: ["comments", "votes", "sub"],
+// 			skip: currentPage * postsPerPage,
+// 			take: postsPerPage,
+// 		});
+
+// 		const user = response.locals.user;
+
+// 		if (user) {
+// 			posts.forEach((p) => p.setUserVote(user));
+// 		}
+
+// 		return response.json(posts);
+// 	} catch (error) {
+// 		console.error(error);
+// 		return response
+// 			.status(404)
+// 			.json({ error: "El Grupo no ha sido encontrado." });
+// 	}
+// };
+
 const getSub = async (request: Request, response: Response) => {
 	const name = request.params.name;
 
@@ -64,7 +122,7 @@ const getSub = async (request: Request, response: Response) => {
 		const posts = await Post.find({
 			where: { sub },
 			order: { createdAt: "DESC" },
-			relations: ["comments", "votes"],
+			relations: ["comments", "votes", "sub"],
 		});
 
 		sub.posts = posts;

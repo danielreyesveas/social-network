@@ -42,7 +42,7 @@ interface Action {
 	payload: any;
 }
 
-let index, modifiedComments, modifiedPosts;
+let index, modifiedComments, newState;
 
 export default function Reducer(
 	state: State = initialState,
@@ -64,6 +64,7 @@ export default function Reducer(
 			return {
 				...state,
 				sub: payload,
+				posts: payload.posts ? [].concat(...payload.posts) : [],
 			};
 		case UPDATE_SUB_IMAGE:
 			if (payload.type === "image") {
@@ -119,7 +120,6 @@ export default function Reducer(
 				userData: payload,
 			};
 		case VOTE:
-			console.log(payload);
 			if (payload.commentIdentifier) {
 				modifiedComments = state.comments.map((comment) => {
 					if (comment.identifier === payload.commentIdentifier) {
@@ -141,7 +141,9 @@ export default function Reducer(
 						}),
 					};
 				} else {
-					var newState = Object.assign(
+					console.log(payload);
+					console.log(state);
+					newState = Object.assign(
 						{},
 						JSON.parse(JSON.stringify(state))
 					);
@@ -155,7 +157,21 @@ export default function Reducer(
 				}
 			}
 		case FOLLOW:
-			return state;
+			if (payload.username) {
+				newState = Object.assign({}, JSON.parse(JSON.stringify(state)));
+				newState.userData.user.userFollow = payload.userFollow;
+				newState.userData.user.followerCount = payload.followerCount;
+
+				return newState;
+			} else {
+				return {
+					...state,
+					sub: Object.assign({}, state.sub, {
+						userFollow: payload.userFollow,
+						followerCount: payload.followerCount,
+					}),
+				};
+			}
 		default:
 			return state;
 	}

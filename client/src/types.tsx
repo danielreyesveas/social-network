@@ -19,10 +19,15 @@ export interface Post {
 export interface User {
 	username: string;
 	email: string;
+	bio?: string;
 	createdAt: string;
 	updatedAt: string;
 	imageUrn?: string;
 	imageUrl: string;
+
+	// Virtual fields
+	postCount?: number;
+	followerCount?: number;
 }
 
 export interface Sub {
@@ -40,6 +45,8 @@ export interface Sub {
 	imageUrl: string;
 	bannerUrl: string;
 	postCount?: number;
+	followerCount?: number;
+	userFollow?: number;
 }
 
 export interface Comment {

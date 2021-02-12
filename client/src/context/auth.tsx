@@ -67,7 +67,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		async function loadUser() {
 			try {
 				const response = await axios.get("/auth/me");
-				console.log(response);
 				dispatch("LOGIN", response.data);
 				reduxDispatch({
 					type: SET_USER,

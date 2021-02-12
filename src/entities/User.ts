@@ -46,6 +46,9 @@ export default class User extends Entity {
 	})
 	password: string;
 
+	@Column({ nullable: true, type: "text" })
+	bio: string;
+
 	@Column({ nullable: true })
 	imageUrn: string;
 

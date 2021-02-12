@@ -126,9 +126,7 @@ const PostCard = ({
 
 				<div className="mb-3">
 					{body && (
-						<p className="my-1 text-sm">
-							{string_trunc(body, 500)}
-						</p>
+						<p className="my-1 text-sm">{string_trunc(body)}</p>
 					)}
 				</div>
 

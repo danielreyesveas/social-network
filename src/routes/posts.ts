@@ -67,7 +67,13 @@ const getPost = async (request: Request, response: Response) => {
 				slug,
 			},
 			{
-				relations: ["sub", "votes", "comments"],
+				relations: [
+					"sub",
+					"sub.followers",
+					"sub.posts",
+					"votes",
+					"comments",
+				],
 			}
 		);
 

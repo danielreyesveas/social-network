@@ -28,12 +28,16 @@ export const tempo = (time: string) => {
 	return dayjs(time).fromNow();
 };
 
-export const pluralize = (count: number, noun: string, suffix: string = "s") =>
-	`${count} ${noun}${count !== 1 ? suffix : ""}`;
+export const pluralize = (
+	count: number,
+	noun: string,
+	showCount: boolean = true,
+	suffix: string = "s"
+) => `${showCount ? count : ""} ${noun}${count !== 1 ? suffix : ""}`;
 
 export const string_trunc = (
 	content: string,
-	length: number = 100,
+	length: number = 300,
 	suffix: string = "..."
 ) => {
 	if (content.length > length) {

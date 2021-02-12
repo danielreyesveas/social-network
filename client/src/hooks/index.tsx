@@ -9,7 +9,6 @@ import {
 	SET_USER_DATA,
 } from "../redux/types";
 import { Post, Sub, Comment } from "../types";
-import axios from "axios";
 
 export const useGetPosts = () => {
 	const dispatch = useDispatch();

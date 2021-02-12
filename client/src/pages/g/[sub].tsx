@@ -15,7 +15,7 @@ import { useGetSub } from "../../hooks";
 import Link from "next/link";
 import ActionButton from "../../components/ActionButton";
 
-const SubPage = ({ sub, uploadSubImage, follow }) => {
+const SubPage = ({ sub, posts, uploadSubImage, follow }) => {
 	// Local state
 	const [ownSub, setOwnSub] = useState(false);
 	// Global state
@@ -68,10 +68,10 @@ const SubPage = ({ sub, uploadSubImage, follow }) => {
 	let postsMarkup;
 	if (!sub) {
 		postsMarkup = <p className="text-lg text-center">Cargando..</p>;
-	} else if (sub.posts?.length === 0) {
+	} else if (posts?.length === 0) {
 		postsMarkup = <p className="text-lg text-center">Nada todavía...</p>;
 	} else {
-		postsMarkup = sub.posts.map((post: Post) => (
+		postsMarkup = posts?.map((post: Post) => (
 			<PostCard key={post.identifier} post={post} />
 		));
 	}
@@ -143,7 +143,9 @@ const SubPage = ({ sub, uploadSubImage, follow }) => {
 												className="px-4 py-1 mr-4 hollow blue button"
 												onClick={handleFollow}
 											>
-												seguir
+												{!!sub.userFollow
+													? "dejar"
+													: "seguir"}
 											</a>
 										</ActionButton>
 									</div>
@@ -169,6 +171,7 @@ const SubPage = ({ sub, uploadSubImage, follow }) => {
 
 const mapStateToProps = (state: any) => ({
 	sub: state.data.sub,
+	posts: state.data.posts,
 });
 
 const mapActionsToProps = {

@@ -121,10 +121,8 @@ const follow = async (request: Request, response: Response) => {
 				await follow.save();
 			}
 		} else if (value === 0) {
-			// If vote exists and value = 0, remove it
 			await follow.remove();
 		} else if (follow.value !== value) {
-			// If vote and value has changed, update it
 			follow.value = value;
 			await follow.save();
 		}
