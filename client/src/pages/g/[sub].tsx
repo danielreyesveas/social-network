@@ -21,7 +21,7 @@ const SubPage = ({ sub, posts, uploadSubImage, follow }) => {
 	const fileInputRef = createRef<HTMLInputElement>();
 
 	const [observedPost, setObservedPost] = useState("");
-	// const { data: posts } = useSWR<Post[]>("/posts");
+
 	const { authenticated, user } = useAuthState();
 	const router = useRouter();
 	const subName = router.query.sub;

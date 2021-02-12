@@ -17,7 +17,6 @@ const Home = ({ posts, subs, user }) => {
 	const { authenticated } = user;
 
 	const [observedPost, setObservedPost] = useState("");
-	// const { data: posts } = useSWR<Post[]>("/posts");
 
 	const { data, error, page, setPage, revalidate } = useGetPosts();
 
