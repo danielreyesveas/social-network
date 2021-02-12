@@ -36,6 +36,7 @@ const getPosts = async (request: Request, response: Response) => {
 
 	try {
 		const user = response.locals.user;
+
 		const posts = await Post.find({
 			order: { createdAt: "DESC" },
 			relations: ["comments", "votes", "sub"],

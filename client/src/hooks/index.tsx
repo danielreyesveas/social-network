@@ -28,6 +28,25 @@ export const useGetPosts = () => {
 	return { data, error, page, setPage, revalidate };
 };
 
+export const useGetSubPosts = (subName: any) => {
+	const dispatch = useDispatch();
+	const path = subName ? `subs/${subName}/posts?page=` : null;
+
+	const {
+		data,
+		error,
+		size: page,
+		setSize: setPage,
+		revalidate,
+	} = useSWRInfinite<Post[]>((index) => (path ? `${path}${index}` : null), {
+		onSuccess: (data) => {
+			dispatch({ type: SET_POSTS, payload: data });
+		},
+	});
+
+	return { data, error, page, setPage, revalidate };
+};
+
 export const useGetSubs = () => {
 	const dispatch = useDispatch();
 	const path = "/misc/top-subs";

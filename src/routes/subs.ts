@@ -77,60 +77,48 @@ const createSub = async (request: Request, response: Response) => {
 // 	}
 // };
 
-// const getSubPosts = async (request: Request, response: Response) => {
-// 	const name = request.params.name;
-// 	const currentPage: number = (request.query.page || 0) as number;
-// 	const postsPerPage: number = (request.query.count || 8) as number;
+const getSubPosts = async (request: Request, response: Response) => {
+	const name = request.params.name;
+	const currentPage: number = (request.query.page || 0) as number;
+	const postsPerPage: number = (request.query.count || 8) as number;
 
-// 	try {
-// 		// const posts = await Post.find({
-// 		// 	where: { sub },
-// 		// 	order: { createdAt: "DESC" },
-// 		// 	relations: ["comments", "votes", "sub"],
-// 		// });
+	try {
+		console.log(name);
+		const user = response.locals.user;
 
-// 		const posts = await Post.find({
-// 			order: { createdAt: "DESC" },
-// 			relations: ["comments", "votes", "sub"],
-// 			skip: currentPage * postsPerPage,
-// 			take: postsPerPage,
-// 		});
+		const posts = await Post.find({
+			where: { subName: name },
+			order: { createdAt: "DESC" },
+			relations: ["comments", "votes", "sub"],
+			skip: currentPage * postsPerPage,
+			take: postsPerPage,
+		});
 
-// 		const user = response.locals.user;
+		if (user) {
+			posts.forEach((p) => p.setUserVote(user));
+		}
 
-// 		if (user) {
-// 			posts.forEach((p) => p.setUserVote(user));
-// 		}
-
-// 		return response.json(posts);
-// 	} catch (error) {
-// 		console.error(error);
-// 		return response
-// 			.status(404)
-// 			.json({ error: "El Grupo no ha sido encontrado." });
-// 	}
-// };
+		return response.json(posts);
+	} catch (error) {
+		console.error(error);
+		return response
+			.status(404)
+			.json({ error: "El Grupo no ha sido encontrado." });
+	}
+};
 
 const getSub = async (request: Request, response: Response) => {
 	const name = request.params.name;
 
 	try {
-		const sub = await Sub.findOneOrFail(
-			{ name },
-			{ relations: ["followers"] }
-		);
-		const posts = await Post.find({
-			where: { sub },
-			order: { createdAt: "DESC" },
-			relations: ["comments", "votes", "sub"],
-		});
-
-		sub.posts = posts;
-
 		const user = response.locals.user;
 
+		const sub = await Sub.findOneOrFail(
+			{ name },
+			{ relations: ["followers", "posts"] }
+		);
+
 		if (user) {
-			sub.posts.forEach((p) => p.setUserVote(user));
 			sub.setUserFollow(user);
 		}
 
@@ -271,8 +259,9 @@ const searchSubs = async (request: Request, response: Response) => {
 const router = Router();
 
 router.post("/", user, auth, createSub);
-router.post("/:name/update", user, auth, ownSub, updateSub);
 router.get("/:name", user, getSub);
+router.get("/:name/posts", user, getSubPosts);
+router.post("/:name/update", user, auth, ownSub, updateSub);
 router.get("/search/:name", searchSubs);
 router.post(
 	"/:name/image",

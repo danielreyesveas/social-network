@@ -64,7 +64,6 @@ export default function Reducer(
 			return {
 				...state,
 				sub: payload,
-				posts: payload.posts ? [].concat(...payload.posts) : [],
 			};
 		case UPDATE_SUB_IMAGE:
 			if (payload.type === "image") {
