@@ -123,7 +123,8 @@ const Navbar: React.FC<NavbarProps> = ({ loading, authenticated }) => {
 };
 
 const mapStateToProps = (state: any) => ({
-	user: state.user,
+	authenticated: state.user.authenticated,
+	loading: state.user.loading,
 });
 
 export default connect(mapStateToProps)(Navbar);
