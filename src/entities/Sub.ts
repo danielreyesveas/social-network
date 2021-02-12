@@ -1,4 +1,4 @@
-import { Expose } from "class-transformer";
+import { Exclude, Expose } from "class-transformer";
 import {
 	Entity as TOEntity,
 	Column,
@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 
 import Entity from "./Entity";
+import Follow from "./Follow";
 import Post from "./Post";
 import User from "./User";
 
@@ -44,6 +45,30 @@ export default class Sub extends Entity {
 
 	@OneToMany(() => Post, (post) => post.sub)
 	posts: Post[];
+
+	@Exclude()
+	@OneToMany(() => Follow, (follow) => follow.sub)
+	followers: Follow[];
+
+	@Expose()
+	get postCount(): number {
+		return this.posts?.length;
+	}
+
+	@Expose() get followerCount(): number {
+		return this.followers?.reduce(
+			(prev, current) => prev + (current.value || 0),
+			0
+		);
+	}
+
+	protected userFollow: number;
+	setUserFollow(user: User) {
+		const index = this.followers?.findIndex(
+			(v) => v.username === user.username
+		);
+		this.userFollow = index > -1 ? this.followers[index].value : 0;
+	}
 
 	@Expose()
 	get imageUrl(): string {

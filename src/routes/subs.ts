@@ -57,7 +57,10 @@ const getSub = async (request: Request, response: Response) => {
 	const name = request.params.name;
 
 	try {
-		const sub = await Sub.findOneOrFail({ name });
+		const sub = await Sub.findOneOrFail(
+			{ name },
+			{ relations: ["followers"] }
+		);
 		const posts = await Post.find({
 			where: { sub },
 			order: { createdAt: "DESC" },
@@ -70,6 +73,7 @@ const getSub = async (request: Request, response: Response) => {
 
 		if (user) {
 			sub.posts.forEach((p) => p.setUserVote(user));
+			sub.setUserFollow(user);
 		}
 
 		return response.json(sub);

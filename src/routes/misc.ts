@@ -5,6 +5,7 @@ import Post from "../entities/Post";
 import Sub from "../entities/Sub";
 import User from "../entities/User";
 import Vote from "../entities/Vote";
+import Follow from "../entities/Follow";
 import auth from "../middleware/auth";
 import user from "../middleware/user";
 
@@ -81,6 +82,80 @@ const vote = async (request: Request, response: Response) => {
 	}
 };
 
+const follow = async (request: Request, response: Response) => {
+	const { subName, username, value } = request.body;
+	const followTypes = [0, 1];
+
+	if (!followTypes.includes(value)) {
+		return response
+			.status(400)
+			.json({ value: "El valor enviado debe ser 0 o 1." });
+	}
+
+	try {
+		const user: User = response.locals.user;
+		let sub: Sub | undefined;
+		let follow: Follow | undefined;
+		let followedUser: User | undefined;
+
+		if (subName) {
+			sub = await Sub.findOneOrFail({ name: subName });
+			follow = await Follow.findOne({ user, sub });
+		} else {
+			followedUser = await User.findOneOrFail({ username });
+			follow = await Follow.findOne({ user, followedUser });
+		}
+
+		if (!follow && value === 0) {
+			return response
+				.status(400)
+				.json({ error: "El dato no ha sido encontrado." });
+		} else if (!follow) {
+			if (sub) {
+				follow = new Follow({ user, value });
+				follow.sub = sub;
+				await follow.save();
+			} else if (followedUser) {
+				follow = new Follow({ user, value });
+				follow.followedUser = followedUser;
+				await follow.save();
+			}
+		} else if (value === 0) {
+			// If vote exists and value = 0, remove it
+			await follow.remove();
+		} else if (follow.value !== value) {
+			// If vote and value has changed, update it
+			follow.value = value;
+			await follow.save();
+		}
+
+		if (followedUser) {
+			followedUser = await User.findOneOrFail(
+				{ username },
+				{ relations: ["followers"] }
+			);
+
+			followedUser.setUserFollow(user);
+			return response.json(followedUser);
+		} else {
+			sub = await Sub.findOneOrFail(
+				{ name: subName },
+				{
+					relations: ["followers"],
+				}
+			);
+
+			sub.setUserFollow(user);
+			return response.json(sub);
+		}
+	} catch (error) {
+		console.log(error);
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
+	}
+};
+
 const topSubs = async (_: Request, response: Response) => {
 	try {
 		const imageUrlExp = `COALESCE('${process.env.APP_URL}/images/' || s."imageUrn", 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y')`;
@@ -104,6 +179,7 @@ const topSubs = async (_: Request, response: Response) => {
 };
 
 router.post("/vote", user, auth, vote);
+router.post("/follow", user, auth, follow);
 router.get("/top-subs", topSubs);
 
 export default router;

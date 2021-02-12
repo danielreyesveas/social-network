@@ -9,6 +9,7 @@ import {
 	UPDATE_POST,
 	SET_POST,
 	VOTE,
+	FOLLOW,
 } from "../types";
 import { Dispatch } from "redux";
 import { Post, Sub, Comment, User } from "../../types";
@@ -131,6 +132,29 @@ export const vote = ({
 				payload: {
 					...response.data,
 					commentIdentifier,
+				},
+			});
+		})
+		.catch((error) => {
+			console.error(error);
+		});
+};
+
+export const follow = ({ subName = null, username = null, value }) => async (
+	dispatch: Dispatch
+) => {
+	axios
+		.post("/misc/follow", {
+			subName,
+			username,
+			value,
+		})
+		.then((response) => {
+			dispatch({
+				type: FOLLOW,
+				payload: {
+					...response.data,
+					username,
 				},
 			});
 		})

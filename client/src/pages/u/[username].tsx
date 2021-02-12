@@ -9,12 +9,13 @@ import axios from "axios";
 import { ChangeEvent, createRef, useEffect, useState } from "react";
 import { useAuthState } from "../../context";
 import { useGetUserData } from "../../hooks";
-import { uploadUserImage } from "../../redux/actions/dataActions";
+import { uploadUserImage, follow } from "../../redux/actions/dataActions";
 
 import dayjs from "dayjs";
 import { connect } from "react-redux";
+import ActionButton from "../../components/ActionButton";
 
-const UserPage = ({ userData, uploadUserImage }) => {
+const UserPage = ({ userData, uploadUserImage, follow }) => {
 	const router = useRouter();
 	const username = router.query.username;
 	const [ownProfile, setOwnProfile] = useState(false);
@@ -36,7 +37,20 @@ const UserPage = ({ userData, uploadUserImage }) => {
 		if (!ownProfile) return;
 		fileInputRef.current.click();
 	};
-	console.log(userData);
+
+	const handleFollow = async () => {
+		if (!authenticated) router.push("/login");
+
+		let value = 1;
+
+		if (userData.user.userFollow === 1) value = 0;
+
+		follow({
+			username,
+			value,
+		});
+	};
+
 	const uploadImage = async (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files[0];
 
@@ -148,6 +162,14 @@ const UserPage = ({ userData, uploadUserImage }) => {
 										)}
 									</p>
 								</div>
+								<ActionButton>
+									<a
+										className="px-4 py-1 mr-4 hollow blue button"
+										onClick={handleFollow}
+									>
+										seguir
+									</a>
+								</ActionButton>
 							</div>
 						</div>
 					</div>
@@ -163,6 +185,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapActionsToProps = {
 	uploadUserImage,
+	follow,
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(UserPage);

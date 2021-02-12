@@ -15,7 +15,8 @@ const getUserSubmissions = async (request: Request, response: Response) => {
 	try {
 		const user = await User.findOneOrFail({
 			where: { username: request.params.username },
-			select: ["username", "email", "createdAt", "imageUrn"],
+			select: ["id", "username", "email", "createdAt", "imageUrn"],
+			relations: ["follows", "followers", "posts", "comments"],
 		});
 
 		const posts = await Post.find({
@@ -31,6 +32,7 @@ const getUserSubmissions = async (request: Request, response: Response) => {
 		if (response.locals.user) {
 			posts.forEach((p) => p.setUserVote(response.locals.user));
 			comments.forEach((c) => c.setUserVote(response.locals.user));
+			user.setUserFollow(response.locals.user);
 		}
 
 		let submissions: any[] = [];

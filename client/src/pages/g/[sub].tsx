@@ -6,15 +6,16 @@ import Image from "next/image";
 import classNames from "classnames";
 
 import { Post, Sub } from "../../types";
-import { uploadSubImage } from "../../redux/actions/dataActions";
+import { uploadSubImage, follow } from "../../redux/actions/dataActions";
 import { useAuthState } from "../../context";
 import axios from "axios";
 import Sidebar from "../../components/Sidebar";
 import { connect } from "react-redux";
 import { useGetSub } from "../../hooks";
 import Link from "next/link";
+import ActionButton from "../../components/ActionButton";
 
-const SubPage = ({ sub, uploadSubImage }) => {
+const SubPage = ({ sub, uploadSubImage, follow }) => {
 	// Local state
 	const [ownSub, setOwnSub] = useState(false);
 	// Global state
@@ -47,6 +48,19 @@ const SubPage = ({ sub, uploadSubImage }) => {
 		formData.append("subName", sub.name);
 
 		uploadSubImage(formData);
+	};
+
+	const handleFollow = async () => {
+		if (!authenticated) router.push("/login");
+
+		let value = 1;
+
+		if (sub.userFollow === 1) value = 0;
+
+		follow({
+			subName,
+			value,
+		});
 	};
 
 	if (error) router.push("/");
@@ -124,6 +138,14 @@ const SubPage = ({ sub, uploadSubImage }) => {
 												editar
 											</a>
 										</Link>
+										<ActionButton>
+											<a
+												className="px-4 py-1 mr-4 hollow blue button"
+												onClick={handleFollow}
+											>
+												seguir
+											</a>
+										</ActionButton>
 									</div>
 									<p className="text-sm font-bold text-gray-500">
 										/g/{sub.name}
@@ -151,6 +173,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapActionsToProps = {
 	uploadSubImage,
+	follow,
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(SubPage);

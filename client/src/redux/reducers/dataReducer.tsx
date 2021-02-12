@@ -13,6 +13,7 @@ import {
 	ADD_COMMENT,
 	SET_USER_DATA,
 	VOTE,
+	FOLLOW,
 } from "../types";
 import { Sub, Post, Comment } from "../../types";
 
@@ -153,6 +154,8 @@ export default function Reducer(
 					return newState;
 				}
 			}
+		case FOLLOW:
+			return state;
 		default:
 			return state;
 	}
