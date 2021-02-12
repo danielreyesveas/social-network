@@ -1,20 +1,20 @@
 import Link from "next/link";
 import Logo from "../images/clics-b.svg";
 
-import { useAuthState, useAuthDispatch } from "../context/auth";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Sub } from "../types";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import ProfileMenu from "./ProfileMenu";
+import { connect } from "react-redux";
 
-const Navbar: React.FC = () => {
+const Navbar: React.FC = ({ user }) => {
 	const [search, setSearch] = useState("");
 	const [subs, setSubs] = useState<Sub[]>([]);
 	const [timer, setTimer] = useState(null);
 
-	const { authenticated, loading } = useAuthState();
+	const { loading, authenticated } = user;
 
 	const router = useRouter();
 
@@ -119,4 +119,8 @@ const Navbar: React.FC = () => {
 	);
 };
 
-export default Navbar;
+const mapStateToProps = (state: any) => ({
+	user: state.user,
+});
+
+export default connect(mapStateToProps)(Navbar);

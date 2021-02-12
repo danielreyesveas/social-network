@@ -129,7 +129,7 @@ const mapActionsToProps = (dispatch) => ({
 	addSub: (subData) => dispatch(addSub(subData)),
 });
 
-// export default connect(null, mapActionsToProps)(CreateSub);
+export default connect(null, mapActionsToProps)(CreateSub);
 
 // export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 // 	try {

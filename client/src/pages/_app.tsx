@@ -6,12 +6,14 @@ import { useRouter } from "next/router";
 import { SWRConfig } from "swr";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
+
 dayjs.locale("es");
+
 import { AuthProvider, UIProvider } from "../context";
 import { Provider } from "react-redux";
 import store from "../redux/store";
-
 import Navbar from "../components/Navbar";
+import { useEffect } from "react";
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_SERVER_BASE_URL + "/api";
 axios.defaults.withCredentials = true;
@@ -21,7 +23,6 @@ const fetcher = async (url: string) => {
 		const response = await axios.get(url);
 		return response.data;
 	} catch (error) {
-		console.error(error);
 		throw error.response.data;
 	}
 };
@@ -39,14 +40,14 @@ const App = ({ Component, pageProps }: AppProps) => {
 			}}
 		>
 			<Provider store={store}>
-				<UIProvider>
-					<AuthProvider>
+				<AuthProvider>
+					<UIProvider>
 						{!authRoute && <Navbar />}
 						<div className={authRoute ? "" : "pt-12"}>
 							<Component {...pageProps} />
 						</div>
-					</AuthProvider>
-				</UIProvider>
+					</UIProvider>
+				</AuthProvider>
 			</Provider>
 		</SWRConfig>
 	);

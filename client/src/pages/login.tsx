@@ -5,12 +5,14 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import InputGroup from "../components/InputGroup";
 
-import { useAuthState, useAuthDispatch } from "../context";
+import { login } from "../redux/actions/userActions";
 
-export default function Login() {
+import { useAuthState, useAuthDispatch } from "../context";
+import { connect } from "react-redux";
+
+const Login = ({ login, errors }) => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
-	const [errors, setErrors] = useState<any>({});
 
 	const router = useRouter();
 
@@ -22,19 +24,13 @@ export default function Login() {
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 
-		try {
-			const response = await axios.post("/auth/login", {
-				username,
-				password,
+		await login({ username, password })
+			.then((response) => {
+				router.back();
+			})
+			.catch((error) => {
+				console.log(error);
 			});
-
-			dispatch("LOGIN", response.data);
-
-			router.back();
-		} catch (error) {
-			console.log(error);
-			setErrors(error.response.data);
-		}
 	};
 	return (
 		<div className="flex bg-primary-5">
@@ -91,4 +87,14 @@ export default function Login() {
 			</div>
 		</div>
 	);
-}
+};
+
+const mapStateToProps = (state: any) => ({
+	errors: state.ui.errors,
+});
+
+const mapActionsToProps = (dispatch) => ({
+	login: (userData) => dispatch(login(userData)),
+});
+
+export default connect(mapStateToProps, mapActionsToProps)(Login);

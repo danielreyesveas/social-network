@@ -12,3 +12,11 @@ export const VOTE = "VOTE";
 export const SET_COMMENTS = "SET_COMMENTS";
 export const ADD_COMMENT = "ADD_COMMENT";
 export const SET_USER_DATA = "SET_USER_DATA";
+
+export const SET_USER = "SET_USER";
+export const SET_UNAUTHENTICATED = "SET_UNAUTHENTICATED";
+export const SET_AUTHENTICATED = "SET_AUTHENTICATED";
+export const SET_ERRORS = "SET_ERRORS";
+export const CLEAR_ERRORS = "CLEAR_ERRORS";
+export const LOADING_UI = "LOADING_UI";
+export const STOP_LOADING_UI = "STOP_LOADING_UI";

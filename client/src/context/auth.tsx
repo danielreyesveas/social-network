@@ -1,5 +1,12 @@
 import axios from "axios";
 import { createContext, useContext, useEffect, useReducer } from "react";
+import {
+	SET_USER,
+	SET_AUTHENTICATED,
+	SET_UNAUTHENTICATED,
+	STOP_LOADING_UI,
+} from "../redux/types";
+import { useDispatch } from "react-redux";
 import { User } from "../types";
 
 interface State {
@@ -46,6 +53,7 @@ const reducer = (state: State, { type, payload }: Action) => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+	const reduxDispatch = useDispatch();
 	const [state, defaultDispatch] = useReducer(reducer, {
 		user: null,
 		authenticated: false,
@@ -59,7 +67,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		async function loadUser() {
 			try {
 				const response = await axios.get("/auth/me");
+				console.log(response);
 				dispatch("LOGIN", response.data);
+				reduxDispatch({
+					type: SET_USER,
+					payload: response.data,
+				});
 			} catch (error) {
 				console.log(error);
 			} finally {

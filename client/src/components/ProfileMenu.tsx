@@ -2,16 +2,12 @@ import classNames from "classnames";
 import Link from "next/link";
 import axios from "axios";
 
-import {
-	useAuthState,
-	useAuthDispatch,
-	useUIState,
-	useUIDispatch,
-} from "../context";
+import { useUIState, useUIDispatch, useAuthDispatch } from "../context";
+import { logout } from "../redux/actions/userActions";
+import { connect } from "react-redux";
 
-export default function ProfileMenu() {
+const ProfileMenu = ({ user, logout }) => {
 	const { showProfileMenu } = useUIState();
-	const { user } = useAuthState();
 
 	const uiDispatch = useUIDispatch();
 	const authDispatch = useAuthDispatch();
@@ -22,14 +18,11 @@ export default function ProfileMenu() {
 
 	const handleLogout = (e) => {
 		e.preventDefault();
-		authDispatch("TOGGLE_PROFILE_MENU");
-		axios
-			.get("/auth/logout")
-			.then(() => {
-				authDispatch("LOGOUT");
-				window.location.reload();
-			})
-			.catch((error) => console.error(error));
+		uiDispatch("TOGGLE_PROFILE_MENU");
+		authDispatch("LOGOUT");
+
+		logout();
+		window.location.reload();
 	};
 
 	return (
@@ -45,7 +38,7 @@ export default function ProfileMenu() {
 						<span className="sr-only">Open user menu</span>
 						<img
 							className="w-8 h-8 rounded-full"
-							src={user.imageUrl}
+							src={user.credentials.imageUrl}
 							alt=""
 						/>
 					</button>
@@ -62,11 +55,11 @@ export default function ProfileMenu() {
 				>
 					<div className="py-1">
 						<span className="block px-4 py-2 text-sm text-right text-gray-700">
-							{user.username}
+							⊚ {user.credentials.username}
 						</span>
 					</div>
 					<div className="py-1">
-						<Link href={`/u/${user.username}`}>
+						<Link href={`/u/${user.credentials.username}`}>
 							<a
 								onClick={handleShow}
 								className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -97,4 +90,14 @@ export default function ProfileMenu() {
 			</div>
 		</div>
 	);
-}
+};
+
+const mapStateToProps = (state: any) => ({
+	user: state.user,
+});
+
+const mapActionsToProps = (dispatch) => ({
+	logout: () => dispatch(logout()),
+});
+
+export default connect(mapStateToProps, mapActionsToProps)(ProfileMenu);

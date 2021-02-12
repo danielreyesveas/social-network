@@ -6,19 +6,18 @@ import PostCard from "../components/PostCard";
 import Image from "next/image";
 import Link from "next/link";
 
-import { useAuthState } from "../context/auth";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useGetSubs, useGetPosts } from "../hooks";
 
-const Home = ({ posts, subs }) => {
+const Home = ({ posts, subs, user }) => {
 	const description = "Clics es una red social para músicos y sus leseras";
 	const title = "Clics: Leseras musicales.";
 
+	const { authenticated } = user;
+
 	const [observedPost, setObservedPost] = useState("");
 	// const { data: posts } = useSWR<Post[]>("/posts");
-
-	const { authenticated } = useAuthState();
 
 	const { data, error, page, setPage, revalidate } = useGetPosts();
 
@@ -68,11 +67,7 @@ const Home = ({ posts, subs }) => {
 						<p className="text-lg text-center">Cargando...</p>
 					)}
 					{posts?.map((post) => (
-						<PostCard
-							key={post.identifier}
-							post={post}
-							revalidate={revalidate}
-						/>
+						<PostCard key={post.identifier} post={post} />
 					))}
 					{isInitialLoading && posts.length > 0 && (
 						<p className="text-lg text-center">Cargando más...</p>
@@ -132,6 +127,7 @@ const Home = ({ posts, subs }) => {
 };
 
 const mapStateToProps = (state: any) => ({
+	user: state.user,
 	posts: state.data.posts,
 	subs: state.data.subs,
 });

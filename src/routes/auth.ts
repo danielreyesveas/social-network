@@ -55,7 +55,7 @@ const register = async (request: Request, response: Response) => {
 			})
 		);
 
-		return response.json(user);
+		return response.json({ user, token });
 	} catch (error) {
 		console.error(error);
 
@@ -102,7 +102,7 @@ const login = async (request: Request, response: Response) => {
 			})
 		);
 
-		return response.json(user);
+		return response.json({ user, token });
 	} catch (error) {
 		console.error(error);
 		return response.json({ error: "Algo no ha salido bien..." });
