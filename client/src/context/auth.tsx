@@ -29,6 +29,8 @@ const StateContext = createContext<State>({
 const DispatchContext = createContext(null);
 
 const reducer = (state: State, { type, payload }: Action) => {
+	console.log(type);
+	console.log(payload);
 	switch (type) {
 		case "LOGIN":
 			return {
@@ -66,6 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	useEffect(() => {
 		async function loadUser() {
 			try {
+				console.log("loadUser");
 				const response = await axios.get("/auth/me");
 				dispatch("LOGIN", response.data);
 				reduxDispatch({

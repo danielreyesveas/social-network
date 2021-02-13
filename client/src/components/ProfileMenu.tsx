@@ -16,13 +16,16 @@ const ProfileMenu = ({ user, logout }) => {
 		uiDispatch("TOGGLE_PROFILE_MENU");
 	};
 
-	const handleLogout = (e) => {
+	const handleLogout = async (e) => {
 		e.preventDefault();
 		uiDispatch("TOGGLE_PROFILE_MENU");
-		authDispatch("LOGOUT");
-
-		logout();
-		window.location.reload();
+		await logout()
+			.then((response) => {
+				authDispatch("LOGOUT");
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 	};
 
 	return (
