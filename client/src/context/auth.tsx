@@ -70,11 +70,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			try {
 				console.log("loadUser");
 				const response = await axios.get("/auth/me");
-				dispatch("LOGIN", response.data);
-				reduxDispatch({
-					type: SET_USER,
-					payload: response.data,
-				});
+				console.log(state.user);
+				if (!state.user) {
+					dispatch("LOGIN", response.data);
+					reduxDispatch({
+						type: SET_USER,
+						payload: response.data,
+					});
+				} else {
+					console.log("Already logged");
+				}
 			} catch (error) {
 				console.log(error);
 			} finally {
