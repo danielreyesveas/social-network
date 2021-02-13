@@ -73,7 +73,7 @@ const Home = ({ posts, subs, user }) => {
 					)}
 				</div>
 
-				<div className="hidden ml-6 md:block w-80">
+				<div className="hidden ml-6 mr-4 md:block w-80">
 					<div className="bg-white rounded">
 						<div className="p-4 border-b-2">
 							<p className="text-lg font-semibold text-center">

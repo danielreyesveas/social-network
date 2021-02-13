@@ -129,7 +129,7 @@ const UserPage = ({ userData, uploadUserImage, follow }) => {
 					<div className="container flex pt-5">
 						<div className="w-160">{submissionsMarkup}</div>
 
-						<div className="ml-6 w-80">
+						<div className="hidden ml-6 w-80 md:block">
 							<div className="bg-white rounded">
 								<div className="p-3 rounded-t bg-dark-3">
 									<img
@@ -188,17 +188,16 @@ const UserPage = ({ userData, uploadUserImage, follow }) => {
 											"D MMM YYYY"
 										)}
 									</p>
-								</div>
-								<ActionButton>
+
 									<a
-										className="px-4 py-1 mr-4 hollow blue button"
+										className="px-4 py-1 mt-4 hollow primary button"
 										onClick={handleFollow}
 									>
 										{!!userData.user.userFollow
 											? "dejar"
 											: "seguir"}
 									</a>
-								</ActionButton>
+								</div>
 							</div>
 						</div>
 					</div>

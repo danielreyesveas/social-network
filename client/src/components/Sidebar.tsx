@@ -14,7 +14,7 @@ export default function Sidebar({ sub, hideCreate = false }: SidebarProps) {
 	const { authenticated } = useAuthState();
 
 	return (
-		<div className="hidden ml-6 md:block w-80">
+		<div className="hidden ml-6 mr-4 md:block w-80">
 			<div className="rounded bg-primary-5">
 				<div className="p-3 rounded-t bg-dark-3">
 					<p className="font-semibold text-white">Nosotros</p>

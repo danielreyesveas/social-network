@@ -245,6 +245,7 @@ const searchSubs = async (request: Request, response: Response) => {
 			.where("LOWER(name) LIKE :name", {
 				name: `%${name.toLowerCase().trim()}%`,
 			})
+			.limit(10)
 			.getMany();
 
 		return response.json(subs);
@@ -262,7 +263,7 @@ router.post("/", user, auth, createSub);
 router.get("/:name", user, getSub);
 router.get("/:name/posts", user, getSubPosts);
 router.post("/:name/update", user, auth, ownSub, updateSub);
-router.get("/search/:name", searchSubs);
+router.get("/search/:name", user, searchSubs);
 router.post(
 	"/:name/image",
 	user,

@@ -16,6 +16,7 @@ import { addComment, vote } from "../../../../redux/actions/dataActions";
 
 const PostPage = ({ post, comments, addComment, vote }) => {
 	// Local state
+	const [ownPost, setOwnPost] = useState(false);
 	const [description, setDescription] = useState("");
 	const [newComment, setNewComment] = useState("");
 
@@ -36,6 +37,7 @@ const PostPage = ({ post, comments, addComment, vote }) => {
 		let desc = post.body || post.title;
 		desc = desc.substr(0, 158).concat("..");
 		setDescription(desc);
+		setOwnPost(authenticated && user.username === post.username);
 	}, [post]);
 
 	const handleVote = async (value: number, comment?: Comment) => {
@@ -79,10 +81,11 @@ const PostPage = ({ post, comments, addComment, vote }) => {
 				<meta property="twitter:description" content={description} />
 				<meta property="twitter:title" content={post?.title} />
 			</Head>
-			<Link href={`/g/${sub}`}>
-				<a>
-					<div className="flex items-center w-full h-20 p-8 bg-blue-500">
-						<div className="container flex">
+
+			<div className="flex items-center w-full h-20 p-8 bg-dark-3">
+				<div className="container flex">
+					<Link href={`/g/${sub}`}>
+						<a>
 							{post && (
 								<div className="w-8 h-8 mr-2 overflow-hidden rounded-full">
 									<Image
@@ -92,13 +95,18 @@ const PostPage = ({ post, comments, addComment, vote }) => {
 									/>
 								</div>
 							)}
+						</a>
+					</Link>
+					<Link href={`/g/${sub}`}>
+						<a>
 							<p className="text-xl font-semibold text-white">
 								/g/{sub}
 							</p>
-						</div>
-					</div>
-				</a>
-			</Link>
+						</a>
+					</Link>
+				</div>
+			</div>
+
 			<div className="container flex pt-5">
 				{/* Post */}
 				<div className="w-full px-4 md:w-160 md:p-0">
@@ -164,18 +172,21 @@ const PostPage = ({ post, comments, addComment, vote }) => {
 										{/* Post title */}
 										<h1 className="my-1 mt-3 text-xl font-medium">
 											{post.title}
+											{ownPost && (
+												<Link href={`${post.url}/edit`}>
+													<a className="px-4 py-1 ml-3 hollow primary button">
+														editar
+													</a>
+												</Link>
+											)}
 										</h1>
-										<Link href={`${post.url}/edit`}>
-											<a className="px-4 py-1 mr-4 hollow blue button">
-												editar
-											</a>
-										</Link>
+
 										{/* Post body */}
 										<p className="my-3 mt-3 text-sm linebreaks">
 											{post.body}
 										</p>
 										{/* Actions */}
-										<div className="flex mt-3">
+										<div className="flex my-4">
 											<Link href={post.url}>
 												<a>
 													<ActionButton>
@@ -206,7 +217,7 @@ const PostPage = ({ post, comments, addComment, vote }) => {
 								</div>
 
 								{/* Comments input area */}
-								<div className="pl-10 pr-6 mb-4">
+								<div className="pl-10 pr-6 my-4">
 									{authenticated ? (
 										<div>
 											<p className="mb-1 text-xs">

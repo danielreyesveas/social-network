@@ -10,6 +10,8 @@ import { makeId } from "../utils/helpers";
 import auth from "../middleware/auth";
 
 import user from "../middleware/user";
+import { isEmpty } from "class-validator";
+import { getRepository } from "typeorm";
 
 const getUserSubmissions = async (request: Request, response: Response) => {
 	try {
@@ -77,7 +79,7 @@ const uploadUserImage = async (request: Request, response: Response) => {
 	const user: User = response.locals.user;
 
 	try {
-		if (user.username !== request.params.name) {
+		if (user.username !== request.params.username) {
 			fs.unlinkSync(request.file.path);
 			return response.status(400).json({
 				error: "No tienes los permisos para realizar esta acción.",
@@ -104,9 +106,62 @@ const uploadUserImage = async (request: Request, response: Response) => {
 	}
 };
 
+const searchUsers = async (request: Request, response: Response) => {
+	const user: User = response.locals.user;
+	try {
+		const username = request.params.username;
+
+		if (isEmpty(username)) {
+			return response
+				.status(400)
+				.json({ error: "La búsqueda no puede estar vacía." });
+		}
+
+		let users;
+		let { membersNames } = request.body;
+
+		if (user) {
+			membersNames.push(user.username);
+		}
+
+		if (membersNames.length) {
+			users = await getRepository(User)
+				.createQueryBuilder()
+				.where("LOWER(username) LIKE :username", {
+					username: `%${username.toLowerCase().trim()}%`,
+				})
+				.where("username NOT IN (:...membersNames)", { membersNames })
+				.limit(6)
+				.getMany();
+		} else {
+			users = await getRepository(User)
+				.createQueryBuilder()
+				.where("LOWER(username) LIKE :username", {
+					username: `%${username.toLowerCase().trim()}%`,
+				})
+				.limit(6)
+				.getMany();
+		}
+
+		return response.json(users);
+	} catch (error) {
+		console.error(error);
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
+	}
+};
+
 const router = Router();
 
 router.get("/:username", user, getUserSubmissions);
-router.post("/:name/image", user, auth, upload.single("file"), uploadUserImage);
+router.post(
+	"/:username/image",
+	user,
+	auth,
+	upload.single("file"),
+	uploadUserImage
+);
+router.post("/search/:username", user, searchUsers);
 
 export default router;

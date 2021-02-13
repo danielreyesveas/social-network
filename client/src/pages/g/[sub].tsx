@@ -14,7 +14,7 @@ import Link from "next/link";
 
 import { connect } from "react-redux";
 import { useGetSub, useGetSubPosts } from "../../hooks";
-import ActionButton from "../../components/ActionButton";
+import { pluralize } from "../../utils";
 
 const SubPage = ({ sub, posts, uploadSubImage, follow }) => {
 	const [ownSub, setOwnSub] = useState(false);
@@ -119,7 +119,7 @@ const SubPage = ({ sub, posts, uploadSubImage, follow }) => {
 							>
 								{sub.bannerUrl ? (
 									<div
-										className="h-14 sm:h-28 md:h-56 bg-primary-1"
+										className="h-32 md:h-20"
 										style={{
 											backgroundImage: `url(${sub.bannerUrl})`,
 											backgroundRepeat: "no-repeat",
@@ -128,15 +128,15 @@ const SubPage = ({ sub, posts, uploadSubImage, follow }) => {
 										}}
 									></div>
 								) : (
-									<div className="h-20 bg-dark-3"></div>
+									<div className="h-20 sm:h-28 md:h-56 bg-dark-3"></div>
 								)}
 							</div>
 
-							<div className="h-20 bg-primary-5">
+							<div className="pl-5 h-50 sm:h-42 md:h-24 bg-primary-5">
 								<div className="container relative flex">
 									<div
-										className="absolute"
-										style={{ top: -15 }}
+										className="absolute "
+										style={{ top: -30 }}
 									>
 										<Image
 											src={sub.imageUrl}
@@ -154,30 +154,90 @@ const SubPage = ({ sub, posts, uploadSubImage, follow }) => {
 											height={70}
 										/>
 									</div>
-									<div className="pt-1 pl-24">
+									<div className="pt-10 pl-6 md:pt-1 md:pl-24">
 										<div className="flex items-center">
-											<h1 className="mb-1 text-3xl font-bold">
+											<h1 className="mb-1 text-2xl font-bold sm:text-3xl">
 												{sub.title}
 											</h1>
-											<Link href={`/g/${sub.name}/edit`}>
-												<a className="px-4 py-1 mr-4 hollow blue button">
-													editar
-												</a>
-											</Link>
-											<ActionButton>
-												<a
-													className="px-4 py-1 mr-4 hollow blue button"
-													onClick={handleFollow}
-												>
-													{!!sub.userFollow
-														? "dejar"
-														: "seguir"}
-												</a>
-											</ActionButton>
+											<div>
+												{ownSub ? (
+													<Link
+														href={`/g/${sub.name}/edit`}
+													>
+														<a className="px-4 py-1 mx-4 hollow primary button">
+															editar
+														</a>
+													</Link>
+												) : (
+													<a
+														className="px-4 py-1 mx-4 hollow button primary"
+														onClick={handleFollow}
+													>
+														{!!sub.userFollow
+															? "dejar"
+															: "seguir"}
+													</a>
+												)}
+											</div>
 										</div>
-										<p className="text-sm font-bold text-gray-500">
+										<p className="text-xs font-bold text-gray-500 sm:text-sm">
 											/g/{sub.name}
 										</p>
+
+										<div className="block w-full p-2 md:hidden">
+											<div className="items-center sm:flex">
+												<div className="flex items-center flex-shrink-0 w-1/2 sm:flex-shrink-1">
+													<p className="mr-2 text-xs italic">
+														{sub.description}
+													</p>
+												</div>
+
+												<div className="flex w-1/2 mt-1 ml-0 text-xs font-medium sm:inline-block sm:ml-10">
+													<div className="w-1/2">
+														<p>
+															{pluralize(
+																sub.postCount,
+																"entrada"
+															)}
+														</p>
+													</div>
+													<div className="w-1/2">
+														<p>
+															{pluralize(
+																sub.followerCount,
+																"grupi"
+															)}
+														</p>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										{/* <div className="items-center sm:flex">
+											<div className="flex items-center sm:flex-shrink-0">
+												<p className="mt-2 text-xs text-center sm:text-left linebreaks">
+													{sub.description}
+												</p>
+												<div className="flex mt-1 text-xs font-medium text-center sm:text-left">
+													<div className="w-1/2">
+														<p>
+															{pluralize(
+																sub.postCount,
+																"entrada"
+															)}
+														</p>
+													</div>
+													<div className="w-1/2">
+														<p>
+															{pluralize(
+																sub.followerCount,
+																"grupi"
+															)}
+														</p>
+													</div>
+												</div>
+											</div>
+										</div> */}
 									</div>
 								</div>
 							</div>

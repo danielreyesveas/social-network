@@ -4,7 +4,7 @@
 
 @layer components {
 	.button {
-		@apply inline-block w-32 py-1 text-xs font-bold leading-5 text-center uppercase border rounded text-primary-1;
+		@apply inline-block w-20 py-1 font-bold leading-3 text-center uppercase border rounded cursor-pointer sm:w-32 sm:leading-5 text-xxs sm:text-xs text-primary-1;
 	}
 
 	.button.primary {
@@ -16,7 +16,7 @@
 	}
 
 	.button.primary.hollow {
-		@apply bg-transparent text-primary-1 border-primary-1;
+		@apply bg-transparent text-primary-1 border-primary-1 hover:bg-primary-5 hover:border-primary-5;
 	}
 
 	.button.dark {
