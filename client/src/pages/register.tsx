@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import axios from "axios";
 import InputGroup from "../components/InputGroup";
+import { login } from "../redux/actions/userActions";
 
 import { useAuthState, useAuthDispatch } from "../context/auth";
+import { connect } from "react-redux";
 
-export default function Register() {
+const Register = ({ login }) => {
 	const [email, setEmail] = useState("");
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
@@ -33,15 +35,20 @@ export default function Register() {
 			return;
 		}
 		try {
-			const response = await axios.post("/auth/register", {
+			await axios.post("/auth/register", {
 				email,
 				username,
 				password,
 			});
 
-			dispatch("LOGIN", response.data);
-
-			router.push("/");
+			await login({ username, password })
+				.then((response) => {
+					dispatch("LOGIN", response);
+					router.push("/");
+				})
+				.catch((error) => {
+					console.log(error);
+				});
 		} catch (error) {
 			console.log(error);
 			setErrors(error.response.data);
@@ -130,4 +137,13 @@ export default function Register() {
 			</div>
 		</div>
 	);
-}
+};
+const mapStateToProps = (state: any) => ({
+	errors: state.ui.errors,
+});
+
+const mapActionsToProps = (dispatch) => ({
+	login: (userData) => dispatch(login(userData)),
+});
+
+export default connect(mapStateToProps, mapActionsToProps)(Register);

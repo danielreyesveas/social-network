@@ -11,6 +11,7 @@ import {
 import Entity from "./Entity";
 import Follow from "./Follow";
 import Post from "./Post";
+import SubMember from "./SubMember";
 import User from "./User";
 
 @TOEntity("subs")
@@ -46,6 +47,9 @@ export default class Sub extends Entity {
 	@OneToMany(() => Post, (post) => post.sub)
 	posts: Post[];
 
+	@OneToMany(() => SubMember, (member) => member.sub)
+	members: SubMember[];
+
 	@Exclude()
 	@OneToMany(() => Follow, (follow) => follow.sub)
 	followers: Follow[];
@@ -56,10 +60,11 @@ export default class Sub extends Entity {
 	}
 
 	@Expose() get followerCount(): number {
-		return this.followers?.reduce(
-			(prev, current) => prev + (current.value || 0),
-			0
-		);
+		return this.followers?.length;
+	}
+
+	@Expose() get followersPreview(): Follow[] {
+		return this.followers?.slice(0, 10);
 	}
 
 	protected userFollow: number;
@@ -68,6 +73,10 @@ export default class Sub extends Entity {
 			(v) => v.username === user.username
 		);
 		this.userFollow = index > -1 ? this.followers[index].value : 0;
+	}
+
+	@Expose() get url(): string {
+		return `/g/${this.name}`;
 	}
 
 	@Expose()

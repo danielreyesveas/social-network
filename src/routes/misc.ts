@@ -157,10 +157,11 @@ const follow = async (request: Request, response: Response) => {
 const topSubs = async (_: Request, response: Response) => {
 	try {
 		const imageUrlExp = `COALESCE('${process.env.APP_URL}/images/' || s."imageUrn", 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y')`;
+		const url = `CONCAT('g/',s."name")`;
 		const subs = await getConnection()
 			.createQueryBuilder()
 			.select(
-				`s.title, s.name, ${imageUrlExp} as "imageUrl", count(p.id) as "postCount"`
+				`s.title, s.name, ${url} as "url", ${imageUrlExp} as "imageUrl", count(p.id) as "postCount"`
 			)
 			.from(Sub, "s")
 			.leftJoin(Post, "p", `s.name = p."subName"`)

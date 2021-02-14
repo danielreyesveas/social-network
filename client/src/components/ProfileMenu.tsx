@@ -58,11 +58,11 @@ const ProfileMenu = ({ user, logout }) => {
 				>
 					<div className="py-1">
 						<span className="block px-4 py-2 text-sm text-right text-gray-700">
-							⊚ {user.credentials.username}
+							⊚{user.credentials.username}
 						</span>
 					</div>
 					<div className="py-1">
-						<Link href={`/u/${user.credentials.username}`}>
+						<Link href={user.credentials.url}>
 							<a
 								onClick={handleShow}
 								className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

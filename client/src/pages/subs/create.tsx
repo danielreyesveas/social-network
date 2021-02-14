@@ -75,10 +75,10 @@ const CreateSub = ({ addSub }) => {
 			name: name.trim(),
 			title: title.trim(),
 			description: description.trim(),
+			members: membersNames,
 		};
 
 		addSub(subData).then((response) => {
-			console.log(response);
 			router.push(`/g/${response.name}`);
 		});
 	};
@@ -94,7 +94,7 @@ const CreateSub = ({ addSub }) => {
 				style={{ backgroundImage: "url('/images/clics.jpg')" }}
 			></div>
 
-			<div className="flex flex-col justify-center pl-6 pr-3">
+			<div className="flex flex-col justify-center pl-6 pr-3 mb-3">
 				<div className="xs:w-70 sm:w-98">
 					<h1 className="mb-2 text-lg font-medium">Crea un Grupo</h1>
 
@@ -141,7 +141,7 @@ const CreateSub = ({ addSub }) => {
 						</div>
 
 						<div className="max-w-full px-2 my-6 sm-px-4 w-60 sm:w-100">
-							<p className="font-medium">Integrantes</p>
+							<p className="font-medium">Miembros</p>
 
 							<div className="my-5">
 								{members ? (
@@ -160,7 +160,7 @@ const CreateSub = ({ addSub }) => {
 											/>
 											<div className="ml-4 text-sm">
 												<p className="font-medium">
-													⊚ {m.username}
+													⊚{m.username}
 												</p>
 												<p className="text-gray-600">
 													{m.email}
@@ -179,7 +179,7 @@ const CreateSub = ({ addSub }) => {
 								<input
 									type="text"
 									className="w-full py-1 pr-3 bg-transparent rounded focus:outline-none"
-									placeholder="¿Qué buscas?"
+									placeholder="Buscar"
 									value={search}
 									onChange={(e) => setSearch(e.target.value)}
 								/>
@@ -202,7 +202,7 @@ const CreateSub = ({ addSub }) => {
 											/>
 											<div className="ml-4 text-sm">
 												<p className="font-medium">
-													⊚ {user.username}
+													⊚{user.username}
 												</p>
 												<p className="text-gray-600">
 													{user.email}

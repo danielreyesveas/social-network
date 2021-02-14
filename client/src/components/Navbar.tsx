@@ -43,11 +43,6 @@ const Navbar: React.FC<NavbarProps> = ({ loading, authenticated }) => {
 		);
 	};
 
-	const goToSub = (subName: string) => {
-		router.push(`/g/${subName}`);
-		setSearch("");
-	};
-
 	return (
 		<div className="fixed inset-x-0 top-0 z-10 flex items-center justify-between h-12 px-2 bg-white sm:px-5">
 			{/* Logo and title */}
@@ -80,7 +75,10 @@ const Navbar: React.FC<NavbarProps> = ({ loading, authenticated }) => {
 							<div
 								key={sub.name}
 								className="flex items-center px-4 py-3 cursor-pointer hover:bg-gray-200"
-								onClick={() => goToSub(sub.name)}
+								onClick={() => {
+									router.push(sub.url);
+									setSearch("");
+								}}
 							>
 								<Image
 									src={sub.imageUrl}

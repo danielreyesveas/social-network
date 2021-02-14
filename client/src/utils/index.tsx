@@ -50,3 +50,16 @@ export const string_trunc = (
 	}
 	return content;
 };
+
+export const status_text = (status: string) => {
+	switch (status) {
+		case "pending":
+			return "Pendiente";
+		case "accepted":
+			return "Aceptada";
+		case "rejected":
+			return "Rechazada";
+		default:
+			return status;
+	}
+};

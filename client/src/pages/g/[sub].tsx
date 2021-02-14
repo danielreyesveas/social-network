@@ -162,7 +162,7 @@ const SubPage = ({ sub, posts, uploadSubImage, follow }) => {
 											<div>
 												{ownSub ? (
 													<Link
-														href={`/g/${sub.name}/edit`}
+														href={`${sub.url}/edit`}
 													>
 														<a className="px-4 py-1 mx-4 hollow primary button">
 															editar
@@ -181,7 +181,7 @@ const SubPage = ({ sub, posts, uploadSubImage, follow }) => {
 											</div>
 										</div>
 										<p className="text-xs font-bold text-gray-500 sm:text-sm">
-											/g/{sub.name}
+											{sub.url}
 										</p>
 
 										<div className="block w-full p-2 md:hidden">
@@ -250,9 +250,15 @@ const SubPage = ({ sub, posts, uploadSubImage, follow }) => {
 						{isInitialLoading && (
 							<p className="text-lg text-center">Cargando...</p>
 						)}
-						{posts?.map((post) => (
-							<PostCard key={post.identifier} post={post} />
-						))}
+						{posts.length > 0 ? (
+							posts.map((post) => (
+								<PostCard key={post.identifier} post={post} />
+							))
+						) : (
+							<p className="text-lg text-center">
+								Nada todavía...
+							</p>
+						)}
 						{isInitialLoading && posts.length > 0 && (
 							<p className="text-lg text-center">
 								Cargando más...

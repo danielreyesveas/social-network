@@ -5,6 +5,7 @@ export interface Post {
 	body?: string;
 	subName: string;
 	username: string;
+	user: User;
 	createdAt: string;
 	updatedAt: string;
 	sub?: Sub;
@@ -22,10 +23,11 @@ export interface User {
 	bio?: string;
 	createdAt: string;
 	updatedAt: string;
-	imageUrn?: string;
-	imageUrl: string;
 
 	// Virtual fields
+	imageUrn?: string;
+	imageUrl: string;
+	url: string;
 	postCount?: number;
 	followerCount?: number;
 }
@@ -39,14 +41,18 @@ export interface Sub {
 	imageUrn: string;
 	bannerUrn: string;
 	username: string;
+	user: User;
 	posts: Post[];
+	members: any[];
 
 	// Virtual fields
+	url: string;
 	imageUrl: string;
 	bannerUrl: string;
 	postCount?: number;
 	followerCount?: number;
 	userFollow?: number;
+	followersPreview: any[];
 }
 
 export interface Comment {

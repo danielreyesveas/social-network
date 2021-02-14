@@ -39,7 +39,7 @@ const getPosts = async (request: Request, response: Response) => {
 
 		const posts = await Post.find({
 			order: { createdAt: "DESC" },
-			relations: ["comments", "votes", "sub"],
+			relations: ["comments", "votes", "sub", "user"],
 			skip: currentPage * postsPerPage,
 			take: postsPerPage,
 		});
@@ -71,6 +71,10 @@ const getPost = async (request: Request, response: Response) => {
 				relations: [
 					"sub",
 					"sub.followers",
+					"sub.followers.user",
+					"sub.user",
+					"sub.members",
+					"sub.members.user",
 					"sub.posts",
 					"votes",
 					"comments",

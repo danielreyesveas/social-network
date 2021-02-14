@@ -27,6 +27,7 @@ const PostCard = ({
 		commentCount,
 		url,
 		username,
+		user,
 		sub,
 	},
 	vote,
@@ -86,13 +87,13 @@ const PostCard = ({
 				<div className="items-center md:flex">
 					{!isInSubPage && (
 						<div className="flex items-center md:flex-shrink-0">
-							<Link href={`/g/${subName}`}>
+							<Link href={sub.url}>
 								<img
 									src={sub.imageUrl}
 									className="w-6 h-6 mr-1 rounded-full cursor-pointer"
 								/>
 							</Link>
-							<Link href={`/g/${subName}`}>
+							<Link href={sub.url}>
 								<a className="text-xs font-bold cursor-pointer hover:underline">
 									/g/{subName}
 								</a>

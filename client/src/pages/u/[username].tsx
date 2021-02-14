@@ -181,6 +181,39 @@ const UserPage = ({ userData, uploadUserImage, follow }) => {
 										</div>
 									</div>
 
+									{userData.user.followerCount && (
+										<div className="my-5">
+											<h2 className="text-center">
+												Grupis
+											</h2>
+
+											<div className="-space-x-4">
+												{userData.user.followersPreview.map(
+													(follower) => (
+														<img
+															key={
+																follower.username
+															}
+															className="relative z-30 inline object-cover w-10 h-10 border-2 border-white rounded-full cursor-pointer profile-image"
+															onClick={() =>
+																router.push(
+																	follower
+																		.user
+																		.url
+																)
+															}
+															src={
+																follower.user
+																	.imageUrl
+															}
+															alt="Profile image"
+														/>
+													)
+												)}
+											</div>
+										</div>
+									)}
+
 									<p className="my-3">
 										<i className="mr-2 fas fa-birthday-cake"></i>
 										Se unió el{" "}
@@ -189,14 +222,16 @@ const UserPage = ({ userData, uploadUserImage, follow }) => {
 										)}
 									</p>
 
-									<a
-										className="px-4 py-1 mt-4 hollow primary button"
-										onClick={handleFollow}
-									>
-										{!!userData.user.userFollow
-											? "dejar"
-											: "seguir"}
-									</a>
+									{!ownProfile && (
+										<a
+											className="px-4 py-1 mt-4 hollow primary button"
+											onClick={handleFollow}
+										>
+											{!!userData.user.userFollow
+												? "dejar"
+												: "seguir"}
+										</a>
+									)}
 								</div>
 							</div>
 						</div>

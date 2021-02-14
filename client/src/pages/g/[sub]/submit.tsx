@@ -46,9 +46,7 @@ const Submit = ({ sub, addPost }) => {
 			</Head>
 			<div className="w-160">
 				<div className="p-4 bg-white rounded">
-					<h1 className="mb-3 text-lg">
-						Nueva entrada en /g/{subName}
-					</h1>
+					<h1 className="mb-3 text-lg">Nueva entrada en {sub.url}</h1>
 					<form onSubmit={handleAddPost}>
 						<div className="relative mb-2">
 							<input

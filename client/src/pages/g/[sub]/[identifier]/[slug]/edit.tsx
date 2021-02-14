@@ -60,7 +60,7 @@ const EditPost = ({ sub, post, updatePost }) => {
 			<div className="w-160">
 				<div className="p-4 bg-white rounded">
 					<h1 className="mb-3 text-lg">
-						Editar entrada en /g/{subName}
+						Editar entrada en {sub?.url}
 					</h1>
 					<form onSubmit={handleUpdatePost}>
 						<div className="relative mb-2">

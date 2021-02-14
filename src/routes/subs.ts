@@ -1,20 +1,22 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { isEmpty } from "class-validator";
-import { getRepository } from "typeorm";
+import { Connection, getConnection, getRepository } from "typeorm";
 import multer, { FileFilterCallback } from "multer";
 import path from "path";
 import fs from "fs";
 
 import Sub from "../entities/Sub";
 import User from "../entities/User";
+import Notification from "../entities/Notification";
 
 import auth from "../middleware/auth";
 import user from "../middleware/user";
 import Post from "../entities/Post";
 import { makeId } from "../utils/helpers";
+import SubMember, { Status } from "../entities/SubMember";
 
 const createSub = async (request: Request, response: Response) => {
-	const { name, title, description } = request.body;
+	const { name, title, description, members } = request.body;
 
 	const user: User = response.locals.user;
 
@@ -41,8 +43,25 @@ const createSub = async (request: Request, response: Response) => {
 
 	try {
 		const sub = new Sub({ name, title, description, user });
-
 		await sub.save();
+
+		// TODO: trigger function
+		if (members.length) {
+			members.map(async (member: string) => {
+				const notification = new Notification({
+					username: member,
+					type: "invitation",
+					sender: user,
+					sub,
+				});
+				const subMember = new SubMember({
+					username: member,
+					sub,
+				});
+				await notification.save();
+				await subMember.save();
+			});
+		}
 
 		return response.json(sub);
 	} catch (error) {
@@ -52,30 +71,6 @@ const createSub = async (request: Request, response: Response) => {
 			.json({ error: "Algo no ha salido bien..." });
 	}
 };
-
-// const getSub = async (request: Request, response: Response) => {
-// 	const name = request.params.name;
-
-// 	try {
-// 		const sub = await Sub.findOneOrFail(
-// 			{ name },
-// 			{ relations: ["followers"] }
-// 		);
-
-// 		const user = response.locals.user;
-
-// 		if (user) {
-// 			sub.setUserFollow(user);
-// 		}
-
-// 		return response.json(sub);
-// 	} catch (error) {
-// 		console.error(error);
-// 		return response
-// 			.status(404)
-// 			.json({ error: "El Grupo no ha sido encontrado." });
-// 	}
-// };
 
 const getSubPosts = async (request: Request, response: Response) => {
 	const name = request.params.name;
@@ -115,7 +110,17 @@ const getSub = async (request: Request, response: Response) => {
 
 		const sub = await Sub.findOneOrFail(
 			{ name },
-			{ relations: ["followers", "posts"] }
+			{
+				relations: [
+					"followers",
+					"followers.user",
+					"user",
+					"posts",
+					"posts.user",
+					"members",
+					"members.user",
+				],
+			}
 		);
 
 		if (user) {
@@ -140,6 +145,7 @@ const ownSub = async (
 	try {
 		const sub = await Sub.findOneOrFail({
 			where: { name: request.params.name },
+			relations: ["members"],
 		});
 
 		if (sub.username !== user.username) {
@@ -180,10 +186,94 @@ const updateSub = async (request: Request, response: Response) => {
 	const sub: Sub = response.locals.sub;
 
 	try {
-		const { title, description } = request.body;
+		const { title, description, members } = request.body;
 		sub.title = title;
 		sub.description = description;
 		await sub.save();
+
+		// TODO: trigger function
+		if (members.length) {
+			const user: User = response.locals.user;
+			const currentMembers = sub.members.map((m) => m.username);
+			const addedMembers = members.map((m: any) => m.username);
+			console.log(currentMembers);
+			const deletedMembers = currentMembers.filter(
+				(m: string) => !addedMembers.includes(m)
+			);
+			const newMembers = addedMembers.filter(
+				(m: string) => !currentMembers.includes(m)
+			);
+			const modifiedMembers = members.filter((m: any) =>
+				currentMembers.includes(m.username)
+			);
+			let readdedMembers: any[] = [];
+			modifiedMembers.filter(function (m: any) {
+				return sub.members.filter(function (c: any) {
+					if (
+						m.username === c.username &&
+						c.status === "rejected" &&
+						!m.status
+					) {
+						readdedMembers.push(m.username);
+					}
+				});
+			});
+
+			newMembers.map(async (member: string) => {
+				const notification = new Notification({
+					username: member,
+					type: "invitation",
+					sender: user,
+					sub,
+				});
+				const subMember = new SubMember({
+					username: member,
+					sub,
+				});
+				await notification.save();
+				await subMember.save();
+			});
+
+			if (deletedMembers.length) {
+				deletedMembers.map(async (member: string) => {
+					const notification = new Notification({
+						username: member,
+						type: "deletion",
+						sender: user,
+						sub,
+					});
+					await notification.save();
+				});
+				await getConnection()
+					.createQueryBuilder()
+					.delete()
+					.from(SubMember)
+					.where("username IN (:...deletedMembers)", {
+						deletedMembers,
+					})
+					.execute();
+			}
+
+			if (readdedMembers.length) {
+				readdedMembers.map((member: string) => {
+					const notification = new Notification({
+						username: member,
+						type: "reinvitation",
+						sender: user,
+						sub,
+					});
+					notification.save();
+				});
+				await getConnection()
+					.createQueryBuilder()
+					.update(SubMember)
+					.set({ status: Status.PENDING })
+					.where("username IN (:...readdedMembers)", {
+						readdedMembers,
+					})
+					.execute();
+			}
+		}
 
 		return response.json(sub);
 	} catch (error) {

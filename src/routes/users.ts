@@ -18,7 +18,13 @@ const getUserSubmissions = async (request: Request, response: Response) => {
 		const user = await User.findOneOrFail({
 			where: { username: request.params.username },
 			select: ["id", "username", "email", "createdAt", "imageUrn"],
-			relations: ["follows", "followers", "posts", "comments"],
+			relations: [
+				"follows",
+				"followers",
+				"followers.user",
+				"posts",
+				"comments",
+			],
 		});
 
 		const posts = await Post.find({
@@ -130,7 +136,9 @@ const searchUsers = async (request: Request, response: Response) => {
 				.where("LOWER(username) LIKE :username", {
 					username: `%${username.toLowerCase().trim()}%`,
 				})
-				.where("username NOT IN (:...membersNames)", { membersNames })
+				.andWhere("username NOT IN (:...membersNames)", {
+					membersNames,
+				})
 				.limit(6)
 				.getMany();
 		} else {

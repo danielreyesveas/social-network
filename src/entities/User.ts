@@ -16,6 +16,7 @@ import Post from "./Post";
 import Vote from "./Vote";
 import Follow from "./Follow";
 import Comment from "./Comment";
+import Notification from "./Notification";
 
 @TOEntity("users")
 export default class User extends Entity {
@@ -67,6 +68,9 @@ export default class User extends Entity {
 	@OneToMany(() => Comment, (comment) => comment.user)
 	comments: Comment[];
 
+	@OneToMany(() => Notification, (notification) => notification.user)
+	notifications: Notification[];
+
 	@OneToMany(() => Vote, (vote) => vote.user)
 	votes: Vote[];
 
@@ -97,6 +101,14 @@ export default class User extends Entity {
 
 	@Expose() get followerCount(): number {
 		return this.followers?.length;
+	}
+
+	@Expose() get followersPreview(): Follow[] {
+		return this.followers?.slice(0, 10);
+	}
+
+	@Expose() get url(): string {
+		return `/u/${this.username}`;
 	}
 
 	protected userFollow: number;

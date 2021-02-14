@@ -86,7 +86,7 @@ const Home = ({ posts, subs, user }) => {
 									key={sub.name}
 									className="flex items-center px-4 py-2 text-xs border-b"
 								>
-									<Link href={`/g/${sub.name}`}>
+									<Link href={sub.url}>
 										<a>
 											<Image
 												src={sub.imageUrl}
@@ -97,9 +97,9 @@ const Home = ({ posts, subs, user }) => {
 											/>
 										</a>
 									</Link>
-									<Link href={`/g/${sub.name}`}>
+									<Link href={sub.url}>
 										<a className="ml-2 font-bold hover:cursor-pointer">
-											/g/{sub.name}
+											/{sub.url}
 										</a>
 									</Link>
 									<p className="ml-auto font-med">
