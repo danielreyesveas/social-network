@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import Link from "next/link";
-import axios from "axios";
 
 import { useUIState, useUIDispatch, useAuthDispatch } from "../context";
 import { logout } from "../redux/actions/userActions";
@@ -71,14 +70,16 @@ const ProfileMenu = ({ user, logout }) => {
 								Perfil
 							</a>
 						</Link>
-						<a
-							onClick={handleShow}
-							href="#"
-							className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-							role="menuitem"
-						>
-							Mensajes
-						</a>
+						<Link href="/chat">
+							<a
+								onClick={handleShow}
+								href="#"
+								className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+								role="menuitem"
+							>
+								Chat
+							</a>
+						</Link>
 					</div>
 					<a
 						onClick={(e) => handleLogout(e)}

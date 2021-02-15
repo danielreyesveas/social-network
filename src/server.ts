@@ -12,6 +12,7 @@ import postRoutes from "./routes/posts";
 import subRoutes from "./routes/subs";
 import miscRoutes from "./routes/misc";
 import userRoutes from "./routes/users";
+import chatRoutes from "./routes/chat";
 
 import trim from "./middleware/trim";
 
@@ -48,6 +49,7 @@ app.use("/api/posts", postRoutes);
 app.use("/api/subs", subRoutes);
 app.use("/api/misc", miscRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/chat", chatRoutes);
 
 app.listen(PORT, async () => {
 	console.log(`SERVER RUNNING at http://localhost:${PORT}`);

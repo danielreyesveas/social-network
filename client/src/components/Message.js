@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import classNames from "classnames";
 
 import { useAuthState } from "../context/auth";
-
+import { useDispatch, useSelector } from "react-redux";
 import { gql, useMutation } from "@apollo/client";
 
 const reactions = ["❤️", "😆", "😯", "😢", "😡", "👍", "👎"];
@@ -16,7 +16,7 @@ const REACT_TO_MESSAGE = gql`
 `;
 
 export default function Message({ message }) {
-	const { user } = useAuthState();
+	const user = useSelector((state) => state.user.credentials);
 	const sent = message.from === user.username;
 	const received = !sent;
 	const [showPopover, setShowPopover] = useState(false);

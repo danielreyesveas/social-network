@@ -4,6 +4,7 @@ import thunk from "redux-thunk";
 import dataReducer from "./reducers/dataReducer";
 import userReducer from "./reducers/userReducer";
 import uiReducer from "./reducers/uiReducer";
+import chatReducer from "./reducers/chatReducer";
 
 const initialState = {};
 
@@ -12,6 +13,7 @@ const middleware = [thunk];
 const reducers = combineReducers({
 	data: dataReducer,
 	user: userReducer,
+	chat: chatReducer,
 	ui: uiReducer,
 });
 

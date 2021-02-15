@@ -21,3 +21,10 @@ export const SET_ERRORS = "SET_ERRORS";
 export const CLEAR_ERRORS = "CLEAR_ERRORS";
 export const LOADING_UI = "LOADING_UI";
 export const STOP_LOADING_UI = "STOP_LOADING_UI";
+
+// CHAT
+export const SET_USERS = "SET_USERS";
+export const SET_SELECTED_USER = "SET_SELECTED_USER";
+export const SET_USER_MESSAGES = "SET_USER_MESSAGES";
+export const ADD_MESSAGE = "ADD_MESSAGE";
+export const ADD_REACTION = "ADD_REACTION";

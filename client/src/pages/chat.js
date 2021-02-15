@@ -1,9 +1,7 @@
+import Head from "next/head";
 import React, { useEffect } from "react";
 import { gql, useSubscription } from "@apollo/client";
-
-import { useAuthState, useAuthDispatch } from "../context/auth";
-import { useMessageDispatch } from "../context/message";
-
+import { useDispatch, useSelector } from "react-redux";
 import Users from "../components/Users";
 import Messages from "../components/Messages";
 import { connect } from "react-redux";
@@ -34,10 +32,12 @@ const NEW_REACTION = gql`
 	}
 `;
 
-const Chat = ({ history, user }) => {
-	const authDispatch = useAuthDispatch();
-	const messageDispatch = useMessageDispatch();
+export default function Chat({ history }) {
+	const title = "Clics: Chat";
+	const description = "Mensajería instantánea en Clics. ";
+	const user = useSelector((state) => state.user.credentials);
 
+	const dispatch = useDispatch();
 	const { data: messageData, error: messageError } = useSubscription(
 		NEW_MESSAGE
 	);
@@ -52,14 +52,8 @@ const Chat = ({ history, user }) => {
 		if (messageData) {
 			const message = messageData.newMessage;
 			const otherUser =
-				user.credentials.username === message.to
-					? message.from
-					: message.to;
-			console.log(user);
-			console.log(message.to);
-			console.log(message.from);
-			console.log(otherUser);
-			messageDispatch({
+				user.username === message.to ? message.from : message.to;
+			dispatch({
 				type: "ADD_MESSAGE",
 				payload: {
 					username: otherUser,
@@ -91,55 +85,49 @@ const Chat = ({ history, user }) => {
 	// 	// eslint-disable-next-line
 	// }, [reactionData, reactionError]);
 
-	const logout = () => {
-		authDispatch({ type: "LOGOUT" });
-		window.location.href = "/login";
-	};
-
 	return (
-		<div className="flex h-screen antialiased text-gray-800">
-			<div className="flex flex-row w-full h-full overflow-x-hidden">
-				<div className="flex flex-col flex-shrink-0 w-64 py-8 pl-6 pr-2 bg-white">
-					<div className="flex flex-row items-center justify-center w-full h-12">
-						<div className="ml-2 text-2xl font-bold">Chat</div>
-					</div>
-					<div className="flex flex-col items-center w-full px-4 py-6 mt-4 bg-indigo-100 border border-gray-200 rounded-lg">
-						<div className="w-20 h-20 overflow-hidden border rounded-full">
-							<img
-								src={user.credentials.imageUrl}
-								alt="Avatar"
-								className="w-full h-full"
-							/>
-						</div>
-						<div className="mt-2 text-sm font-semibold">
-							{user.credentials.username}
-						</div>
-						<div className="text-xs text-gray-500">
-							{user.credentials.email}
-						</div>
-						<div className="flex flex-row items-center mt-3">
-							<div className="flex flex-col justify-center w-8 h-4 bg-indigo-500 rounded-full">
-								<div className="self-end w-3 h-3 mr-1 bg-white rounded-full"></div>
-							</div>
-							<div className="ml-1 text-xs leading-none">
-								Active
-							</div>
-						</div>
-					</div>
+		<>
+			<Head>
+				<title>{title}</title>
+				<meta name="description" content={description} />
+				<meta property="og:description" content={description} />
+				<meta property="og:title" content={title} />
+				<meta property="twitter:description" content={description} />
+				<meta property="twitter:title" content={title} />
+			</Head>
 
-					<Users />
+			<div className="container flex pt-4">
+				<div className="flex h-full antialiased text-gray-800">
+					<div className="flex flex-row w-full overflow-x-hidden">
+						<div className="flex flex-col flex-shrink-0 w-64 py-8 pl-6 pr-2 bg-white">
+							<div className="flex flex-row items-center justify-center w-full h-12">
+								<div className="ml-2 text-2xl font-bold">
+									Chat
+								</div>
+							</div>
+							<div className="flex flex-col items-center w-full px-4 py-6 mt-4 bg-indigo-100 border border-gray-200 rounded-lg">
+								<div className="w-20 h-20 overflow-hidden border rounded-full">
+									<img
+										src={user.imageUrl}
+										alt="Avatar"
+										className="w-full h-full"
+									/>
+								</div>
+								<div className="mt-2 text-sm font-semibold">
+									{user.username}
+								</div>
+								<div className="text-xs text-gray-500">
+									{user.email}
+								</div>
+							</div>
+
+							<Users />
+						</div>
+
+						<Messages />
+					</div>
 				</div>
-
-				<Messages />
 			</div>
-		</div>
+		</>
 	);
-};
-
-const mapStateToProps = (state) => ({
-	user: state.user,
-});
-
-const mapActionsToProps = (dispatch) => ({});
-
-export default connect(mapStateToProps, mapActionsToProps)(Chat);
+}

@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 
-import { useMessageDispatch, useMessageState } from "../context/message";
+import { useDispatch, useSelector } from "react-redux";
 
 import Message from "./Message";
 
@@ -35,10 +35,10 @@ const SEND_MESSAGE = gql`
 `;
 
 export default function Messages() {
-	const { users } = useMessageState();
+	const users = useSelector((state) => state.chat.users);
 	const [content, setContent] = useState("");
 	const selectedUser = users?.find((u) => !!u.selected);
-	const dispatch = useMessageDispatch();
+	const dispatch = useDispatch();
 	const messages = selectedUser?.messages;
 
 	const [

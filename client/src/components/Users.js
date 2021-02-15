@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { gql, useQuery } from "@apollo/client";
 import classNames from "classnames";
 
-import { useMessageDispatch, useMessageState } from "../context/message";
+import { useDispatch, useSelector } from "react-redux";
+import { getUsers } from "../redux/actions/chatActions";
 
 const GET_USERS = gql`
 	query getUsers {
@@ -10,7 +11,7 @@ const GET_USERS = gql`
 			username
 			email
 			createdAt
-			imageUrn
+			imageUrl
 			latestMessage {
 				uuid
 				from
@@ -24,9 +25,12 @@ const GET_USERS = gql`
 
 export default function Users() {
 	let usersMarkup;
-	const dispatch = useMessageDispatch();
-	const { users } = useMessageState();
+
+	const users = useSelector((state) => state.chat.users);
+
 	const selectedUser = users?.find((u) => !!u.selected)?.username;
+
+	const dispatch = useDispatch();
 
 	const { loading } = useQuery(GET_USERS, {
 		onCompleted: (data) =>
@@ -59,50 +63,21 @@ export default function Users() {
 					onClick={() => handleClickUser(user.username)}
 				>
 					<img
-						src={
-							user.imageUrn ||
-							"https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
-						}
+						src={user.imageUrl}
 						className="relative z-30 inline object-cover w-10 h-10 border-2 border-white rounded-full cursor-pointer user-image profile-image"
 					/>
 					<div className="ml-2 text-sm font-semibold">
-						{user.username}
+						<p>⊚{user.username}</p>
+						<p className="font-light">
+							{user.latestMessage
+								? user.latestMessage.content
+								: "You are now connected!"}
+						</p>
 					</div>
 				</div>
 			);
 		});
 	}
-	//return (
-	// <div
-	// 	role="button"
-	// 	className={classNames(
-	// 		"user-div d-flex justify-content-center justify-content-md-start p-3",
-	// 		{
-	// 			"bg-white": selected,
-	// 		}
-	// 	)}
-	// 	key={user.username}
-	// 	onClick={() => handleClickUser(user.username)}
-	// >
-	// 	<img
-	// 		src={
-	// 			user.imageUrn ||
-	// 			"https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
-	// 		}
-	// 		className="user-image"
-	// 	/>
-
-	// 	<div className="ml-2 d-none d-md-block">
-	// 		<p className="text-success">{user.username}</p>
-	// 		<p className="font-weight-light">
-	// 			{user.latestMessage
-	// 				? user.latestMessage.content
-	// 				: "You are now connected!"}
-	// 		</p>
-	// 	</div>
-	// </div>
-
-	//);
 
 	return (
 		<div className="flex flex-col mt-8">
@@ -113,9 +88,14 @@ export default function Users() {
 				</span>
 			</div>
 
-			<div className="flex flex-col mt-4 -mx-2 space-y-1 overflow-y-auto max-h-100">
+			<div className="flex flex-col mt-4 -mx-2 space-y-1 overflow-y-auto">
 				{usersMarkup}
 			</div>
 		</div>
 	);
 }
+
+const mapStateToProps = (store) => ({
+	people: store.people,
+	total: store.people.length,
+});
