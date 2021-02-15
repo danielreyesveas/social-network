@@ -101,7 +101,6 @@ export default function Reducer(
 			return {
 				...state,
 				post: payload,
-				posts: [],
 			};
 		case SET_COMMENTS:
 			return {
@@ -140,8 +139,6 @@ export default function Reducer(
 						}),
 					};
 				} else {
-					console.log(payload);
-					console.log(state);
 					newState = Object.assign(
 						{},
 						JSON.parse(JSON.stringify(state))
@@ -149,25 +146,31 @@ export default function Reducer(
 					index = state.posts.findIndex(
 						(post) => post.identifier === payload.identifier
 					);
-					console.log(index);
 					newState.posts[index].voteScore = payload.voteScore;
 					newState.posts[index].userVote = payload.userVote;
 					return newState;
 				}
 			}
 		case FOLLOW:
+			console.log(payload);
 			if (payload.username) {
+				console.log("asdf");
 				newState = Object.assign({}, JSON.parse(JSON.stringify(state)));
 				newState.userData.user.userFollow = payload.userFollow;
 				newState.userData.user.followerCount = payload.followerCount;
+				newState.userData.user.followersPreview =
+					payload.followersPreview;
+				console.log(newState.userData.user);
 
 				return newState;
 			} else {
+				console.log("sub");
 				return {
 					...state,
 					sub: Object.assign({}, state.sub, {
 						userFollow: payload.userFollow,
 						followerCount: payload.followerCount,
+						followersPreview: payload.followersPreview,
 					}),
 				};
 			}

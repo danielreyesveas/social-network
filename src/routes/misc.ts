@@ -130,7 +130,7 @@ const follow = async (request: Request, response: Response) => {
 		if (followedUser) {
 			followedUser = await User.findOneOrFail(
 				{ username },
-				{ relations: ["followers"] }
+				{ relations: ["followers", "followers.user"] }
 			);
 
 			followedUser.setUserFollow(user);
@@ -139,7 +139,7 @@ const follow = async (request: Request, response: Response) => {
 			sub = await Sub.findOneOrFail(
 				{ name: subName },
 				{
-					relations: ["followers"],
+					relations: ["followers", "followers.user"],
 				}
 			);
 

@@ -44,6 +44,7 @@ export default class Sub extends Entity {
 	@JoinColumn({ name: "username", referencedColumnName: "username" })
 	user: User;
 
+	@Exclude()
 	@OneToMany(() => Post, (post) => post.sub)
 	posts: Post[];
 

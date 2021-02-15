@@ -52,9 +52,9 @@ export default function Sidebar({ sub, hideCreate = false }: SidebarProps) {
 								<p className="text-xs font-medium">
 									⊚{sub.username}
 								</p>
-								<p className="text-xs text-gray-600">
+								{/* <p className="text-xs text-gray-600">
 									{sub.user.email}
-								</p>
+								</p> */}
 							</div>
 						</div>
 
@@ -73,9 +73,9 @@ export default function Sidebar({ sub, hideCreate = false }: SidebarProps) {
 									<p className="text-xs font-medium">
 										⊚{member.username}
 									</p>
-									<p className="text-xs text-gray-600">
+									{/* <p className="text-xs text-gray-600">
 										{member.user.email}
-									</p>
+									</p> */}
 								</div>
 							</div>
 						))}

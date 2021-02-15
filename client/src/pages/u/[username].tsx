@@ -181,7 +181,8 @@ const UserPage = ({ userData, uploadUserImage, follow }) => {
 										</div>
 									</div>
 
-									{userData.user.followerCount && (
+									{userData.user.followersPreview.length >
+										0 && (
 										<div className="my-5">
 											<h2 className="text-center">
 												Grupis

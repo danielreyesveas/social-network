@@ -87,13 +87,13 @@ const PostCard = ({
 				<div className="items-center md:flex">
 					{!isInSubPage && (
 						<div className="flex items-center md:flex-shrink-0">
-							<Link href={sub.url}>
+							<Link href={`/g/${subName}`}>
 								<img
-									src={sub.imageUrl}
+									src={sub?.imageUrl}
 									className="w-6 h-6 mr-1 rounded-full cursor-pointer"
 								/>
 							</Link>
-							<Link href={sub.url}>
+							<Link href={`/g/${subName}`}>
 								<a className="text-xs font-bold cursor-pointer hover:underline">
 									/g/{subName}
 								</a>
@@ -104,19 +104,24 @@ const PostCard = ({
 						</div>
 					)}
 
-					<p className="text-xs text-gray-500">
-						Por
+					<div className="flex items-center text-xs text-gray-500 md:flex-shrink-0">
+						{isInSubPage && (
+							<Link href={`/u/${username}`}>
+								<img
+									src={user?.imageUrl}
+									className="w-6 h-6 mr-1 rounded-full cursor-pointer"
+								/>
+							</Link>
+						)}
 						<Link href={`/u/${username}`}>
-							<a className="mx-1 hover:underline">
-								/u/{username}
-							</a>
+							<a className="hover:underline">/u/{username}</a>
 						</Link>
 						<Link href={url}>
-							<a className="mx-1 hover:underline">
+							<a className="ml-2 hover:underline">
 								{tempo(createdAt)}
 							</a>
 						</Link>
-					</p>
+					</div>
 				</div>
 
 				<div className="mt-3">

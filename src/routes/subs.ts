@@ -84,7 +84,7 @@ const getSubPosts = async (request: Request, response: Response) => {
 		const posts = await Post.find({
 			where: { subName: name },
 			order: { createdAt: "DESC" },
-			relations: ["comments", "votes", "sub"],
+			relations: ["comments", "votes", "user"],
 			skip: currentPage * postsPerPage,
 			take: postsPerPage,
 		});
@@ -116,7 +116,6 @@ const getSub = async (request: Request, response: Response) => {
 					"followers.user",
 					"user",
 					"posts",
-					"posts.user",
 					"members",
 					"members.user",
 				],
