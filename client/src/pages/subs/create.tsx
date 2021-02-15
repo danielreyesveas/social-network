@@ -253,9 +253,7 @@ export default connect(null, mapActionsToProps)(CreateSub);
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 	try {
-		console.log("Create");
 		const cookie = req.headers.cookie;
-		console.log(cookie);
 		if (!cookie) throw new Error("Missing auth token cookie.");
 		await axios.get("/auth/me", { headers: { cookie } });
 		return { props: {} };
