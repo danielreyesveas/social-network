@@ -13,7 +13,18 @@ export default async (
 		if (!token) return next();
 
 		const { username }: any = jwt.verify(token, process.env.JWT_SECRET!);
-		const user = await User.findOne({ username });
+		const user = await User.findOne(
+			{ username },
+			{
+				relations: [
+					"notifications",
+					"notifications.sender",
+					"notifications.sub",
+					"notifications.post",
+					"notifications.comment",
+				],
+			}
+		);
 
 		response.locals.user = user;
 		return next();

@@ -68,6 +68,7 @@ export default class User extends Entity {
 	@OneToMany(() => Comment, (comment) => comment.user)
 	comments: Comment[];
 
+	@Exclude()
 	@OneToMany(() => Notification, (notification) => notification.user)
 	notifications: Notification[];
 
@@ -105,6 +106,10 @@ export default class User extends Entity {
 
 	@Expose() get followersPreview(): Follow[] {
 		return this.followers?.slice(0, 10);
+	}
+
+	@Expose() get lastNotifications(): Notification[] {
+		return this.notifications?.filter((n) => !n.read).slice(0, 10);
 	}
 
 	@Expose() get url(): string {

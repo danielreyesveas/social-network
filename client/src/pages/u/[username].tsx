@@ -195,7 +195,7 @@ const UserPage = ({ userData, uploadUserImage, follow }) => {
 															key={
 																follower.username
 															}
-															className="relative z-30 inline object-cover w-10 h-10 border-2 border-white rounded-full cursor-pointer profile-image"
+															className="relative inline object-cover w-10 h-10 border-2 border-white rounded-full cursor-pointer profile-image"
 															onClick={() =>
 																router.push(
 																	follower

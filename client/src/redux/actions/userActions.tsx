@@ -29,9 +29,9 @@ export const login = (userData: User) => (dispatch: Dispatch) => {
 };
 
 export const logout = () => (dispatch) => {
-	return axios
+	axios
 		.get("/auth/logout")
-		.then((res) => {
+		.then(() => {
 			dispatch({ type: CLEAR_ERRORS });
 			dispatch({ type: SET_UNAUTHENTICATED });
 			return;

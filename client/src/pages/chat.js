@@ -18,6 +18,18 @@ const NEW_MESSAGE = gql`
 	}
 `;
 
+const NEW_NOTIFICATION = gql`
+	subscription newNotification {
+		newNotification {
+			uuid
+			from
+			to
+			content
+			createdAt
+		}
+	}
+`;
+
 const NEW_REACTION = gql`
 	subscription newReaction {
 		newReaction {
@@ -42,9 +54,23 @@ export default function Chat({ history }) {
 		NEW_MESSAGE
 	);
 
+	const {
+		data: notificationData,
+		error: notificationError,
+	} = useSubscription(NEW_NOTIFICATION);
+
 	// const { data: reactionData, error: reactionError } = useSubscription(
 	// 	NEW_REACTION
 	// );
+
+	useEffect(() => {
+		if (notificationError) console.error(notificationError);
+
+		if (notificationData) {
+			console.log(notificationData);
+		}
+		// eslint-disable-next-line
+	}, [notificationData, notificationError]);
 
 	useEffect(() => {
 		if (messageError) console.error(messageError);
@@ -97,7 +123,7 @@ export default function Chat({ history }) {
 			</Head>
 
 			<div className="container flex pt-4">
-				<div className="flex h-full antialiased text-gray-800">
+				<div className="flex w-full h-full antialiased text-gray-800">
 					<div className="flex flex-row w-full overflow-x-hidden">
 						<div className="flex flex-col flex-shrink-0 w-64 py-8 pl-6 pr-2 bg-white">
 							<div className="flex flex-row items-center justify-center w-full h-12">

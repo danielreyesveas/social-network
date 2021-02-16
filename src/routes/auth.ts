@@ -75,7 +75,18 @@ const login = async (request: Request, response: Response) => {
 		if (Object.keys(errors).length > 0)
 			return response.status(400).json(errors);
 
-		const user = await User.findOne({ username });
+		const user = await User.findOne(
+			{ username },
+			{
+				relations: [
+					"notifications",
+					"notifications.sender",
+					"notifications.sub",
+					"notifications.post",
+					"notifications.comment",
+				],
+			}
+		);
 
 		if (!user)
 			return response.status(404).json({

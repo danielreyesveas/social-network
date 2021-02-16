@@ -8,6 +8,10 @@ import {
 	BeforeInsert,
 	OneToMany,
 	AfterLoad,
+	AfterUpdate,
+	EventSubscriber,
+	EntitySubscriberInterface,
+	UpdateEvent,
 } from "typeorm";
 import { makeId, slugify } from "../utils/helpers";
 import Comment from "./Comment";

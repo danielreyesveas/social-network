@@ -44,4 +44,8 @@
 	.profile-image:hover {
 		-webkit-filter: brightness(150%);
 	}
+
+	.badge {
+		@apply absolute top-0 right-0 inline-block w-3 h-3 leading-3 text-center rounded-full bg-primary-4 text-primary-5 text-xxs;
+	}
 }

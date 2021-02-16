@@ -13,7 +13,7 @@ import subRoutes from "./routes/subs";
 import miscRoutes from "./routes/misc";
 import userRoutes from "./routes/users";
 import chatRoutes from "./routes/chat";
-
+import { request, gql } from "graphql-request";
 import trim from "./middleware/trim";
 
 const app = express();
@@ -50,6 +50,20 @@ app.use("/api/subs", subRoutes);
 app.use("/api/misc", miscRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
+
+const NOTIFICATION = gql`
+	mutation createNotification($username: String!) {
+		createNotification(username: $username) {
+			content
+		}
+	}
+`;
+
+app.get("/api/notificate", (_, res) => {
+	request("http://localhost:4000/graphql", NOTIFICATION, {
+		username: "tuto",
+	}).then((data) => res.send(data));
+});
 
 app.listen(PORT, async () => {
 	console.log(`SERVER RUNNING at http://localhost:${PORT}`);

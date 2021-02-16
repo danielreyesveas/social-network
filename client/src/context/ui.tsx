@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useReducer } from "react";
 
 interface State {
 	showProfileMenu: boolean;
+	showNotifications: boolean;
 	loading: boolean;
 }
 
@@ -11,6 +12,7 @@ interface Action {
 }
 const StateContext = createContext<State>({
 	showProfileMenu: false,
+	showNotifications: false,
 	loading: false,
 });
 
@@ -22,6 +24,11 @@ const reducer = (state: State, { type, payload }: Action) => {
 			return {
 				...state,
 				showProfileMenu: !state.showProfileMenu,
+			};
+		case "TOGGLE_NOTIFICATIONS":
+			return {
+				...state,
+				showNotifications: !state.showNotifications,
 			};
 		case "STOP_LOADING":
 			return {
@@ -41,6 +48,7 @@ const reducer = (state: State, { type, payload }: Action) => {
 export const UIProvider = ({ children }: { children: React.ReactNode }) => {
 	const [state, defaultDispatch] = useReducer(reducer, {
 		showProfileMenu: false,
+		showNotifications: false,
 		loading: false,
 	});
 
