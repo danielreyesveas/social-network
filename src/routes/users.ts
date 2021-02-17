@@ -160,9 +160,65 @@ const searchUsers = async (request: Request, response: Response) => {
 	}
 };
 
+const profile = async (_: Request, response: Response) => {
+	try {
+		const user = await User.findOneOrFail({
+			where: { username: response.locals.user.username },
+			select: ["id", "username", "email", "bio", "createdAt", "imageUrn"],
+			relations: [
+				"notifications",
+				"notifications.sender",
+				"notifications.sub",
+				"notifications.post",
+				"notifications.comment",
+				"follows",
+				"followers",
+				"followers.user",
+				"members",
+				"members.sub",
+				"posts",
+				"comments",
+			],
+		});
+
+		const posts = await Post.find({
+			where: { username: response.locals.user.username },
+			relations: ["comments", "votes", "sub"],
+		});
+
+		const comments = await Comment.find({
+			where: { username: response.locals.user.username },
+			relations: ["post"],
+		});
+
+		if (response.locals.user) {
+			posts.forEach((p) => p.setUserVote(response.locals.user));
+			comments.forEach((c) => c.setUserVote(response.locals.user));
+		}
+
+		let submissions: any[] = [];
+
+		posts.forEach((p) => submissions.push({ type: "Post", ...p.toJSON() }));
+		comments.forEach((c) =>
+			submissions.push({ type: "Comment", ...c.toJSON() })
+		);
+		submissions.sort((a, b) => {
+			if (b.createdAt > a.createdAt) return 1;
+			if (b.createdAt < a.createdAt) return -1;
+			return 0;
+		});
+
+		return response.json({ user, submissions });
+	} catch (error) {
+		console.error(error);
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
+	}
+};
+
 const router = Router();
 
-router.get("/:username", user, getUserSubmissions);
 router.post(
 	"/:username/image",
 	user,
@@ -171,5 +227,7 @@ router.post(
 	uploadUserImage
 );
 router.post("/search/:username", user, searchUsers);
+router.get("/profile", user, auth, profile);
+router.get("/user/:username", user, getUserSubmissions);
 
 export default router;

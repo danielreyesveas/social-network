@@ -1,8 +1,7 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
 
 interface State {
-	showProfileMenu: boolean;
-	showNotifications: boolean;
+	showNotificationsTab: boolean;
 	loading: boolean;
 }
 
@@ -11,24 +10,23 @@ interface Action {
 	payload?: any;
 }
 const StateContext = createContext<State>({
-	showProfileMenu: false,
-	showNotifications: false,
+	showNotificationsTab: false,
 	loading: false,
 });
 
 const DispatchContext = createContext(null);
 
+let show: boolean;
+
 const reducer = (state: State, { type, payload }: Action) => {
 	switch (type) {
-		case "TOGGLE_PROFILE_MENU":
+		case "TOGGLE_NOTIFICATIONS_TAB":
+			if (payload === undefined) show = !state.showNotificationsTab;
+			else show = payload;
+
 			return {
 				...state,
-				showProfileMenu: !state.showProfileMenu,
-			};
-		case "TOGGLE_NOTIFICATIONS":
-			return {
-				...state,
-				showNotifications: !state.showNotifications,
+				showNotificationsTab: show,
 			};
 		case "STOP_LOADING":
 			return {
@@ -47,8 +45,7 @@ const reducer = (state: State, { type, payload }: Action) => {
 
 export const UIProvider = ({ children }: { children: React.ReactNode }) => {
 	const [state, defaultDispatch] = useReducer(reducer, {
-		showProfileMenu: false,
-		showNotifications: false,
+		showNotificationsTab: false,
 		loading: false,
 	});
 

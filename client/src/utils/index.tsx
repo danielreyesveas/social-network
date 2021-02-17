@@ -37,7 +37,7 @@ export const pluralize = (
 
 export const string_trunc = (
 	content: string,
-	length: number = 300,
+	length: number = 150,
 	suffix: string = "..."
 ) => {
 	if (content.length > length) {
@@ -47,6 +47,17 @@ export const string_trunc = (
 				0,
 				Math.min(trimmedString.length, trimmedString.lastIndexOf(" "))
 			) + suffix;
+	}
+	return content;
+};
+
+export const linebreaks = (content: string) => {
+	if (content.length > length) {
+		let html = "";
+		content.split("\n").map((i, key) => {
+			html += i + "<br/>";
+		});
+		return html;
 	}
 	return content;
 };

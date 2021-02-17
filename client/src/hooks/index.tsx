@@ -7,6 +7,7 @@ import {
 	SET_POST,
 	SET_COMMENTS,
 	SET_USER_DATA,
+	SET_USER_PROFILE_DATA,
 } from "../redux/types";
 import { Post, Sub, Comment } from "../types";
 
@@ -102,11 +103,24 @@ export const useGetComments = (identifier: any, slug: any) => {
 
 export const useGetUserData = (username: any) => {
 	const dispatch = useDispatch();
-	const path = username ? `/users/${username}` : null;
+	const path = username ? `/users/user/${username}` : null;
 
 	const { data: userData, error } = useSWR<any>(path, {
 		onSuccess: (data) => {
 			dispatch({ type: SET_USER_DATA, payload: data });
+		},
+	});
+
+	return { userData, error };
+};
+
+export const useGetUserProfileData = () => {
+	const dispatch = useDispatch();
+	const path = "/users/profile";
+
+	const { data: userData, error } = useSWR<any>(path, {
+		onSuccess: (data) => {
+			dispatch({ type: SET_USER_PROFILE_DATA, payload: data });
 		},
 	});
 

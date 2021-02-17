@@ -45,7 +45,7 @@ export default function Sidebar({ sub, hideCreate = false }: SidebarProps) {
 						>
 							<img
 								src={sub.user.imageUrl}
-								className="relative z-30 inline object-cover w-12 h-12 border-2 border-white rounded-full"
+								className="relative inline object-cover w-12 h-12 border-2 border-white rounded-full"
 								alt="User"
 							/>
 							<div className="ml-2 text-sm">
@@ -66,16 +66,13 @@ export default function Sidebar({ sub, hideCreate = false }: SidebarProps) {
 							>
 								<img
 									src={member.user.imageUrl}
-									className="relative z-30 inline object-cover w-12 h-12 border-2 border-white rounded-full"
+									className="relative inline object-cover w-12 h-12 border-2 border-white rounded-full"
 									alt="User"
 								/>
 								<div className="ml-2 text-sm">
 									<p className="text-xs font-medium">
 										⊚{member.username}
 									</p>
-									{/* <p className="text-xs text-gray-600">
-										{member.user.email}
-									</p> */}
 								</div>
 							</div>
 						))}
@@ -89,7 +86,7 @@ export default function Sidebar({ sub, hideCreate = false }: SidebarProps) {
 								{sub.followersPreview.map((follower) => (
 									<img
 										key={follower.username}
-										className="relative z-30 inline object-cover w-10 h-10 border-2 border-white rounded-full cursor-pointer profile-image"
+										className="relative inline object-cover w-10 h-10 border-2 border-white rounded-full cursor-pointer profile-image"
 										onClick={() =>
 											router.push(follower.user.url)
 										}

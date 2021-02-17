@@ -5,12 +5,14 @@ import {
 	SET_UNAUTHENTICATED,
 	STOP_LOADING_UI,
 	UPDATE_USER_IMAGE,
+	SET_USER_PROFILE_DATA,
 } from "../types";
 
 const initialState = {
 	authenticated: false,
 	loading: false,
 	credentials: {},
+	profile: null,
 	notifications: [],
 };
 
@@ -18,6 +20,7 @@ interface State {
 	authenticated: boolean;
 	loading: boolean;
 	credentials: object;
+	profile: object;
 	notifications: any[];
 }
 
@@ -48,6 +51,11 @@ export default function user(
 			return Object.assign({}, state, {
 				credentials: payload,
 			});
+		case SET_USER_PROFILE_DATA:
+			return {
+				...state,
+				profile: payload,
+			};
 		default:
 			return state;
 	}

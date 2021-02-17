@@ -101,8 +101,10 @@ const SubPage = ({ sub, posts, uploadSubImage, follow }) => {
 
 			<>
 				{/* Sub info and images */}
+
 				<div>
 					{/* Banner image */}
+
 					{sub && (
 						<>
 							<input
@@ -154,6 +156,7 @@ const SubPage = ({ sub, posts, uploadSubImage, follow }) => {
 											height={70}
 										/>
 									</div>
+
 									<div className="pt-10 pl-6 md:pt-1 md:pl-24">
 										<div className="flex items-center">
 											<h1 className="mb-1 text-2xl font-bold sm:text-3xl">
@@ -212,39 +215,15 @@ const SubPage = ({ sub, posts, uploadSubImage, follow }) => {
 												</div>
 											</div>
 										</div>
-
-										{/* <div className="items-center sm:flex">
-											<div className="flex items-center sm:flex-shrink-0">
-												<p className="mt-2 text-xs text-center sm:text-left linebreaks">
-													{sub.description}
-												</p>
-												<div className="flex mt-1 text-xs font-medium text-center sm:text-left">
-													<div className="w-1/2">
-														<p>
-															{pluralize(
-																sub.postCount,
-																"entrada"
-															)}
-														</p>
-													</div>
-													<div className="w-1/2">
-														<p>
-															{pluralize(
-																sub.followerCount,
-																"grupi"
-															)}
-														</p>
-													</div>
-												</div>
-											</div>
-										</div> */}
 									</div>
 								</div>
 							</div>
 						</>
 					)}
 				</div>
+
 				{/* Posts & Sidebar */}
+
 				<div className="container flex pt-5">
 					<div className="w-full px-4 md:w-160 md:p-0160">
 						{isInitialLoading && (

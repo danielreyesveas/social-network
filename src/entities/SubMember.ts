@@ -1,4 +1,10 @@
-import { Entity as TOEntity, Column, ManyToOne, JoinColumn } from "typeorm";
+import {
+	Entity as TOEntity,
+	Column,
+	ManyToOne,
+	JoinColumn,
+	ManyToMany,
+} from "typeorm";
 
 import Entity from "./Entity";
 import Sub from "./Sub";
@@ -30,7 +36,7 @@ export default class SubMember extends Entity {
 	@Column()
 	subName: string;
 
-	@ManyToOne(() => User)
+	@ManyToOne(() => User, (user) => user.members)
 	@JoinColumn({ name: "username", referencedColumnName: "username" })
 	user: User;
 

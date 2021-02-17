@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import classNames from "classnames";
 
 import { useAuthState } from "../context/auth";
 import { useDispatch, useSelector } from "react-redux";

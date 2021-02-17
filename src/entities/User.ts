@@ -6,6 +6,7 @@ import {
 	Index,
 	BeforeInsert,
 	OneToMany,
+	ManyToMany,
 } from "typeorm";
 
 import bcrypt from "bcrypt";
@@ -17,6 +18,7 @@ import Vote from "./Vote";
 import Follow from "./Follow";
 import Comment from "./Comment";
 import Notification from "./Notification";
+import SubMember from "./SubMember";
 
 @TOEntity("users")
 export default class User extends Entity {
@@ -83,6 +85,10 @@ export default class User extends Entity {
 	@OneToMany(() => Follow, (follow) => follow.followedUser)
 	followers: Follow[];
 
+	@Exclude()
+	@OneToMany(() => SubMember, (member) => member.user)
+	members: SubMember[];
+
 	@Expose()
 	get postCount(): number {
 		return this.posts?.length;
@@ -94,22 +100,35 @@ export default class User extends Entity {
 	}
 
 	@Expose() get followCount(): number {
-		return this.follows?.reduce(
-			(prev, current) => prev + (current.value || 0),
-			0
-		);
+		return this.follows?.length;
 	}
 
 	@Expose() get followerCount(): number {
 		return this.followers?.length;
 	}
 
+	@Expose() get membersCount(): number {
+		return this.members?.length;
+	}
+
+	@Expose() get followPreview(): Follow[] {
+		return this.follows?.slice(0, 10);
+	}
+
 	@Expose() get followersPreview(): Follow[] {
 		return this.followers?.slice(0, 10);
 	}
 
+	@Expose() get membersPreview(): SubMember[] {
+		return this.members?.slice(0, 10);
+	}
+
 	@Expose() get lastNotifications(): Notification[] {
 		return this.notifications?.filter((n) => !n.read).slice(0, 10);
+	}
+
+	get allNotifications(): Notification[] {
+		return this.notifications;
 	}
 
 	@Expose() get url(): string {

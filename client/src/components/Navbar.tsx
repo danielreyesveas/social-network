@@ -1,8 +1,9 @@
 import Link from "next/link";
 import Logo from "../images/clics-b.svg";
 
+import classNames from "classnames";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Sub } from "../types";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -15,9 +16,36 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ loading, authenticated }) => {
+	const searchContainer = useRef(null);
+	const [showSearch, setShowSearch] = useState(false);
 	const [search, setSearch] = useState("");
 	const [subs, setSubs] = useState<Sub[]>([]);
 	const [timer, setTimer] = useState(null);
+
+	useEffect(() => {
+		const handleOutsideClick = (event: MouseEvent) => {
+			if (!searchContainer.current.contains(event.target)) {
+				if (!showSearch) return;
+				setShowSearch(false);
+			}
+		};
+
+		window.addEventListener("click", handleOutsideClick);
+		return () => window.removeEventListener("click", handleOutsideClick);
+	}, [showSearch, searchContainer]);
+
+	useEffect(() => {
+		const handleEscape = (event: KeyboardEvent) => {
+			if (!showSearch) return;
+
+			if (event.key === "Escape") {
+				setShowSearch(false);
+			}
+		};
+
+		document.addEventListener("keyup", handleEscape);
+		return () => document.removeEventListener("keyup", handleEscape);
+	}, [showSearch]);
 
 	const router = useRouter();
 
@@ -26,6 +54,7 @@ const Navbar: React.FC<NavbarProps> = ({ loading, authenticated }) => {
 			setSubs([]);
 			return;
 		}
+		setShowSearch(true);
 		searchSubs();
 	}, [search]);
 
@@ -57,7 +86,10 @@ const Navbar: React.FC<NavbarProps> = ({ loading, authenticated }) => {
 				</span>
 			</div>
 			{/* Serach Input */}
-			<div className="max-w-full px-2 sm-px-4 w-50 sm:w-160">
+			<div
+				className="max-w-full px-2 sm-px-4 w-50 sm:w-160"
+				ref={searchContainer}
+			>
 				<div className="relative flex items-center bg-gray-100 border rounded hover:border-blue-500 hover:bg-white">
 					<i className="pl-4 pr-3 text-gray-500 fas fa-search"></i>
 					<input
@@ -66,9 +98,16 @@ const Navbar: React.FC<NavbarProps> = ({ loading, authenticated }) => {
 						placeholder="¿Qué buscas?"
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
+						onClick={() => setShowSearch(!showSearch)}
 					/>
 					<div
-						className="absolute left-0 right-0 bg-white"
+						className={classNames(
+							"absolute left-0 right-0 bg-white",
+							{
+								block: showSearch,
+								hidden: !showSearch,
+							}
+						)}
 						style={{ top: "100%" }}
 					>
 						{subs?.map((sub) => (
@@ -108,11 +147,6 @@ const Navbar: React.FC<NavbarProps> = ({ loading, authenticated }) => {
 									entrar
 								</a>
 							</Link>
-							{/* <Link href="/register">
-								<a className="hidden w-20 py-1 leading-5 sm:block lg:w-32 blue button">
-									registro
-								</a>
-							</Link> */}
 						</>
 					))}
 			</div>

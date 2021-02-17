@@ -12,7 +12,7 @@ import postRoutes from "./routes/posts";
 import subRoutes from "./routes/subs";
 import miscRoutes from "./routes/misc";
 import userRoutes from "./routes/users";
-import chatRoutes from "./routes/chat";
+
 import { request, gql } from "graphql-request";
 import trim from "./middleware/trim";
 
@@ -49,7 +49,6 @@ app.use("/api/posts", postRoutes);
 app.use("/api/subs", subRoutes);
 app.use("/api/misc", miscRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/chat", chatRoutes);
 
 const NOTIFICATION = gql`
 	mutation createNotification($username: String!) {

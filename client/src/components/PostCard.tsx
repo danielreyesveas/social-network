@@ -5,7 +5,7 @@ import { Post } from "../types";
 import ActionButton from "./ActionButton";
 import { useAuthState } from "../context/auth";
 import { useRouter } from "next/router";
-import { tempo, pluralize, string_trunc } from "../utils";
+import { tempo, pluralize, string_trunc, linebreaks } from "../utils";
 import { vote } from "../redux/actions/dataActions";
 import { connect } from "react-redux";
 
@@ -132,7 +132,12 @@ const PostCard = ({
 
 				<div className="mb-3">
 					{body && (
-						<p className="my-1 text-sm">{string_trunc(body)}</p>
+						<p
+							dangerouslySetInnerHTML={{
+								__html: linebreaks(string_trunc(body)),
+							}}
+							className="my-1 text-sm"
+						></p>
 					)}
 				</div>
 

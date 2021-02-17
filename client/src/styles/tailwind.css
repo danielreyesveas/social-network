@@ -38,11 +38,11 @@
 	.profile-image {
 		max-width: 100%;
 		max-height: 100%;
-		-webkit-transition: 0.3s all;
+		-webkit-transition: 0.2s all;
 	}
 
 	.profile-image:hover {
-		-webkit-filter: brightness(150%);
+		-webkit-filter: brightness(105%);
 	}
 
 	.badge {

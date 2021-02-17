@@ -5,6 +5,7 @@ import {
 	CLEAR_ERRORS,
 	LOADING_UI,
 	STOP_LOADING_UI,
+	SET_USER_PROFILE_DATA,
 } from "../types";
 import { Dispatch } from "redux";
 import { User } from "../../types";

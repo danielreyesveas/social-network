@@ -1,27 +1,23 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import classNames from "classnames";
-import { User } from "../../types";
 import PostCard from "../../components/PostCard";
 import { Post, Comment } from "../../types";
-import axios from "axios";
-import { ChangeEvent, createRef, useEffect, useState } from "react";
+
+import { useEffect, useState } from "react";
 import { useAuthState } from "../../context";
 import { useGetUserData } from "../../hooks";
-import { uploadUserImage, follow } from "../../redux/actions/dataActions";
+import { follow } from "../../redux/actions/dataActions";
 
 import dayjs from "dayjs";
 import { connect } from "react-redux";
-import ActionButton from "../../components/ActionButton";
 import { pluralize } from "../../utils";
 
-const UserPage = ({ userData, uploadUserImage, follow }) => {
+const UserPage = ({ userData, follow }) => {
 	const router = useRouter();
 	const username = router.query.username;
 	const [ownProfile, setOwnProfile] = useState(false);
 	const { authenticated, user } = useAuthState();
-	const fileInputRef = createRef<HTMLInputElement>();
 
 	const { error } = useGetUserData(username);
 
@@ -34,11 +30,6 @@ const UserPage = ({ userData, uploadUserImage, follow }) => {
 		);
 	}, [userData]);
 
-	const openFileInput = () => {
-		if (!ownProfile) return;
-		fileInputRef.current.click();
-	};
-
 	const handleFollow = async () => {
 		if (!authenticated) router.push("/login");
 
@@ -50,16 +41,6 @@ const UserPage = ({ userData, uploadUserImage, follow }) => {
 			username,
 			value,
 		});
-	};
-
-	const uploadImage = async (event: ChangeEvent<HTMLInputElement>) => {
-		const file = event.target.files[0];
-
-		const formData = new FormData();
-		formData.append("file", file);
-		formData.append("username", user.username);
-
-		uploadUserImage(formData);
 	};
 
 	let submissionsMarkup;
@@ -119,125 +100,103 @@ const UserPage = ({ userData, uploadUserImage, follow }) => {
 				<title>{userData?.user.username}</title>
 			</Head>
 			{userData && (
-				<>
-					<input
-						type="file"
-						hidden={true}
-						ref={fileInputRef}
-						onChange={uploadImage}
-					/>
-					<div className="container flex pt-5">
-						<div className="w-160">{submissionsMarkup}</div>
+				<div className="container flex pt-5">
+					<div className="w-160">{submissionsMarkup}</div>
 
-						<div className="hidden ml-6 w-80 md:block">
-							<div className="bg-white rounded">
-								<div className="p-3 rounded-t bg-dark-3">
-									<img
-										alt="user profile"
-										src={userData.user.imageUrl}
-										className={classNames(
-											"w-16 h-16 mx-auto border-2 border-white rounded-full",
-											{
-												"cursor-pointer": ownProfile,
-											}
-										)}
-										onClick={() => openFileInput()}
-									/>
+					<div className="hidden ml-6 w-80 md:block">
+						<div className="bg-white rounded">
+							<div className="p-3 rounded-t bg-dark-3">
+								<img
+									alt="user profile"
+									src={userData.user.imageUrl}
+									className="w-16 h-16 mx-auto border-2 border-white rounded-full"
+								/>
+							</div>
+							<div className="p-3 text-center">
+								<h1 className="mb-4 text-xl">
+									{userData.user.username}
+								</h1>
+
+								<hr />
+
+								<p className="my-3">{userData.user.email}</p>
+
+								<p className="mb-3 text-md linebreaks">
+									{userData.user.bio}
+								</p>
+								<div className="flex mb-3 text-sm font-medium">
+									<div className="w-1/2">
+										<p>{userData.user.postCount}</p>
+										<p>
+											{pluralize(
+												userData.user.postCount,
+												"entrada",
+												false
+											)}
+										</p>
+									</div>
+									<div className="w-1/2">
+										<p>{userData.user.followerCount}</p>
+										<p>
+											{pluralize(
+												userData.user.followerCount,
+												"grupi",
+												false
+											)}
+										</p>
+									</div>
 								</div>
-								<div className="p-3 text-center">
-									<h1 className="mb-4 text-xl">
-										{userData.user.username}
-									</h1>
 
-									<hr />
+								{userData.user.followersPreview.length > 0 && (
+									<div className="my-5">
+										<h2 className="text-center">Grupis</h2>
 
-									<p className="my-3">
-										{userData.user.email}
-									</p>
-
-									<p className="mb-3 text-md linebreaks">
-										{userData.user.bio}
-									</p>
-									<div className="flex mb-3 text-sm font-medium">
-										<div className="w-1/2">
-											<p>{userData.user.postCount}</p>
-											<p>
-												{pluralize(
-													userData.user.postCount,
-													"entrada",
-													false
-												)}
-											</p>
-										</div>
-										<div className="w-1/2">
-											<p>{userData.user.followerCount}</p>
-											<p>
-												{pluralize(
-													userData.user.followerCount,
-													"grupi",
-													false
-												)}
-											</p>
+										<div className="-space-x-4">
+											{userData.user.followersPreview.map(
+												(follower) => (
+													<img
+														key={follower.username}
+														className="relative inline object-cover w-10 h-10 border-2 border-white rounded-full cursor-pointer profile-image"
+														onClick={() =>
+															router.push(
+																follower.user
+																	.url
+															)
+														}
+														src={
+															follower.user
+																.imageUrl
+														}
+														alt="Profile image"
+													/>
+												)
+											)}
 										</div>
 									</div>
+								)}
 
-									{userData.user.followersPreview.length >
-										0 && (
-										<div className="my-5">
-											<h2 className="text-center">
-												Grupis
-											</h2>
-
-											<div className="-space-x-4">
-												{userData.user.followersPreview.map(
-													(follower) => (
-														<img
-															key={
-																follower.username
-															}
-															className="relative inline object-cover w-10 h-10 border-2 border-white rounded-full cursor-pointer profile-image"
-															onClick={() =>
-																router.push(
-																	follower
-																		.user
-																		.url
-																)
-															}
-															src={
-																follower.user
-																	.imageUrl
-															}
-															alt="Profile image"
-														/>
-													)
-												)}
-											</div>
-										</div>
+								<p className="my-3">
+									<i className="mr-2 fas fa-birthday-cake"></i>
+									Se unió el{" "}
+									{dayjs(userData.user.createdAt).format(
+										"D MMM YYYY"
 									)}
+								</p>
 
-									<p className="my-3">
-										<i className="mr-2 fas fa-birthday-cake"></i>
-										Se unió el{" "}
-										{dayjs(userData.user.createdAt).format(
-											"D MMM YYYY"
-										)}
-									</p>
-
-									{!ownProfile && (
-										<a
-											className="px-4 py-1 mt-4 hollow primary button"
-											onClick={handleFollow}
-										>
-											{!!userData.user.userFollow
-												? "dejar"
-												: "seguir"}
-										</a>
-									)}
-								</div>
+								{!ownProfile && (
+									<a
+										className="px-4 py-1 mt-4 hollow primary button"
+										onClick={handleFollow}
+									>
+										{!!userData.user.userFollow
+											? "dejar"
+											: "seguir"}
+									</a>
+								)}
 							</div>
 						</div>
 					</div>
-				</>
+				</div>
 			)}
 		</>
 	);
@@ -248,7 +207,6 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapActionsToProps = {
-	uploadUserImage,
 	follow,
 };
 

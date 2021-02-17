@@ -43,7 +43,7 @@
 		"client": "cd client && npm run dev",
 		"chat": "cd ../chat-app && nodemon server.js --ignore client",
 		"dev": "concurrently --kill-others \"npm run server\"  \"npm run client\" -n server,client",
-		"devs": "concurrently --kill-others \"npm run server\" \"npm run chat\"  \"npm run client\" -n server,chat,client",
+		"full": "concurrently --kill-others \"npm run server\" \"npm run chat\"  \"npm run client\" -n server,chat,client",
 		"typeorm": "ts-node ./node_modules/typeorm/cli.js",
 		"seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed"
 	}

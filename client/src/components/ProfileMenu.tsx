@@ -1,32 +1,103 @@
 import classNames from "classnames";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useRef, useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { useUIState, useUIDispatch, useAuthDispatch } from "../context";
+import { useUIDispatch, useAuthDispatch } from "../context";
 import { logout } from "../redux/actions/userActions";
-import { connect } from "react-redux";
 
 export default function ProfileMenu() {
+	const router = useRouter();
 	const user = useSelector((state: any) => state.user.credentials);
-
+	const profileMenuContainer = useRef(null);
+	const notificationsContainer = useRef(null);
+	const [showProfileMenu, setShowProfileMenu] = useState(false);
+	const [showNotifications, setShowNotifications] = useState(false);
 	const dispatch = useDispatch();
-
-	const { showProfileMenu, showNotifications } = useUIState();
-
-	const uiDispatch = useUIDispatch();
 	const authDispatch = useAuthDispatch();
+	const uiDispatch = useUIDispatch();
+
+	useEffect(() => {
+		const handleOutsideClick = (event: MouseEvent) => {
+			if (!profileMenuContainer.current.contains(event.target)) {
+				if (!showProfileMenu) return;
+				setShowProfileMenu(false);
+			}
+		};
+
+		window.addEventListener("click", handleOutsideClick);
+		return () => window.removeEventListener("click", handleOutsideClick);
+	}, [showProfileMenu, profileMenuContainer]);
+
+	useEffect(() => {
+		const handleEscape = (event: KeyboardEvent) => {
+			if (!showProfileMenu) return;
+
+			if (event.key === "Escape") {
+				setShowProfileMenu(false);
+			}
+		};
+
+		document.addEventListener("keyup", handleEscape);
+		return () => document.removeEventListener("keyup", handleEscape);
+	}, [showProfileMenu]);
+
+	useEffect(() => {
+		const handleOutsideClick = (event: MouseEvent) => {
+			if (!notificationsContainer.current.contains(event.target)) {
+				if (!showNotifications) return;
+				setShowNotifications(false);
+			}
+		};
+
+		window.addEventListener("click", handleOutsideClick);
+		return () => window.removeEventListener("click", handleOutsideClick);
+	}, [showNotifications, notificationsContainer]);
+
+	useEffect(() => {
+		const handleEscape = (event: KeyboardEvent) => {
+			if (!showNotifications) return;
+
+			if (event.key === "Escape") {
+				setShowNotifications(false);
+			}
+		};
+
+		document.addEventListener("keyup", handleEscape);
+		return () => document.removeEventListener("keyup", handleEscape);
+	}, [showNotifications]);
 
 	const handleShow = () => {
-		uiDispatch("TOGGLE_PROFILE_MENU");
+		setShowProfileMenu(!showProfileMenu);
 	};
 
 	const handleShowNotifications = () => {
-		uiDispatch("TOGGLE_NOTIFICATIONS");
+		setShowNotifications(!showNotifications);
 	};
 
-	const handleLogout = async (e) => {
+	const handleShowAllNotifications = () => {
+		uiDispatch("TOGGLE_NOTIFICATIONS_TAB", true);
+		setShowNotifications(false);
+		router.push("/profile");
+	};
+
+	const handleProfile = (e: React.MouseEvent<Element, MouseEvent>) => {
 		e.preventDefault();
-		uiDispatch("TOGGLE_PROFILE_MENU");
+		uiDispatch("TOGGLE_NOTIFICATIONS_TAB", false);
+		setShowProfileMenu(false);
+		router.push("/profile");
+	};
+
+	const handleChat = (e: React.MouseEvent<Element, MouseEvent>) => {
+		e.preventDefault();
+		setShowProfileMenu(false);
+		router.push("/chat");
+	};
+
+	const handleLogout = async (e: React.MouseEvent<Element, MouseEvent>) => {
+		e.preventDefault();
+		setShowProfileMenu(false);
 		dispatch(logout());
 		authDispatch("LOGOUT");
 	};
@@ -39,6 +110,7 @@ export default function ProfileMenu() {
 						<button
 							className="relative p-1"
 							onClick={handleShowNotifications}
+							ref={notificationsContainer}
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -61,7 +133,7 @@ export default function ProfileMenu() {
 						</button>
 						<div
 							className={classNames(
-								"absolute right-0 z-50 w-60 py-1 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 divide-y divide-gray-100",
+								"absolute right-0 z-50 w-60 pt-1 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 divide-y divide-gray-100",
 								{
 									block: showNotifications,
 									hidden: !showNotifications,
@@ -72,7 +144,10 @@ export default function ProfileMenu() {
 							aria-labelledby="user-menu"
 						>
 							{user.lastNotifications?.map((notification) => (
-								<div className="flex items-center px-2 py-3 text-xs text-gray-500 md:flex-shrink-0">
+								<div
+									className="flex items-center px-2 py-3 text-xs text-gray-500 md:flex-shrink-0"
+									key={notification.identifier}
+								>
 									A
 									<Link
 										href={`/u/${notification.sendername}`}
@@ -92,6 +167,13 @@ export default function ProfileMenu() {
 									le caes mal
 								</div>
 							))}
+
+							<a
+								className="block py-2 font-bold text-center text-white cursor-pointer bg-dark-3 rounded-b-md"
+								onClick={handleShowAllNotifications}
+							>
+								Ver todas
+							</a>
 						</div>
 					</div>
 				</div>
@@ -99,7 +181,7 @@ export default function ProfileMenu() {
 
 			<div className="relative inline-block text-left">
 				<div className="relative ml-3">
-					<div>
+					<div ref={profileMenuContainer}>
 						<button
 							className="flex text-sm bg-gray-800 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
 							id="user-menu"
@@ -108,7 +190,7 @@ export default function ProfileMenu() {
 						>
 							<span className="sr-only">Open user menu</span>
 							<img
-								className="w-8 h-8 rounded-full"
+								className="w-8 h-8 rounded-full min-h-8 min-w-8"
 								src={user.imageUrl}
 								alt=""
 							/>
@@ -130,25 +212,22 @@ export default function ProfileMenu() {
 							</span>
 						</div>
 						<div className="py-1">
-							<Link href={user.url}>
-								<a
-									onClick={handleShow}
-									className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-									role="menuitem"
-								>
-									Perfil
-								</a>
-							</Link>
-							<Link href="/chat">
-								<a
-									onClick={handleShow}
-									href="#"
-									className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-									role="menuitem"
-								>
-									Chat
-								</a>
-							</Link>
+							<a
+								onClick={(e) => handleProfile(e)}
+								href="#"
+								className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+								role="menuitem"
+							>
+								Perfil
+							</a>
+							<a
+								onClick={(e) => handleChat(e)}
+								href="#"
+								className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+								role="menuitem"
+							>
+								Chat
+							</a>
 						</div>
 						<a
 							onClick={(e) => handleLogout(e)}

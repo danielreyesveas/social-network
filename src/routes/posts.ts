@@ -96,11 +96,18 @@ const getPost = async (request: Request, response: Response) => {
 };
 
 const updatePost = async (request: Request, response: Response) => {
+	const user = response.locals.user;
 	const { identifier, slug } = request.params;
 	const { title, body } = request.body;
 
 	try {
 		const post = await Post.findOneOrFail({ identifier, slug });
+
+		if (post.username !== user.username) {
+			return response
+				.status(403)
+				.json({ error: "No puedes editar este Post." });
+		}
 
 		post.title = title;
 		post.body = body;
@@ -117,6 +124,7 @@ const updatePost = async (request: Request, response: Response) => {
 };
 
 const commentOnPost = async (request: Request, response: Response) => {
+	const user = response.locals.user;
 	const { identifier, slug } = request.params;
 	const { body } = request.body;
 
@@ -125,7 +133,7 @@ const commentOnPost = async (request: Request, response: Response) => {
 
 		const comment = new Comment({
 			body,
-			user: response.locals.user,
+			user,
 			post,
 		});
 
