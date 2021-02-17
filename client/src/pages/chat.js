@@ -18,18 +18,6 @@ const NEW_MESSAGE = gql`
 	}
 `;
 
-const NEW_NOTIFICATION = gql`
-	subscription newNotification {
-		newNotification {
-			uuid
-			from
-			to
-			content
-			createdAt
-		}
-	}
-`;
-
 const NEW_REACTION = gql`
 	subscription newReaction {
 		newReaction {
@@ -54,23 +42,9 @@ export default function Chat({ history }) {
 		NEW_MESSAGE
 	);
 
-	const {
-		data: notificationData,
-		error: notificationError,
-	} = useSubscription(NEW_NOTIFICATION);
-
 	// const { data: reactionData, error: reactionError } = useSubscription(
 	// 	NEW_REACTION
 	// );
-
-	useEffect(() => {
-		if (notificationError) console.error(notificationError);
-
-		if (notificationData) {
-			console.log(notificationData);
-		}
-		// eslint-disable-next-line
-	}, [notificationData, notificationError]);
 
 	useEffect(() => {
 		if (messageError) console.error(messageError);

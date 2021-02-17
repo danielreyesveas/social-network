@@ -33,7 +33,7 @@ interface State {
 	posts: Post[];
 	post?: Post;
 	comments: Comment[];
-	userData: object;
+	userData: any;
 	loading: boolean;
 }
 
@@ -83,12 +83,6 @@ export default function Reducer(
 					}),
 				};
 			}
-		case UPDATE_USER_IMAGE:
-			return Object.assign({}, state, {
-				userData: Object.assign({}, state.userData, {
-					user: payload,
-				}),
-			});
 		case UPDATE_POST:
 			return {
 				...state,

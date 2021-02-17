@@ -6,6 +6,7 @@ import {
 	STOP_LOADING_UI,
 	UPDATE_USER_IMAGE,
 	SET_USER_PROFILE_DATA,
+	SET_NEW_NOTIFICATION,
 } from "../types";
 
 const initialState = {
@@ -19,8 +20,8 @@ const initialState = {
 interface State {
 	authenticated: boolean;
 	loading: boolean;
-	credentials: object;
-	profile: object;
+	credentials: any;
+	profile: any;
 	notifications: any[];
 }
 
@@ -48,14 +49,45 @@ export default function user(
 				credentials: payload,
 			};
 		case UPDATE_USER_IMAGE:
-			return Object.assign({}, state, {
-				credentials: payload,
-			});
+			return {
+				...state,
+				credentials: Object.assign({}, state.credentials, {
+					imageUrl: payload.imageUrl,
+				}),
+				profile: Object.assign({}, state.profile, {
+					user: Object.assign({}, state.profile.user, {
+						imageUrl: payload.imageUrl,
+					}),
+				}),
+			};
 		case SET_USER_PROFILE_DATA:
 			return {
 				...state,
 				profile: payload,
 			};
+		case SET_NEW_NOTIFICATION:
+			return {
+				...state,
+				credentials: Object.assign({}, state.credentials, {
+					lastNotifications: [
+						payload,
+						...state.credentials.lastNotifications.slice(0, -1),
+					],
+					notificationCount: state.credentials.notificationCount + 1,
+				}),
+				profile: Object.assign({}, state.profile, {
+					user: Object.assign({}, state.profile.user, {
+						allNotifications: [
+							payload,
+							...state.profile.user.allNotifications,
+						],
+					}),
+				}),
+			};
+		case UPDATE_USER_IMAGE:
+			return Object.assign({}, state, {
+				credentials: payload,
+			});
 		default:
 			return state;
 	}

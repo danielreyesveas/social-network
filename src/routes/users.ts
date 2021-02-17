@@ -176,6 +176,7 @@ const profile = async (_: Request, response: Response) => {
 				"followers.user",
 				"members",
 				"members.sub",
+				"subs",
 				"posts",
 				"comments",
 			],

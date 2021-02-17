@@ -2,10 +2,33 @@ import classNames from "classnames";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useRef, useEffect, useState } from "react";
-
+import { gql, useSubscription } from "@apollo/client";
 import { useDispatch, useSelector } from "react-redux";
 import { useUIDispatch, useAuthDispatch } from "../context";
 import { logout } from "../redux/actions/userActions";
+import { tempo } from "../utils";
+import dayjs from "dayjs";
+
+const NEW_NOTIFICATION = gql`
+	subscription newNotification {
+		newNotification {
+			identifier
+			type
+			sender {
+				username
+				imageUrl
+			}
+			sub {
+				name
+				imageUrl
+			}
+			comment {
+				body
+			}
+			createdAt
+		}
+	}
+`;
 
 export default function ProfileMenu() {
 	const router = useRouter();
@@ -17,6 +40,24 @@ export default function ProfileMenu() {
 	const dispatch = useDispatch();
 	const authDispatch = useAuthDispatch();
 	const uiDispatch = useUIDispatch();
+
+	const {
+		data: notificationData,
+		error: notificationError,
+	} = useSubscription(NEW_NOTIFICATION);
+
+	useEffect(() => {
+		if (notificationError) console.error(notificationError);
+
+		if (notificationData) {
+			const { newNotification } = notificationData;
+			dispatch({
+				type: "SET_NEW_NOTIFICATION",
+				payload: newNotification,
+			});
+		}
+		// eslint-disable-next-line
+	}, [notificationData, notificationError]);
 
 	useEffect(() => {
 		const handleOutsideClick = (event: MouseEvent) => {
@@ -108,28 +149,30 @@ export default function ProfileMenu() {
 				<div className="relative ml-3">
 					<div>
 						<button
-							className="relative p-1"
+							className="relative p-1 top-1 focus:outline-none"
 							onClick={handleShowNotifications}
 							ref={notificationsContainer}
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								width="18"
-								height="18"
+								width="20"
+								height="20"
 								viewBox="0 0 24 24"
 								fill="none"
 								stroke="currentColor"
 								strokeWidth="2"
 								strokeLinecap="round"
 								strokeLinejoin="round"
-								className="w-4 h-4"
+								className="w-5 h-5"
 							>
 								<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
 								<path d="M13.73 21a2 2 0 0 1-3.46 0" />
 							</svg>
-							<span className="badge">
-								{user.lastNotifications.length}
-							</span>
+							{user.notificationCount > 0 && (
+								<span className="badge">
+									{user.notificationCount}
+								</span>
+							)}
 						</button>
 						<div
 							className={classNames(
@@ -150,7 +193,7 @@ export default function ProfileMenu() {
 								>
 									A
 									<Link
-										href={`/u/${notification.sendername}`}
+										href={`/u/${notification.sender.username}`}
 									>
 										<img
 											src={notification.sender.imageUrl}
@@ -158,13 +201,16 @@ export default function ProfileMenu() {
 										/>
 									</Link>
 									<Link
-										href={`/u/${notification.sendername}`}
+										href={`/u/${notification.sender.username}`}
 									>
 										<a className="mr-1 font-semibold hover:underline">
-											/u/{notification.sendername}
+											/u/{notification.sender.username}
 										</a>
 									</Link>
-									le caes mal
+									le caes mal{" "}
+									{dayjs(notification.createdAt).format(
+										"HH:mm:ss"
+									)}
 								</div>
 							))}
 
@@ -183,7 +229,7 @@ export default function ProfileMenu() {
 				<div className="relative ml-3">
 					<div ref={profileMenuContainer}>
 						<button
-							className="flex text-sm bg-gray-800 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+							className="flex text-sm bg-gray-800 rounded-full focus:outline-none focus:ring-white"
 							id="user-menu"
 							aria-haspopup="true"
 							onClick={handleShow}

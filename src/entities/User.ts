@@ -19,6 +19,7 @@ import Follow from "./Follow";
 import Comment from "./Comment";
 import Notification from "./Notification";
 import SubMember from "./SubMember";
+import Sub from "./Sub";
 
 @TOEntity("users")
 export default class User extends Entity {
@@ -66,6 +67,9 @@ export default class User extends Entity {
 	@OneToMany(() => Post, (post) => post.user)
 	posts: Post[];
 
+	@OneToMany(() => Sub, (sub) => sub.user)
+	subs: Sub[];
+
 	@Exclude()
 	@OneToMany(() => Comment, (comment) => comment.user)
 	comments: Comment[];
@@ -111,24 +115,31 @@ export default class User extends Entity {
 		return this.members?.length;
 	}
 
+	@Expose() get notificationCount(): number {
+		return this.notifications?.filter((n) => !n.read).length;
+	}
+
 	@Expose() get followPreview(): Follow[] {
-		return this.follows?.slice(0, 10);
+		return this.follows?.slice(-10).reverse();
 	}
 
 	@Expose() get followersPreview(): Follow[] {
-		return this.followers?.slice(0, 10);
+		return this.followers?.slice(-10).reverse();
 	}
 
 	@Expose() get membersPreview(): SubMember[] {
-		return this.members?.slice(0, 10);
+		return this.members?.slice(-10).reverse();
 	}
 
 	@Expose() get lastNotifications(): Notification[] {
-		return this.notifications?.filter((n) => !n.read).slice(0, 10);
+		return this.notifications
+			?.filter((n) => !n.read)
+			.slice(-6)
+			.reverse();
 	}
 
-	get allNotifications(): Notification[] {
-		return this.notifications;
+	@Expose() get allNotifications(): Notification[] {
+		return this.notifications?.reverse();
 	}
 
 	@Expose() get url(): string {

@@ -21,7 +21,10 @@ export default function ProfilePage() {
 	const [activeTab, setActiveTab] = useState("profile");
 	const { authenticated, user } = useAuthState();
 	const fileInputRef = createRef<HTMLInputElement>();
+
 	const profileData = useSelector((state: any) => state.user.profile);
+	const dispatch = useDispatch();
+
 	const { showNotificationsTab } = useUIState();
 	const uiDispatch = useUIDispatch();
 
@@ -50,12 +53,13 @@ export default function ProfilePage() {
 
 	const uploadImage = async (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files[0];
+		console.log("PHOTO");
 
 		const formData = new FormData();
 		formData.append("file", file);
 		formData.append("username", user.username);
 
-		uploadUserImage(formData);
+		dispatch(uploadUserImage(formData));
 	};
 
 	let submissionsMarkup, notificationsMarkup, profileMarkup;
@@ -64,75 +68,7 @@ export default function ProfilePage() {
 		submissionsMarkup = notificationsMarkup = profileMarkup = (
 			<p className="text-lg text-center">Cargando..</p>
 		);
-	} else if (profileData.submissions.length === 0) {
-		submissionsMarkup = notificationsMarkup = profileMarkup = (
-			<p className="text-lg text-center">Nada todavía...</p>
-		);
 	} else {
-		submissionsMarkup = profileData.submissions.map((submission: any) => {
-			if (submission.type === "Post") {
-				const post: Post = submission;
-				return <PostCard key={post.identifier} post={post} />;
-			} else {
-				const comment: Comment = submission;
-				return (
-					<div
-						key={comment.identifier}
-						className="flex my-4 bg-white rounded"
-					>
-						<div className="flex-shrink-0 w-10 py-4 text-center bg-gray-200 rounded-l">
-							<i className="text-gray-400 fas fa-comment-alt fa-xs"></i>
-						</div>
-						<div className="w-full p-2">
-							<p className="mb-2 text-xs text-gray-500">
-								{comment.username}
-								<span> ha comentado en </span>
-								<Link href={comment.post.url}>
-									<a className="font-semibold cursor-pointer hover:underline">
-										{comment.post.title}
-									</a>
-								</Link>
-								<span className="mx-1">•</span>
-								<Link href={`/g/${comment.post.subName}`}>
-									<a className="text-black cursor-pointer hover:underline">
-										/g/
-										{comment.post.subName}
-									</a>
-								</Link>
-							</p>
-
-							<hr />
-
-							<p className="mt-2">{comment.body}</p>
-						</div>
-					</div>
-				);
-			}
-		});
-		notificationsMarkup = profileData?.user?.lastNotifications.map(
-			(notification: any) => {
-				return (
-					<div
-						className="flex items-center px-2 py-3 text-xs text-gray-500 md:flex-shrink-0"
-						key={notification.identifier}
-					>
-						A
-						<Link href={`/u/${notification.sendername}`}>
-							<img
-								src={notification.sender.imageUrl}
-								className="w-6 h-6 mx-1 rounded-full cursor-pointer"
-							/>
-						</Link>
-						<Link href={`/u/${notification.sendername}`}>
-							<a className="mr-1 font-semibold hover:underline">
-								/u/{notification.sendername}
-							</a>
-						</Link>
-						le caes mal
-					</div>
-				);
-			}
-		);
 		profileMarkup = (
 			<div className="p-3 text-center">
 				<div className="flex mb-3 text-sm font-medium">
@@ -157,6 +93,31 @@ export default function ProfilePage() {
 						</p>
 					</div>
 				</div>
+
+				{profileData.user.subs.length > 0 && (
+					<div className="my-5">
+						<h2 className="text-center">Grupos</h2>
+
+						{profileData.user.subs.map((sub) => (
+							<div
+								key={sub.name}
+								className="flex items-center cursor-pointer hover:bg-gray-200 hover:border-primary-4 group"
+								onClick={() => router.push(sub.url)}
+							>
+								<img
+									src={sub.imageUrl}
+									className="relative z-30 inline object-cover w-12 h-12 border-2 border-white rounded-full"
+									alt="User"
+								/>
+								<div className="ml-2 text-sm">
+									<p className="text-xs font-medium">
+										{sub.url}
+									</p>
+								</div>
+							</div>
+						))}
+					</div>
+				)}
 
 				{profileData.user.membersPreview.length > 0 && (
 					<div className="my-5">
@@ -211,6 +172,81 @@ export default function ProfilePage() {
 				</p>
 			</div>
 		);
+		notificationsMarkup = profileData?.user?.allNotifications.map(
+			(notification: any) => {
+				return (
+					<div
+						className="flex items-center px-2 py-3 text-xs text-gray-500 md:flex-shrink-0"
+						key={notification.identifier}
+					>
+						A
+						<Link href={`/u/${notification.sender.username}`}>
+							<img
+								src={notification.sender.imageUrl}
+								className="w-6 h-6 mx-1 rounded-full cursor-pointer"
+							/>
+						</Link>
+						<Link href={`/u/${notification.sender.username}`}>
+							<a className="mr-1 font-semibold hover:underline">
+								/u/{notification.sender.username}
+							</a>
+						</Link>
+						le caes mal{" "}
+						{dayjs(notification.createdAt).format("HH:mm:ss")}
+					</div>
+				);
+			}
+		);
+		if (profileData.submissions.length === 0) {
+			submissionsMarkup = (
+				<p className="text-lg text-center">Nada todavía...</p>
+			);
+		} else {
+			submissionsMarkup = profileData.submissions.map(
+				(submission: any) => {
+					if (submission.type === "Post") {
+						const post: Post = submission;
+						return <PostCard key={post.identifier} post={post} />;
+					} else {
+						const comment: Comment = submission;
+						return (
+							<div
+								key={comment.identifier}
+								className="flex my-4 bg-white rounded"
+							>
+								<div className="flex-shrink-0 w-10 py-4 text-center bg-gray-200 rounded-l">
+									<i className="text-gray-400 fas fa-comment-alt fa-xs"></i>
+								</div>
+								<div className="w-full p-2">
+									<p className="mb-2 text-xs text-gray-500">
+										{comment.username}
+										<span> ha comentado en </span>
+										<Link href={comment.post.url}>
+											<a className="font-semibold cursor-pointer hover:underline">
+												{comment.post.title}
+											</a>
+										</Link>
+										<span className="mx-1">•</span>
+										<Link
+											href={`/g/${comment.post.subName}`}
+										>
+											<a className="text-black cursor-pointer hover:underline">
+												/g/
+												{comment.post.subName}
+											</a>
+										</Link>
+									</p>
+
+									<hr />
+
+									<p className="mt-2">{comment.body}</p>
+								</div>
+							</div>
+						);
+					}
+				}
+			);
+		}
 	}
 
 	return (

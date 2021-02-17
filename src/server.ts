@@ -50,20 +50,6 @@ app.use("/api/subs", subRoutes);
 app.use("/api/misc", miscRoutes);
 app.use("/api/users", userRoutes);
 
-const NOTIFICATION = gql`
-	mutation createNotification($username: String!) {
-		createNotification(username: $username) {
-			content
-		}
-	}
-`;
-
-app.get("/api/notificate", (_, res) => {
-	request("http://localhost:4000/graphql", NOTIFICATION, {
-		username: "tuto",
-	}).then((data) => res.send(data));
-});
-
 app.listen(PORT, async () => {
 	console.log(`SERVER RUNNING at http://localhost:${PORT}`);
 

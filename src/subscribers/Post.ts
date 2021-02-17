@@ -9,9 +9,7 @@ import { request, gql } from "graphql-request";
 const NOTIFICATION = gql`
 	mutation createNotification($username: String!) {
 		createNotification(username: $username) {
-			to {
-				username
-			}
+			identifier
 		}
 	}
 `;
