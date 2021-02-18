@@ -13,7 +13,6 @@ import { Post, Sub, Comment } from "../types";
 
 export const useGetPosts = () => {
 	const dispatch = useDispatch();
-
 	const {
 		data,
 		error,
@@ -21,6 +20,23 @@ export const useGetPosts = () => {
 		setSize: setPage,
 		revalidate,
 	} = useSWRInfinite<Post[]>((index) => `/posts?page=${index}`, {
+		onSuccess: (data) => {
+			dispatch({ type: SET_POSTS, payload: data });
+		},
+	});
+
+	return { data, error, page, setPage, revalidate };
+};
+
+export const useGetBookmarkPosts = () => {
+	const dispatch = useDispatch();
+	const {
+		data,
+		error,
+		size: page,
+		setSize: setPage,
+		revalidate,
+	} = useSWRInfinite<Post[]>((ind) => `/posts/bookmarks?page=${ind}`, {
 		onSuccess: (data) => {
 			dispatch({ type: SET_POSTS, payload: data });
 		},

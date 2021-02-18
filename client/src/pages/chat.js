@@ -97,16 +97,16 @@ export default function Chat({ history }) {
 			</Head>
 
 			<div className="container flex pt-4">
-				<div className="flex w-full h-full antialiased text-gray-800">
+				<div className="flex w-full h-screen antialiased text-gray-800">
 					<div className="flex flex-row w-full overflow-x-hidden">
-						<div className="flex flex-col flex-shrink-0 w-64 py-8 pl-6 pr-2 bg-white">
+						<div className="flex flex-col flex-shrink-0 w-64 py-8 pl-6 pr-2 bg-white rounded-md">
 							<div className="flex flex-row items-center justify-center w-full h-12">
 								<div className="ml-2 text-2xl font-bold">
 									Chat
 								</div>
 							</div>
-							<div className="flex flex-col items-center w-full px-4 py-6 mt-4 bg-indigo-100 border border-gray-200 rounded-lg">
-								<div className="w-20 h-20 overflow-hidden border rounded-full">
+							<div className="flex flex-col items-center w-full px-4 py-6 mt-4 bg-indigo-100 border border-gray-200 rounded-md">
+								<div className="w-20 h-20 overflow-hidden border rounded-md">
 									<img
 										src={user.imageUrl}
 										alt="Avatar"

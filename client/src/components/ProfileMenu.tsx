@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useUIDispatch, useAuthDispatch } from "../context";
 import { logout } from "../redux/actions/userActions";
 import { tempo } from "../utils";
-import dayjs from "dayjs";
 
 const NEW_NOTIFICATION = gql`
 	subscription newNotification {
@@ -123,21 +122,23 @@ export default function ProfileMenu() {
 		router.push("/profile");
 	};
 
-	const handleProfile = (e: React.MouseEvent<Element, MouseEvent>) => {
-		e.preventDefault();
+	const handleProfile = () => {
 		uiDispatch("TOGGLE_NOTIFICATIONS_TAB", false);
 		setShowProfileMenu(false);
 		router.push("/profile");
 	};
 
-	const handleChat = (e: React.MouseEvent<Element, MouseEvent>) => {
-		e.preventDefault();
+	const handleChat = () => {
 		setShowProfileMenu(false);
 		router.push("/chat");
 	};
 
-	const handleLogout = async (e: React.MouseEvent<Element, MouseEvent>) => {
-		e.preventDefault();
+	const handleBookmarks = () => {
+		setShowProfileMenu(false);
+		router.push("/bookmarks");
+	};
+
+	const handleLogout = async () => {
 		setShowProfileMenu(false);
 		dispatch(logout());
 		authDispatch("LOGOUT");
@@ -207,10 +208,7 @@ export default function ProfileMenu() {
 											/u/{notification.sender.username}
 										</a>
 									</Link>
-									le caes mal{" "}
-									{dayjs(notification.createdAt).format(
-										"HH:mm:ss"
-									)}
+									le caes mal {tempo(notification.createdAt)}
 								</div>
 							))}
 
@@ -259,26 +257,30 @@ export default function ProfileMenu() {
 						</div>
 						<div className="py-1">
 							<a
-								onClick={(e) => handleProfile(e)}
-								href="#"
-								className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+								onClick={handleProfile}
+								className="menu-item"
 								role="menuitem"
 							>
 								Perfil
 							</a>
 							<a
-								onClick={(e) => handleChat(e)}
-								href="#"
-								className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+								onClick={handleChat}
+								className="menu-item"
 								role="menuitem"
 							>
 								Chat
 							</a>
+							<a
+								onClick={handleBookmarks}
+								className="menu-item"
+								role="menuitem"
+							>
+								Marcadores
+							</a>
 						</div>
 						<a
-							onClick={(e) => handleLogout(e)}
-							href="#"
-							className="block px-4 py-2 text-sm text-right text-gray-700 hover:bg-gray-100"
+							onClick={handleLogout}
+							className="text-right menu-item"
 							role="menuitem"
 						>
 							salir{" "}

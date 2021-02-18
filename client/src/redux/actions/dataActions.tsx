@@ -10,6 +10,7 @@ import {
 	SET_POST,
 	VOTE,
 	FOLLOW,
+	BOOKMARK,
 } from "../types";
 import { Dispatch } from "redux";
 import { Post, Sub, Comment, User } from "../../types";
@@ -156,6 +157,27 @@ export const follow = ({ subName = null, username = null, value }) => async (
 					...response.data,
 					username,
 				},
+			});
+		})
+		.catch((error) => {
+			console.error(error);
+		});
+};
+
+export const bookmark = ({
+	identifier,
+	slug,
+	isBookmarkPage = false,
+}) => async (dispatch: Dispatch) => {
+	axios
+		.post("/misc/bookmark", {
+			identifier,
+			slug,
+		})
+		.then((response) => {
+			dispatch({
+				type: BOOKMARK,
+				payload: { data: response.data, isBookmarkPage },
 			});
 		})
 		.catch((error) => {

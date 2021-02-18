@@ -14,6 +14,7 @@ import {
 	UpdateEvent,
 } from "typeorm";
 import { makeId, slugify } from "../utils/helpers";
+import Bookmark from "./Bookmark";
 import Comment from "./Comment";
 
 import Entity from "./Entity";
@@ -64,6 +65,10 @@ export default class Post extends Entity {
 	@OneToMany(() => Vote, (vote) => vote.post)
 	votes: Vote[];
 
+	@Exclude()
+	@OneToMany(() => Bookmark, (bookmark) => bookmark.post)
+	bookmarks: Bookmark[];
+
 	@Expose() get commentCount(): number {
 		return this.comments?.length;
 	}
@@ -85,6 +90,14 @@ export default class Post extends Entity {
 			(v) => v.username === user.username
 		);
 		this.userVote = index > -1 ? this.votes[index].value : 0;
+	}
+
+	protected userBookmark: boolean;
+	setUserBookmark(user: User) {
+		const index = this.bookmarks?.findIndex(
+			(b) => b.username === user.username
+		);
+		this.userBookmark = index > -1;
 	}
 
 	@BeforeInsert()

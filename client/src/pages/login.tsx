@@ -2,7 +2,6 @@ import { FormEvent, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import axios from "axios";
 import InputGroup from "../components/InputGroup";
 
 import { login } from "../redux/actions/userActions";

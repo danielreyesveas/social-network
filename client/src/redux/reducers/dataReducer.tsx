@@ -14,6 +14,7 @@ import {
 	SET_USER_DATA,
 	VOTE,
 	FOLLOW,
+	BOOKMARK,
 } from "../types";
 import { Sub, Post, Comment } from "../../types";
 
@@ -146,19 +147,15 @@ export default function Reducer(
 				}
 			}
 		case FOLLOW:
-			console.log(payload);
 			if (payload.username) {
-				console.log("asdf");
 				newState = Object.assign({}, JSON.parse(JSON.stringify(state)));
 				newState.userData.user.userFollow = payload.userFollow;
 				newState.userData.user.followerCount = payload.followerCount;
 				newState.userData.user.followersPreview =
 					payload.followersPreview;
-				console.log(newState.userData.user);
 
 				return newState;
 			} else {
-				console.log("sub");
 				return {
 					...state,
 					sub: Object.assign({}, state.sub, {
@@ -167,6 +164,42 @@ export default function Reducer(
 						followersPreview: payload.followersPreview,
 					}),
 				};
+			}
+		case BOOKMARK:
+			if (state.post) {
+				return {
+					...state,
+					post: Object.assign({}, state.post, {
+						userBookmark: payload.data.userBookmark,
+					}),
+				};
+			} else {
+				newState = Object.assign({}, JSON.parse(JSON.stringify(state)));
+				index = state.posts.findIndex(
+					(post) => post.identifier === payload.data.identifier
+				);
+				newState.posts[index].userBookmark = payload.data.userBookmark;
+				return newState;
+				// if (payload.isBookmarkPage) {
+				// 	if (!payload.data.userBookmark) {
+				// 		return Object.assign({}, state, {
+				// 			posts: state.posts.filter(
+				// 				(p) => p.identifier !== payload.data.identifier
+				// 			),
+				// 		});
+				// 	}
+				// } else {
+				// 	newState = Object.assign(
+				// 		{},
+				// 		JSON.parse(JSON.stringify(state))
+				// 	);
+				// 	index = state.posts.findIndex(
+				// 		(post) => post.identifier === payload.data.identifier
+				// 	);
+				// 	newState.posts[index].userBookmark =
+				// 		payload.data.userBookmark;
+				// 	return newState;
+				// }
 			}
 		default:
 			return state;

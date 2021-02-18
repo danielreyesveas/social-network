@@ -12,7 +12,7 @@ import { useGetUserProfileData } from "../hooks";
 import { uploadUserImage } from "../redux/actions/dataActions";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
-import { pluralize } from "../utils";
+import { pluralize, tempo } from "../utils";
 import { useUIState, useUIDispatch } from "../context";
 
 export default function ProfilePage() {
@@ -53,8 +53,6 @@ export default function ProfilePage() {
 
 	const uploadImage = async (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files[0];
-		console.log("PHOTO");
-
 		const formData = new FormData();
 		formData.append("file", file);
 		formData.append("username", user.username);
@@ -191,8 +189,7 @@ export default function ProfilePage() {
 								/u/{notification.sender.username}
 							</a>
 						</Link>
-						le caes mal{" "}
-						{dayjs(notification.createdAt).format("HH:mm:ss")}
+						le caes mal {tempo(notification.createdAt)}
 					</div>
 				);
 			}

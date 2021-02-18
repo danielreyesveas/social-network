@@ -6,15 +6,14 @@ import ActionButton from "./ActionButton";
 import { useAuthState } from "../context/auth";
 import { useRouter } from "next/router";
 import { tempo, pluralize, string_trunc, linebreaks } from "../utils";
-import { vote } from "../redux/actions/dataActions";
-import { connect } from "react-redux";
+import { vote, bookmark } from "../redux/actions/dataActions";
+import { connect, useDispatch } from "react-redux";
 
 interface PostCardProps {
 	post: Post;
-	vote: Function;
 }
 
-const PostCard = ({
+export default function PostCard({
 	post: {
 		identifier,
 		slug,
@@ -24,30 +23,39 @@ const PostCard = ({
 		createdAt,
 		voteScore,
 		userVote,
+		userBookmark,
 		commentCount,
 		url,
 		username,
 		user,
 		sub,
 	},
-	vote,
-}: PostCardProps) => {
+}: PostCardProps) {
 	const { authenticated } = useAuthState();
 
 	const router = useRouter();
 
 	const isInSubPage = router.pathname === "/g/[sub]";
+	const isBookmarkPage = router.pathname === "/bookmarks";
+
+	const dispatch = useDispatch();
 
 	const handleVote = async (value: number) => {
 		if (!authenticated) return router.push("/login");
 
 		if (value === userVote) value = 0;
 
-		vote({
-			identifier,
-			slug,
-			value,
-		});
+		dispatch(
+			vote({
+				identifier,
+				slug,
+				value,
+			})
+		);
+	};
+
+	const handleBookmark = async () => {
+		dispatch(bookmark({ identifier, slug, isBookmarkPage }));
 	};
 
 	return (
@@ -157,17 +165,18 @@ const PostCard = ({
 						<span className="font-bold">Compartir</span>
 					</ActionButton>
 					<ActionButton>
-						<i className="mr-1 fas fa-bookmark fa-xs"></i>
-						<span className="font-bold">Marcar</span>
+						<a onClick={handleBookmark}>
+							<i
+								className={`mx-1 ${
+									userBookmark
+										? "fas fa-bookmark"
+										: "far fa-bookmark"
+								}`}
+							></i>
+						</a>
 					</ActionButton>
 				</div>
 			</div>
 		</div>
 	);
-};
-
-const mapActionsToProps = {
-	vote,
-};
-
-export default connect(null, mapActionsToProps)(PostCard);
+}

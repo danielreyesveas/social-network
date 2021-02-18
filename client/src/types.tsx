@@ -15,6 +15,7 @@ export interface Post {
 	voteScore?: number;
 	commentCount?: number;
 	userVote?: number;
+	userBookmark?: boolean;
 }
 
 export interface User {
@@ -66,4 +67,10 @@ export interface Comment {
 	// virtual fields
 	userVote: number;
 	voteScore: number;
+}
+
+export interface Thread {
+	id: string;
+	createdAt: string;
+	updatedAt: string;
 }

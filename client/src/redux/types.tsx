@@ -10,6 +10,7 @@ export const SET_SUBS = "SET_SUBS";
 export const SET_SUB = "SET_SUB";
 export const VOTE = "VOTE";
 export const FOLLOW = "FOLLOW";
+export const BOOKMARK = "BOOKMARK";
 export const SET_COMMENTS = "SET_COMMENTS";
 export const ADD_COMMENT = "ADD_COMMENT";
 export const SET_USER_DATA = "SET_USER_DATA";
@@ -25,7 +26,7 @@ export const LOADING_UI = "LOADING_UI";
 export const STOP_LOADING_UI = "STOP_LOADING_UI";
 
 // CHAT
-export const SET_USERS = "SET_USERS";
+export const SET_THREADS = "SET_THREADS";
 export const SET_SELECTED_USER = "SET_SELECTED_USER";
 export const SET_USER_MESSAGES = "SET_USER_MESSAGES";
 export const ADD_MESSAGE = "ADD_MESSAGE";

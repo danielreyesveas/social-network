@@ -1,4 +1,6 @@
 import { Router, Request, Response } from "express";
+import { getRepository, In } from "typeorm";
+import Bookmark from "../entities/Bookmark";
 import Comment from "../entities/Comment";
 import Post from "../entities/Post";
 import Sub from "../entities/Sub";
@@ -39,13 +41,53 @@ const getPosts = async (request: Request, response: Response) => {
 
 		const posts = await Post.find({
 			order: { createdAt: "DESC" },
-			relations: ["comments", "votes", "sub"],
+			relations: ["comments", "votes", "sub", "bookmarks"],
 			skip: currentPage * postsPerPage,
 			take: postsPerPage,
 		});
 
 		if (user) {
-			posts.forEach((p) => p.setUserVote(user));
+			posts.forEach((p) => {
+				p.setUserVote(user);
+				p.setUserBookmark(user);
+			});
+		}
+
+		return response.json(posts);
+	} catch (error) {
+		console.error(error);
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
+	}
+};
+
+const getBookmarkPosts = async (request: Request, response: Response) => {
+	const currentPage: number = (request.query.page || 0) as number;
+	const postsPerPage: number = (request.query.count || 8) as number;
+
+	try {
+		const user = response.locals.user;
+		let posts: Post[] = [];
+
+		const userBookmarks = await Bookmark.find({
+			select: ["postId"],
+			where: { user },
+			skip: currentPage * postsPerPage,
+			take: postsPerPage,
+		});
+
+		if (userBookmarks) {
+			const ids = userBookmarks.map((b) => b.postId);
+			posts = await Post.find({
+				where: { id: In(ids) },
+				order: { createdAt: "DESC" },
+				relations: ["comments", "votes", "sub", "bookmarks"],
+			});
+			posts.forEach((p) => {
+				p.setUserVote(user);
+				p.setUserBookmark(user);
+			});
 		}
 
 		return response.json(posts);
@@ -78,12 +120,14 @@ const getPost = async (request: Request, response: Response) => {
 					"sub.posts",
 					"votes",
 					"comments",
+					"bookmarks",
 				],
 			}
 		);
 
 		if (user) {
 			post.setUserVote(user);
+			post.setUserBookmark(user);
 		}
 
 		return response.json(post);
@@ -153,6 +197,7 @@ const commentOnPost = async (request: Request, response: Response) => {
 const getPostComments = async (request: Request, response: Response) => {
 	const user = response.locals.user;
 	const { identifier, slug } = request.params;
+
 	try {
 		const post = await Post.findOneOrFail({ identifier, slug });
 		const comments = await Comment.find({
@@ -178,6 +223,7 @@ const router = Router();
 
 router.post("/", user, auth, createPost);
 router.get("/", user, getPosts);
+router.get("/bookmarks", user, auth, getBookmarkPosts);
 router.get("/:identifier/:slug", user, getPost);
 router.post("/:identifier/:slug/update", user, auth, updatePost);
 router.post("/:identifier/:slug/comments", user, auth, commentOnPost);

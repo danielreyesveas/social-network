@@ -3,25 +3,35 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import classNames from "classnames";
-import { Comment } from "../../../../types";
+import { Comment, Post } from "../../../../types";
 import Sidebar from "../../../../components/Sidebar";
 import { useAuthState } from "../../../../context/auth";
 
 import ActionButton from "../../../../components/ActionButton";
 import { FormEvent, useEffect, useState } from "react";
 import { tempo, pluralize } from "../../../../utils";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useGetPost, useGetComments } from "../../../../hooks";
-import { addComment, vote } from "../../../../redux/actions/dataActions";
+import {
+	addComment,
+	vote,
+	bookmark,
+} from "../../../../redux/actions/dataActions";
 
-const PostPage = ({ post, comments, addComment, vote }) => {
+export default function PostPage() {
 	// Local state
+	const post: Post = useSelector((state: any) => state.data.post);
+	const comments: Comment[] = useSelector(
+		(state: any) => state.data.comments
+	);
+
 	const [ownPost, setOwnPost] = useState(false);
 	const [description, setDescription] = useState("");
 	const [newComment, setNewComment] = useState("");
 
 	// Global state
 	const { authenticated, user } = useAuthState();
+	const dispatch = useDispatch();
 
 	// Utils
 	const router = useRouter();
@@ -41,22 +51,26 @@ const PostPage = ({ post, comments, addComment, vote }) => {
 	}, [post]);
 
 	const handleVote = async (value: number, comment?: Comment) => {
-		// If not logged in go to login
 		if (!authenticated) router.push("/login");
 
-		// If vote is the same reset vote
 		if (
 			(!comment && value === post.userVote) ||
 			(comment && value === comment.userVote)
 		)
 			value = 0;
 
-		vote({
-			identifier,
-			commentIdentifier: comment?.identifier,
-			slug,
-			value,
-		});
+		dispatch(
+			vote({
+				identifier,
+				commentIdentifier: comment?.identifier,
+				slug,
+				value,
+			})
+		);
+	};
+
+	const handleBookmark = async () => {
+		dispatch(bookmark({ identifier, slug }));
 	};
 
 	const submitComment = async (event: FormEvent) => {
@@ -64,7 +78,9 @@ const PostPage = ({ post, comments, addComment, vote }) => {
 		if (newComment.trim() === "") return;
 
 		try {
-			addComment({ identifier, slug, comment: { body: newComment } });
+			dispatch(
+				addComment({ identifier, slug, comment: { body: newComment } })
+			);
 			setNewComment("");
 		} catch (error) {
 			console.error(error);
@@ -207,10 +223,15 @@ const PostPage = ({ post, comments, addComment, vote }) => {
 												</span>
 											</ActionButton>
 											<ActionButton>
-												<i className="mr-1 fas fa-bookmark fa-xs"></i>
-												<span className="font-bold">
-													Marcar
-												</span>
+												<a onClick={handleBookmark}>
+													<i
+														className={`mx-1 ${
+															post.userBookmark
+																? "fas fa-bookmark"
+																: "far fa-bookmark"
+														}`}
+													></i>
+												</a>
 											</ActionButton>
 										</div>
 									</div>
@@ -355,16 +376,4 @@ const PostPage = ({ post, comments, addComment, vote }) => {
 			</div>
 		</>
 	);
-};
-
-const mapStateToProps = (state: any) => ({
-	post: state.data.post,
-	comments: state.data.comments,
-});
-
-const mapActionsToProps = {
-	addComment,
-	vote,
-};
-
-export default connect(mapStateToProps, mapActionsToProps)(PostPage);
+}

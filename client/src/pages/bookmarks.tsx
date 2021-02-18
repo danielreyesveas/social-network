@@ -6,10 +6,10 @@ import Link from "next/link";
 
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useGetSubs, useGetPosts } from "../hooks";
+import { useGetSubs, useGetBookmarkPosts } from "../hooks";
 import { Post, Sub } from "../types";
 
-export default function Home() {
+export default function Bookmarks() {
 	const description = "Clics es una red social para músicos y sus leseras";
 	const title = "Clics: Leseras musicales.";
 
@@ -21,7 +21,7 @@ export default function Home() {
 
 	const [observedPost, setObservedPost] = useState("");
 
-	const { data, error, page, setPage } = useGetPosts();
+	const { data, error, page, setPage } = useGetBookmarkPosts();
 	const isInitialLoading = !data && !error;
 
 	useGetSubs();

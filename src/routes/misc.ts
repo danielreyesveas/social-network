@@ -8,6 +8,7 @@ import Vote from "../entities/Vote";
 import Follow from "../entities/Follow";
 import auth from "../middleware/auth";
 import user from "../middleware/user";
+import Bookmark from "../entities/Bookmark";
 
 const router = Router();
 
@@ -75,6 +76,37 @@ const vote = async (request: Request, response: Response) => {
 			post.setUserVote(user);
 			return response.json(post);
 		}
+	} catch (error) {
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
+	}
+};
+
+const bookmark = async (request: Request, response: Response) => {
+	const { identifier, slug } = request.body;
+	const user: User = response.locals.user;
+
+	try {
+		let post = await Post.findOneOrFail({ identifier, slug });
+		let bookmark: Bookmark | undefined;
+
+		bookmark = await Bookmark.findOne({ user, post });
+
+		if (bookmark) {
+			await bookmark.remove();
+		} else {
+			bookmark = new Bookmark({ user, post });
+			await bookmark.save();
+		}
+
+		post = await Post.findOneOrFail(
+			{ identifier, slug },
+			{ relations: ["bookmarks"] }
+		);
+
+		post.setUserBookmark(user);
+		return response.json(post);
 	} catch (error) {
 		return response
 			.status(500)
@@ -178,6 +210,7 @@ const topSubs = async (_: Request, response: Response) => {
 };
 
 router.post("/vote", user, auth, vote);
+router.post("/bookmark", user, auth, bookmark);
 router.post("/follow", user, auth, follow);
 router.get("/top-subs", topSubs);
 

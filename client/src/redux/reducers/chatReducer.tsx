@@ -1,6 +1,6 @@
 import { User } from "../../types";
 import {
-	SET_USERS,
+	SET_THREADS,
 	SET_SELECTED_USER,
 	SET_USER_MESSAGES,
 	ADD_MESSAGE,
@@ -8,12 +8,13 @@ import {
 } from "../types";
 
 const initialState = {
-	users: null,
-	selected: null,
+	threads: [],
+	selectedThread: null,
 };
 
 interface State {
-	users: User[];
+	threads: User[];
+	selectedThread: any;
 }
 
 interface Action {
@@ -27,22 +28,22 @@ export default function Reducer(
 ) {
 	let usersCopy, userIndex;
 	switch (type) {
-		case SET_USERS:
+		case SET_THREADS:
 			return {
 				...state,
-				users: payload,
+				threads: payload,
 			};
 		case SET_SELECTED_USER:
-			usersCopy = state.users.map((user) => ({
+			usersCopy = state.threads.map((user) => ({
 				...user,
-				selected: user.username === payload,
+				selectedThread: user.username === payload,
 			}));
 			return {
 				...state,
-				users: usersCopy,
+				threads: usersCopy,
 			};
 		case SET_USER_MESSAGES:
-			usersCopy = [...state.users];
+			usersCopy = [...state.threads];
 			let messages = payload.messages;
 			userIndex = usersCopy.findIndex(
 				(user) => user.username === payload.username
@@ -54,10 +55,10 @@ export default function Reducer(
 
 			return {
 				...state,
-				users: usersCopy,
+				threads: usersCopy,
 			};
 		case ADD_MESSAGE:
-			usersCopy = [...state.users];
+			usersCopy = [...state.threads];
 
 			userIndex = usersCopy.findIndex(
 				(user) => user.username === payload.username
@@ -76,10 +77,10 @@ export default function Reducer(
 
 			return {
 				...state,
-				users: usersCopy,
+				threads: usersCopy,
 			};
 		case ADD_REACTION:
-			usersCopy = [...state.users];
+			usersCopy = [...state.threads];
 
 			userIndex = usersCopy.findIndex(
 				(user) => user.username === payload.username
@@ -123,7 +124,7 @@ export default function Reducer(
 
 			return {
 				...state,
-				users: usersCopy,
+				threads: usersCopy,
 			};
 
 		default:

@@ -48,4 +48,8 @@
 	.badge {
 		@apply absolute top-0 right-0 inline-block w-4 h-4 font-extrabold leading-4 text-center rounded-full text-xxs bg-primary-4 text-primary-5;
 	}
+
+	.menu-item {
+		@apply block px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-100;
+	}
 }

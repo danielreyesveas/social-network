@@ -29,10 +29,10 @@ export default class Notification extends Entity {
 	@Column()
 	username: string;
 
-	@Column()
+	@Column({ nullable: true })
 	sendername: string;
 
-	@Column()
+	@Column({ nullable: true })
 	subName: string;
 
 	@ManyToOne(() => User, (user) => user.notifications)
