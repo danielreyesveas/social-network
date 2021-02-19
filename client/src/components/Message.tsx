@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useAuthState } from "../context/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { gql, useMutation } from "@apollo/client";
+import Image from "next/image";
 
 const reactions = ["❤️", "😆", "😯", "😢", "😡", "👍", "👎"];
 
@@ -15,11 +16,11 @@ const REACT_TO_MESSAGE = gql`
 `;
 
 export default function Message({ message }) {
-	const user = useSelector((state) => state.user.credentials);
+	const user = useSelector((state: any) => state.user.credentials);
 	const sent = message.from === user.username;
 	const received = !sent;
 	const [showPopover, setShowPopover] = useState(false);
-	const reactionIcons = [...new Set(message.reactions.map((r) => r.content))];
+	//const reactionIcons = [...new Set(message.reactions.map((r) => r.content))];
 
 	const [reactToMessage] = useMutation(REACT_TO_MESSAGE, {
 		onCompleted: (data) => {
@@ -40,9 +41,13 @@ export default function Message({ message }) {
 	return sent ? (
 		<div className="col-start-1 col-end-8 p-3 rounded-lg">
 			<div className="flex flex-row items-center">
-				<div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-indigo-500 rounded-full">
-					A
-				</div>
+				<Image
+					src={message.user.imageUrl}
+					className="rounded-full"
+					alt="User"
+					height={(8 * 16) / 4}
+					width={(8 * 16) / 4}
+				/>
 				<div className="relative px-4 py-2 ml-3 text-sm bg-white shadow rounded-xl">
 					<div>{message.content}</div>
 				</div>
@@ -51,9 +56,13 @@ export default function Message({ message }) {
 	) : (
 		<div className="col-start-6 col-end-13 p-3 rounded-lg">
 			<div className="flex flex-row-reverse items-center justify-start">
-				<div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-indigo-500 rounded-full">
-					A
-				</div>
+				<Image
+					src={message.user.imageUrl}
+					className="rounded-full"
+					alt="User"
+					height={(8 * 16) / 4}
+					width={(8 * 16) / 4}
+				/>
 				<div className="relative px-4 py-2 mr-3 text-sm bg-indigo-100 shadow rounded-xl">
 					<div>{message.content}</div>
 				</div>

@@ -1,8 +1,9 @@
+import { Message } from "postcss";
 import { User } from "../../types";
 import {
 	SET_THREADS,
-	SET_SELECTED_USER,
-	SET_USER_MESSAGES,
+	SET_SELECTED_THREAD,
+	SET_MESSAGES,
 	ADD_MESSAGE,
 	ADD_REACTION,
 } from "../types";
@@ -10,11 +11,13 @@ import {
 const initialState = {
 	threads: [],
 	selectedThread: null,
+	messages: [],
 };
 
 interface State {
-	threads: User[];
+	threads: any[];
 	selectedThread: any;
+	messages: Message[];
 }
 
 interface Action {
@@ -26,59 +29,36 @@ export default function Reducer(
 	state: State = initialState,
 	{ type, payload }: Action
 ) {
-	let usersCopy, userIndex;
+	let usersCopy, userIndex, newState;
 	switch (type) {
 		case SET_THREADS:
 			return {
 				...state,
 				threads: payload,
 			};
-		case SET_SELECTED_USER:
-			usersCopy = state.threads.map((user) => ({
-				...user,
-				selectedThread: user.username === payload,
-			}));
+		case SET_SELECTED_THREAD:
 			return {
 				...state,
-				threads: usersCopy,
+				selectedThread: payload,
 			};
-		case SET_USER_MESSAGES:
-			usersCopy = [...state.threads];
-			let messages = payload.messages;
-			userIndex = usersCopy.findIndex(
-				(user) => user.username === payload.username
-			);
-			usersCopy[userIndex] = {
-				...usersCopy[userIndex],
-				messages,
-			};
-
+		case SET_MESSAGES:
 			return {
 				...state,
-				threads: usersCopy,
+				messages: payload,
 			};
 		case ADD_MESSAGE:
-			usersCopy = [...state.threads];
-
-			userIndex = usersCopy.findIndex(
-				(user) => user.username === payload.username
+			userIndex = state.threads.findIndex(
+				(thread) => thread.id === payload.threadId
 			);
+			newState = Object.assign({}, JSON.parse(JSON.stringify(state)));
+			newState.threads[userIndex].lastMessage = payload.content;
 
-			payload.message.reactions = [];
+			if (state.selectedThread) {
+				newState.selectedThread.lastMessage = payload.content;
+				newState.messages = [...newState.messages, payload];
+			}
 
-			let newUser = {
-				...usersCopy[userIndex],
-				messages: usersCopy[userIndex].messages
-					? [...usersCopy[userIndex].messages, payload.message]
-					: null,
-				latestMessage: payload.message,
-			};
-			usersCopy[userIndex] = newUser;
-
-			return {
-				...state,
-				threads: usersCopy,
-			};
+			return newState;
 		case ADD_REACTION:
 			usersCopy = [...state.threads];
 

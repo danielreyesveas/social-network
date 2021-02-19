@@ -11,6 +11,11 @@ const NEW_MESSAGE = gql`
 		newMessage {
 			uuid
 			from
+			user {
+				username
+				imageUrl
+			}
+			threadId
 			to
 			content
 			createdAt
@@ -26,7 +31,6 @@ const NEW_REACTION = gql`
 			message {
 				uuid
 				from
-				to
 			}
 		}
 	}
@@ -51,14 +55,9 @@ export default function Chat({ history }) {
 
 		if (messageData) {
 			const message = messageData.newMessage;
-			const otherUser =
-				user.username === message.to ? message.from : message.to;
 			dispatch({
 				type: "ADD_MESSAGE",
-				payload: {
-					username: otherUser,
-					message,
-				},
+				payload: message,
 			});
 		}
 		// eslint-disable-next-line

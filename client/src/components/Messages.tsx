@@ -7,11 +7,14 @@ import { useDispatch, useSelector } from "react-redux";
 import Message from "./Message";
 
 const GET_MESSAGES = gql`
-	query getMessages($from: String!) {
-		getMessages(from: $from) {
+	query getMessages($threadId: Int!) {
+		getMessages(threadId: $threadId) {
 			uuid
 			from
-			to
+			user {
+				username
+				imageUrl
+			}
 			createdAt
 			content
 			reactions {
@@ -23,11 +26,10 @@ const GET_MESSAGES = gql`
 `;
 
 const SEND_MESSAGE = gql`
-	mutation sendMessage($to: String!, $content: String!) {
-		sendMessage(to: $to, content: $content) {
+	mutation sendMessage($threadId: Int!, $content: String!) {
+		sendMessage(threadId: $threadId, content: $content) {
 			uuid
 			from
-			to
 			content
 			createdAt
 		}
@@ -35,11 +37,13 @@ const SEND_MESSAGE = gql`
 `;
 
 export default function Messages() {
-	const users = useSelector((state) => state.chat.users);
 	const [content, setContent] = useState("");
-	const selectedUser = users?.find((u) => !!u.selected);
+	const selectedThread = useSelector(
+		(state: any) => state.chat.selectedThread
+	);
+	const messages = useSelector((state: any) => state.chat.messages);
+
 	const dispatch = useDispatch();
-	const messages = selectedUser?.messages;
 
 	const [
 		getMessages,
@@ -51,32 +55,30 @@ export default function Messages() {
 	});
 
 	useEffect(() => {
-		console.log(selectedUser);
-		if (selectedUser && !selectedUser.messages) {
-			getMessages({ variables: { from: selectedUser.username } });
+		if (selectedThread) {
+			getMessages({ variables: { threadId: Number(selectedThread.id) } });
 		}
 		// eslint-disable-next-line
-	}, [selectedUser]);
+	}, [selectedThread]);
 
 	useEffect(() => {
 		if (messagesData) {
 			dispatch({
-				type: "SET_USER_MESSAGES",
-				payload: {
-					username: selectedUser.username,
-					messages: messagesData.getMessages,
-				},
+				type: "SET_MESSAGES",
+				payload: messagesData.getMessages,
 			});
 		}
 		// eslint-disable-next-line
 	}, [messagesData]);
 
 	const handleSubmit = (event) => {
-		if (content.trim() === "" || !selectedUser) return;
+		if (content.trim() === "" || !selectedThread) return;
 
 		setContent("");
 
-		sendMessage({ variables: { to: selectedUser.username, content } });
+		sendMessage({
+			variables: { threadId: Number(selectedThread.id), content },
+		});
 	};
 
 	let selectedChatMarkup;
@@ -104,12 +106,8 @@ export default function Messages() {
 	return (
 		<div className="flex flex-col flex-auto h-full p-6">
 			<div className="flex flex-col flex-auto flex-shrink-0 h-full p-4 bg-gray-100 rounded-2xl">
-				<div className="flex flex-col h-full mb-4 overflow-x-auto">
-					<div className="flex flex-col h-full">
-						<div className="grid grid-cols-12 gap-y-2">
-							{selectedChatMarkup}
-						</div>
-					</div>
+				<div className="flex flex-col-reverse h-full mb-4 scroll">
+					{selectedChatMarkup}
 				</div>
 				<div className="flex flex-row items-center w-full h-16 px-4 bg-white rounded-xl">
 					<div className="flex-grow ml-4">
