@@ -11,7 +11,7 @@ import { Dispatch } from "redux";
 import { User } from "../../types";
 import axios from "axios";
 
-export const login = (userData: User) => (dispatch: Dispatch) => {
+export const login = (userData: User) => async (dispatch: Dispatch) => {
 	dispatch({ type: LOADING_UI });
 	return axios
 		.post("/auth/login", userData)
@@ -29,8 +29,8 @@ export const login = (userData: User) => (dispatch: Dispatch) => {
 		});
 };
 
-export const logout = () => (dispatch) => {
-	axios
+export const logout = () => async (dispatch: Dispatch) => {
+	return axios
 		.get("/auth/logout")
 		.then(() => {
 			dispatch({ type: CLEAR_ERRORS });

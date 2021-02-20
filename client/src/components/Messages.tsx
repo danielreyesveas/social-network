@@ -5,6 +5,7 @@ import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useDispatch, useSelector } from "react-redux";
 
 import Message from "./Message";
+import Image from "next/image";
 
 const GET_MESSAGES = gql`
 	query getMessages($threadId: Int!) {
@@ -26,8 +27,12 @@ const GET_MESSAGES = gql`
 `;
 
 const SEND_MESSAGE = gql`
-	mutation sendMessage($threadId: Int!, $content: String!) {
-		sendMessage(threadId: $threadId, content: $content) {
+	mutation sendMessage($threadId: Int, $username: String, $content: String!) {
+		sendMessage(
+			threadId: $threadId
+			username: $username
+			content: $content
+		) {
 			uuid
 			from
 			content
@@ -41,6 +46,8 @@ export default function Messages() {
 	const selectedThread = useSelector(
 		(state: any) => state.chat.selectedThread
 	);
+
+	const newThread = useSelector((state: any) => state.chat.newThread);
 	const messages = useSelector((state: any) => state.chat.messages);
 
 	const dispatch = useDispatch();
@@ -65,29 +72,41 @@ export default function Messages() {
 		if (messagesData) {
 			dispatch({
 				type: "SET_MESSAGES",
-				payload: messagesData.getMessages,
+				payload: {
+					threadId: selectedThread.id,
+					messages: messagesData.getMessages,
+				},
 			});
 		}
 		// eslint-disable-next-line
 	}, [messagesData]);
 
-	const handleSubmit = (event) => {
-		if (content.trim() === "" || !selectedThread) return;
+	const handleSubmit = () => {
+		if (content.trim() === "" || (!selectedThread && !newThread)) return;
+		console.log("SENT");
+
+		let variables;
 
 		setContent("");
 
+		if (selectedThread) {
+			variables = { threadId: Number(selectedThread.id), content };
+		} else if (newThread) {
+			variables = { username: newThread.username, content };
+		}
 		sendMessage({
-			variables: { threadId: Number(selectedThread.id), content },
+			variables,
 		});
 	};
 
-	let selectedChatMarkup;
+	let messagesMarkup, selectedChatMarkup;
+
 	if (!messages && !messagesLoading) {
-		selectedChatMarkup = <p className="info-text">Select a friend.</p>;
+		messagesMarkup = <p className="info-text">Select a friend.</p>;
 	} else if (messagesLoading) {
-		selectedChatMarkup = <p className="info-text">Loading...</p>;
+		messagesMarkup = <p className="info-text">Loading...</p>;
 	} else if (!!messages.length) {
-		selectedChatMarkup = messages.map((message, index) => (
+		messagesMarkup = messages.map((message, index) => (
 			<Fragment key={message.uuid}>
 				<Message message={message} />
 				{index === message.length - 1 && (
@@ -97,41 +116,90 @@ export default function Messages() {
 				)}
 			</Fragment>
 		));
-	} else {
+	}
+
+	if (selectedThread) {
 		selectedChatMarkup = (
-			<p className="info-text">You are now connected!</p>
+			<>
+				<Image
+					src={selectedThread.user.imageUrl}
+					className="rounded-full"
+					alt="User"
+					height={48}
+					width={48}
+				/>
+				<div className="ml-4 text-sm">
+					<p className="text-lg font-medium">
+						⊚{selectedThread.user.username}
+					</p>
+					<p className="text-xs font-light text-gray-500">
+						{selectedThread.user.email}
+					</p>
+				</div>
+			</>
+		);
+	} else if (newThread) {
+		selectedChatMarkup = (
+			<>
+				<Image
+					src={newThread.imageUrl}
+					className="rounded-full"
+					alt="User"
+					height={48}
+					width={48}
+				/>
+				<div className="ml-4 text-sm">
+					<p className="text-lg font-medium">⊚{newThread.username}</p>
+					<p className="text-xs italic font-light text-gray-500">
+						{newThread.email}
+					</p>
+				</div>
+			</>
 		);
 	}
 
 	return (
-		<div className="flex flex-col flex-auto h-full p-6">
-			<div className="flex flex-col flex-auto flex-shrink-0 h-full p-4 bg-gray-100 rounded-2xl">
-				<div className="flex flex-col-reverse h-full mb-4 scroll">
-					{selectedChatMarkup}
-				</div>
-				<div className="flex flex-row items-center w-full h-16 px-4 bg-white rounded-xl">
-					<div className="flex-grow ml-4">
-						<div className="relative w-full">
-							<input
-								type="text"
-								className="flex w-full h-10 pl-4 border rounded-xl focus:outline-none focus:border-indigo-300"
-								placeholder="Escribe aquí..."
-								name="content"
-								value={content}
-								onChange={(event) =>
-									setContent(event.target.value)
-								}
-							/>
+		<div className="flex flex-col flex-auto h-full px-4">
+			<div className="flex flex-col flex-auto flex-shrink-0 h-full bg-gray-100 rounded-2xl">
+				{(selectedThread || newThread) && (
+					<div className="flex flex-row items-center w-full h-24 bg-white rounded-t-md">
+						<div className="flex-grow ml-4">
+							<div className="flex items-center px-4 py-3">
+								{selectedChatMarkup}
+							</div>
 						</div>
 					</div>
-					<div className="ml-4">
-						<i
-							className="mx-2 fas fa-paper-plane fa-2x text-primary"
-							onClick={handleSubmit}
-							role="button"
-						></i>
-					</div>
+				)}
+
+				<div className="flex flex-col-reverse h-full mb-4 scroll">
+					{messagesMarkup}
 				</div>
+
+				{(selectedThread || newThread) && (
+					<div className="flex flex-row items-center w-full h-20 px-4 bg-white rounded-b-md">
+						<div className="flex-grow ml-4">
+							<div className="relative w-full">
+								<input
+									type="text"
+									className="flex w-full h-10 pl-4 border rounded-xl focus:outline-none focus:border-indigo-300"
+									placeholder="Escribe aquí..."
+									name="content"
+									value={content}
+									onChange={(event) =>
+										setContent(event.target.value)
+									}
+								/>
+							</div>
+						</div>
+						<div className="ml-4">
+							<i
+								className="mx-2 fas fa-paper-plane fa-2x text-primary"
+								onClick={handleSubmit}
+								role="button"
+							></i>
+						</div>
+					</div>
+				)}
 			</div>
 		</div>
 	);

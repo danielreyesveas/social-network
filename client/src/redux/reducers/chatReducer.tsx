@@ -1,22 +1,25 @@
 import { Message } from "postcss";
-import { User } from "../../types";
 import {
 	SET_THREADS,
+	SORT_THREADS,
 	SET_SELECTED_THREAD,
 	SET_MESSAGES,
 	ADD_MESSAGE,
 	ADD_REACTION,
+	SET_NEW_THREAD,
 } from "../types";
 
 const initialState = {
 	threads: [],
 	selectedThread: null,
+	newThread: null,
 	messages: [],
 };
 
 interface State {
 	threads: any[];
 	selectedThread: any;
+	newThread: any;
 	messages: Message[];
 }
 
@@ -29,7 +32,7 @@ export default function Reducer(
 	state: State = initialState,
 	{ type, payload }: Action
 ) {
-	let usersCopy, userIndex, newState;
+	let usersCopy, userIndex, newState, threadCopy;
 	switch (type) {
 		case SET_THREADS:
 			return {
@@ -40,22 +43,67 @@ export default function Reducer(
 			return {
 				...state,
 				selectedThread: payload,
+				newThread: null,
 			};
-		case SET_MESSAGES:
+		case SET_NEW_THREAD:
 			return {
 				...state,
-				messages: payload,
+				newThread: payload,
+				selectedThread: null,
+				messages: [],
 			};
-		case ADD_MESSAGE:
+		case SET_MESSAGES:
+			newState = Object.assign({}, JSON.parse(JSON.stringify(state)));
 			userIndex = state.threads.findIndex(
 				(thread) => thread.id === payload.threadId
 			);
+			newState.threads[userIndex].messages = payload.messages;
+			newState.threads[userIndex].unread = 0;
+			newState.messages = payload.messages;
+			return newState;
+		case ADD_MESSAGE:
 			newState = Object.assign({}, JSON.parse(JSON.stringify(state)));
-			newState.threads[userIndex].lastMessage = payload.content;
+			userIndex = state.threads.findIndex(
+				(thread) => thread.id === payload.message.threadId
+			);
+			if (userIndex > -1) {
+				newState.threads[userIndex].lastMessage =
+					payload.message.content;
+				if (
+					state.selectedThread &&
+					state.selectedThread.id === payload.message.threadId
+				) {
+					newState.selectedThread.lastMessage =
+						payload.message.content;
+					newState.messages = [payload.message, ...newState.messages];
+				} else {
+					newState.threads[userIndex].unread++;
+				}
 
-			if (state.selectedThread) {
-				newState.selectedThread.lastMessage = payload.content;
-				newState.messages = [...newState.messages, payload];
+				// Resorting threads
+				threadCopy = newState.threads[userIndex];
+				newState.threads.splice(userIndex, 1);
+				newState.threads = [threadCopy, ...newState.threads];
+			} else {
+				let thread = {
+					...payload.message.threadd,
+					lastMessage: payload.message.content,
+				};
+				if (payload.user.username === payload.message.from) {
+					// If the new message is mine
+					thread.user = {
+						username: state.newThread.username,
+						imageUrl: state.newThread.imageUrl,
+						email: state.newThread.email,
+					};
+					newState.selectedThread = thread;
+					newState.messages = [payload.message, ...newState.messages];
+					newState.newThread = null;
+				} else {
+					thread.user = payload.message.user;
+					thread.unread = 1;
+				}
+				newState.threads = [thread, ...newState.threads];
 			}
 
 			return newState;

@@ -14,6 +14,8 @@ import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import { pluralize, tempo } from "../utils";
 import { useUIState, useUIDispatch } from "../context";
+import { GetServerSideProps } from "next";
+import axios from "axios";
 
 export default function ProfilePage() {
 	const router = useRouter();
@@ -405,3 +407,15 @@ export default function ProfilePage() {
 		</>
 	);
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+	try {
+		const cookie = req.headers.cookie;
+		if (!cookie) throw new Error("Missing auth token cookie.");
+		await axios.get("/auth/me", { headers: { cookie } });
+		return { props: {} };
+	} catch (error) {
+		console.error(error);
+		res.writeHead(307, { Location: "/login" }).end();
+	}
+};

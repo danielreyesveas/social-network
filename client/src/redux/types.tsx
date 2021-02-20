@@ -27,7 +27,9 @@ export const STOP_LOADING_UI = "STOP_LOADING_UI";
 
 // CHAT
 export const SET_THREADS = "SET_THREADS";
+export const SORT_THREADS = "SORT_THREADS";
 export const SET_SELECTED_THREAD = "SET_SELECTED_THREAD";
+export const SET_NEW_THREAD = "SET_NEW_THREAD";
 export const SET_MESSAGES = "SET_MESSAGES";
 export const ADD_MESSAGE = "ADD_MESSAGE";
 export const ADD_REACTION = "ADD_REACTION";

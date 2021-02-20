@@ -14,19 +14,19 @@ const GET_THREADS = gql`
 			createdAt
 			lastMessage
 			updatedAt
-
+			unread
 			user {
 				username
+				email
 				imageUrl
 			}
 		}
 	}
 `;
 
-export default function Users() {
-	let usersMarkup;
+export default function Threads() {
 	const [search, setSearch] = useState("");
-	const [newUsers, setNewUsers] = useState<User[]>([]);
+	const [users, setUsers] = useState<User[]>([]);
 	const [timer, setTimer] = useState(null);
 
 	const threads = useSelector((state: any) => state.chat.threads);
@@ -38,7 +38,7 @@ export default function Users() {
 
 	useEffect(() => {
 		if (search.trim() === "") {
-			setNewUsers([]);
+			setUsers([]);
 			return;
 		}
 		searchUsers();
@@ -53,7 +53,7 @@ export default function Users() {
 						`/users/search/${search}`,
 						{ membersNames: [] }
 					);
-					setNewUsers(data);
+					setUsers(data);
 				} catch (error) {
 					console.error(error);
 				}
@@ -61,7 +61,14 @@ export default function Users() {
 		);
 	};
 
-	const addUser = (username: string) => {
+	const addThread = (user: User) => {
+		const exists = threads.find(
+			(thread) => thread.user.username === user.username
+		);
+
+		if (exists) dispatch({ type: "SET_SELECTED_THREAD", payload: exists });
+		else dispatch({ type: "SET_NEW_THREAD", payload: user });
+
 		setSearch("");
 	};
 
@@ -75,38 +82,44 @@ export default function Users() {
 		dispatch({ type: "SET_SELECTED_THREAD", payload: thread });
 	};
 
+	let threadsMarkup;
 	if (!threads || loading) {
-		usersMarkup = <p>Loading...</p>;
+		threadsMarkup = <p>Cargando...</p>;
 	} else if (threads.length === 0) {
-		usersMarkup = <p>No users yet</p>;
+		threadsMarkup = <p>No has iniciado ninguna conversación.</p>;
 	} else if (threads.length > 0) {
-		usersMarkup = threads.map((thread) => {
-			const selected =
-				selectedThread?.user.username === thread.user.username;
+		threadsMarkup = threads.map((thread) => {
+			const selected = selectedThread?.id === thread.id;
 			return (
 				<div
 					className={classNames(
-						"flex flex-row user-div justify-content-center justify-content-md-start p-3 cursor-pointer",
+						"flex flex-row user-div justify-content-center justify-content-md-start p-3 cursor-pointer rounded-md",
 						{
-							"bg-white": selected,
+							"bg-dark-8": selected,
 						}
 					)}
-					//className="flex flex-row items-center p-2 hover:bg-gray-100 rounded-xl"
 					key={thread.user.username}
 					onClick={() => handleClickThread(thread)}
 				>
 					<img
 						src={thread.user.imageUrl}
-						className="relative z-30 inline object-cover w-10 h-10 border-2 border-white rounded-full cursor-pointer user-image profile-image"
+						className="relative inline object-cover w-10 h-10 border-2 border-white rounded-full cursor-pointer user-image profile-image"
 					/>
 					<div className="ml-2 text-sm font-semibold">
 						<p>⊚{thread.user.username}</p>
-						<p className="italic font-extralight">
-							{thread.lastMessage
-								? thread.lastMessage
-								: "You are now connected!"}
+						<p
+							className={classNames("font-extralight", {
+								"font-semibold italic": thread.unread > 0,
+							})}
+						>
+							{thread.lastMessage}
 						</p>
 					</div>
+					{thread.unread > 0 && (
+						<div className="flex items-center justify-center w-5 h-5 ml-auto text-xs leading-none text-white rounded-full bg-primary-4">
+							{thread.unread}
+						</div>
+					)}
 				</div>
 			);
 		});
@@ -131,11 +144,11 @@ export default function Users() {
 							className="absolute left-0 right-0 z-10 overflow-y-scroll bg-white max-h-52"
 							style={{ top: "100%" }}
 						>
-							{newUsers?.map((user) => (
+							{users?.map((user) => (
 								<div
 									key={user.username}
 									className="flex items-center px-4 py-3 cursor-pointer hover:bg-gray-200"
-									onClick={() => addUser(user.username)}
+									onClick={() => addThread(user)}
 								>
 									<Image
 										src={user.imageUrl}
@@ -154,14 +167,10 @@ export default function Users() {
 						</div>
 					</div>
 				</div>
-
-				<span className="flex items-center justify-center w-4 h-4 bg-gray-300 rounded-full">
-					{threads?.length}
-				</span>
 			</div>
 
-			<div className="flex flex-col mt-4 -mx-2 space-y-1 overflow-y-auto">
-				{usersMarkup}
+			<div className="flex flex-col mx-1 mt-4 space-y-1 overflow-y-auto">
+				{threadsMarkup}
 			</div>
 		</div>
 	);

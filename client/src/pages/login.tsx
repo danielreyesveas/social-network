@@ -25,8 +25,7 @@ const Login = ({ login, errors }) => {
 
 		await login({ username, password })
 			.then((response) => {
-				dispatch("LOGIN", response);
-				router.back();
+				dispatch("LOGIN", response).then(() => router.back());
 			})
 			.catch((error) => {
 				console.log(error);

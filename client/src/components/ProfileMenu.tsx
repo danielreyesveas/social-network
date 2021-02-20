@@ -140,8 +140,14 @@ export default function ProfileMenu() {
 
 	const handleLogout = async () => {
 		setShowProfileMenu(false);
-		dispatch(logout());
-		authDispatch("LOGOUT");
+		await dispatch(logout())
+			.then(() => {
+				authDispatch("LOGOUT");
+				window.location.reload();
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 	};
 
 	return (
