@@ -6,23 +6,35 @@ import { gql, useSubscription } from "@apollo/client";
 import { useDispatch, useSelector } from "react-redux";
 import { useUIDispatch, useAuthDispatch } from "../context";
 import { logout } from "../redux/actions/userActions";
-import { tempo } from "../utils";
+import Notifications from "./Notifications";
 
 const NEW_NOTIFICATION = gql`
 	subscription newNotification {
 		newNotification {
 			identifier
 			type
+			value
 			sender {
 				username
 				imageUrl
 			}
+			post {
+				subName
+				identifier
+				title
+				username
+				slug
+			}
 			sub {
 				name
+				title
+				username
 				imageUrl
 			}
 			comment {
+				identifier
 				body
+				username
 			}
 			createdAt
 		}
@@ -50,6 +62,7 @@ export default function ProfileMenu() {
 
 		if (notificationData) {
 			const { newNotification } = notificationData;
+			console.log(newNotification);
 			dispatch({
 				type: "SET_NEW_NOTIFICATION",
 				payload: newNotification,
@@ -193,36 +206,17 @@ export default function ProfileMenu() {
 							aria-orientation="vertical"
 							aria-labelledby="user-menu"
 						>
-							{user.lastNotifications?.map((notification) => (
-								<div
-									className="flex items-center px-2 py-3 text-xs text-gray-500 md:flex-shrink-0"
-									key={notification.identifier}
-								>
-									A
-									<Link
-										href={`/u/${notification.sender.username}`}
-									>
-										<img
-											src={notification.sender.imageUrl}
-											className="w-6 h-6 mx-1 rounded-full cursor-pointer"
-										/>
-									</Link>
-									<Link
-										href={`/u/${notification.sender.username}`}
-									>
-										<a className="mr-1 font-semibold hover:underline">
-											/u/{notification.sender.username}
-										</a>
-									</Link>
-									le caes mal {tempo(notification.createdAt)}
-								</div>
-							))}
+							<Notifications
+								notifications={user.lastNotifications}
+							/>
 
 							<a
 								className="block py-2 font-bold text-center text-white cursor-pointer bg-dark-3 rounded-b-md"
 								onClick={handleShowAllNotifications}
 							>
-								Ver todas
+								{user.notificationCount > 0
+									? "Ver todas"
+									: "Ver anteriores"}
 							</a>
 						</div>
 					</div>

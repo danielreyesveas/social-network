@@ -1,6 +1,11 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { isEmpty } from "class-validator";
-import { Connection, getConnection, getRepository } from "typeorm";
+import {
+	Connection,
+	EntityManager,
+	getConnection,
+	getRepository,
+} from "typeorm";
 import multer, { FileFilterCallback } from "multer";
 import path from "path";
 import fs from "fs";
@@ -144,7 +149,7 @@ const ownSub = async (
 	try {
 		const sub = await Sub.findOneOrFail({
 			where: { name: request.params.name },
-			relations: ["members"],
+			relations: ["members", "members.sub"],
 		});
 
 		if (sub.username !== user.username) {
@@ -190,88 +195,61 @@ const updateSub = async (request: Request, response: Response) => {
 		sub.description = description;
 		await sub.save();
 
-		// TODO: trigger function
-		if (members.length) {
-			const user: User = response.locals.user;
-			const currentMembers = sub.members.map((m) => m.username);
-			const addedMembers = members.map((m: any) => m.username);
-			console.log(currentMembers);
-			const deletedMembers = currentMembers.filter(
-				(m: string) => !addedMembers.includes(m)
-			);
-			const newMembers = addedMembers.filter(
-				(m: string) => !currentMembers.includes(m)
-			);
-			const modifiedMembers = members.filter((m: any) =>
-				currentMembers.includes(m.username)
-			);
-			let readdedMembers: any[] = [];
-			modifiedMembers.filter(function (m: any) {
-				return sub.members.filter(function (c: any) {
-					if (
-						m.username === c.username &&
-						c.status === "rejected" &&
-						!m.status
-					) {
-						readdedMembers.push(m.username);
-					}
-				});
-			});
+		const user: User = response.locals.user;
+		const currentMembers = sub.members.map((m) => m.username);
+		const addedMembers = members.map((m: any) => m.username);
 
-			newMembers.map(async (member: string) => {
-				const notification = new Notification({
-					username: member,
-					type: "invitation",
-					sender: user,
-					sub,
-				});
-				const subMember = new SubMember({
-					username: member,
-					sub,
-				});
-				await notification.save();
-				await subMember.save();
-			});
-
-			if (deletedMembers.length) {
-				deletedMembers.map(async (member: string) => {
-					const notification = new Notification({
-						username: member,
-						type: "deletion",
-						sender: user,
-						sub,
-					});
-					await notification.save();
-				});
-				await getConnection()
-					.createQueryBuilder()
-					.delete()
-					.from(SubMember)
-					.where("username IN (:...deletedMembers)", {
-						deletedMembers,
-					})
-					.execute();
+		let deletedMembers: any[] = [];
+		sub.members.filter(function (m: any) {
+			if (!addedMembers.includes(m.username) && m.status === "accepted") {
+				deletedMembers.push(m.username);
 			}
+		});
 
-			if (readdedMembers.length) {
-				readdedMembers.map((member: string) => {
-					const notification = new Notification({
-						username: member,
-						type: "reinvitation",
-						sender: user,
-						sub,
-					});
-					notification.save();
-				});
-				await getConnection()
-					.createQueryBuilder()
-					.update(SubMember)
-					.set({ status: Status.PENDING })
-					.where("username IN (:...readdedMembers)", {
-						readdedMembers,
-					})
-					.execute();
-			}
+		const newMembers = addedMembers.filter(
+			(m: string) => !currentMembers.includes(m)
+		);
+		const modifiedMembers = members.filter((m: any) =>
+			currentMembers.includes(m.username)
+		);
+		let readdedMembers: any[] = [];
+
+		modifiedMembers.filter(function (m: any) {
+			return sub.members.filter(function (c: any) {
+				if (
+					m.username === c.username &&
+					c.status === "rejected" &&
+					!m.status
+				) {
+					readdedMembers.push(m.username);
+				}
+			});
+		});
+
+		newMembers.map(async (member: string) => {
+			const subMember = new SubMember({
+				username: member,
+				sub,
+			});
+			await subMember.save();
+		});
+
+		if (deletedMembers.length) {
+			sub.members.map(async (member: SubMember) => {
+				if (deletedMembers.includes(member.username)) {
+					await SubMember.remove(member);
+				}
+			});
+		}
+
+		if (readdedMembers.length) {
+			sub.members.map(async (member: SubMember) => {
+				member.username;
+				if (readdedMembers.includes(member.username)) {
+					member.status = Status.PENDING;
+					await member.save();
+				}
+			});
 		}
 
 		return response.json(sub);

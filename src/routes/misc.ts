@@ -29,12 +29,18 @@ const vote = async (request: Request, response: Response) => {
 		let comment: Comment | undefined;
 
 		if (commentIdentifier) {
-			comment = await Comment.findOneOrFail({
-				identifier: commentIdentifier,
-			});
-			vote = await Vote.findOne({ user, comment });
+			comment = await Comment.findOneOrFail(
+				{
+					identifier: commentIdentifier,
+				},
+				{ relations: ["post"] }
+			);
+			vote = await Vote.findOne(
+				{ user, comment },
+				{ relations: ["comment", "comment.post"] }
+			);
 		} else {
-			vote = await Vote.findOne({ user, post });
+			vote = await Vote.findOne({ user, post }, { relations: ["post"] });
 		}
 
 		if (!vote && value === 0) {

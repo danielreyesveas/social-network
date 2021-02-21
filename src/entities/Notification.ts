@@ -56,6 +56,9 @@ export default class Notification extends Entity {
 	@Column()
 	type: string;
 
+	@Column({ nullable: true })
+	value: string;
+
 	@Column("boolean", { default: false })
 	read: boolean = false;
 

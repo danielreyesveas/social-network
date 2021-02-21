@@ -34,6 +34,7 @@ export default function user(
 	state: State = initialState,
 	{ type, payload }: Action
 ) {
+	let newState;
 	switch (type) {
 		case SET_AUTHENTICATED:
 			return {
@@ -44,6 +45,7 @@ export default function user(
 			return initialState;
 		case SET_USER:
 			return {
+				...state,
 				authenticated: true,
 				loading: false,
 				credentials: payload,
@@ -66,24 +68,24 @@ export default function user(
 				profile: payload,
 			};
 		case SET_NEW_NOTIFICATION:
-			return {
-				...state,
-				credentials: Object.assign({}, state.credentials, {
-					lastNotifications: [
-						payload,
-						...state.credentials.lastNotifications.slice(0, -1),
-					],
-					notificationCount: state.credentials.notificationCount + 1,
-				}),
-				profile: Object.assign({}, state.profile, {
-					user: Object.assign({}, state.profile.user, {
-						allNotifications: [
-							payload,
-							...state.profile.user.allNotifications,
-						],
-					}),
-				}),
-			};
+			newState = Object.assign({}, JSON.parse(JSON.stringify(state)));
+
+			if (newState.credentials.lastNotifications.length >= 6) {
+				newState.credentials.lastNotifications.pop();
+			}
+			newState.credentials.lastNotifications = [
+				payload,
+				...newState.credentials.lastNotifications,
+			];
+			newState.credentials.notificationCount++;
+
+			if (newState.profile) {
+				newState.profile.user.allNotifications = [
+					payload,
+					...newState.profile.user.allNotifications,
+				];
+			}
+			return newState;
 		case UPDATE_USER_IMAGE:
 			return Object.assign({}, state, {
 				credentials: payload,
