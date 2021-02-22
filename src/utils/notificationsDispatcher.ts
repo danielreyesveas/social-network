@@ -26,6 +26,8 @@ const CREATE_NOTIFICATION = gql`
 `;
 
 export function createNotification(values: any) {
+	const url = process.env.NOTIFICATIONS_URL || "/graphql/";
+	console.log(url);
 	const {
 		username,
 		type,
@@ -36,7 +38,7 @@ export function createNotification(values: any) {
 		commentId = null,
 	} = values;
 
-	return request("http://localhost:4000/graphql", CREATE_NOTIFICATION, {
+	return request(url, CREATE_NOTIFICATION, {
 		username,
 		type,
 		value,
