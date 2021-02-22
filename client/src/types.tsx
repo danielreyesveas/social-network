@@ -47,6 +47,7 @@ export interface Sub {
 	members: any[];
 
 	// Virtual fields
+	subMembers: any[];
 	url: string;
 	imageUrl: string;
 	bannerUrl: string;

@@ -7,6 +7,7 @@ import {
 	UPDATE_USER_IMAGE,
 	SET_USER_PROFILE_DATA,
 	SET_NEW_NOTIFICATION,
+	RESPONSE_INVITATION,
 } from "../types";
 
 const initialState = {
@@ -67,6 +68,16 @@ export default function user(
 				...state,
 				profile: payload,
 			};
+		case RESPONSE_INVITATION:
+			return Object.assign({}, state, {
+				profile: Object.assign({}, state.profile, {
+					user: Object.assign({}, state.profile.user, {
+						invitations: state.profile.user.invitations.filter(
+							(i) => i.identifier !== payload.identifier
+						),
+					}),
+				}),
+			});
 		case SET_NEW_NOTIFICATION:
 			newState = Object.assign({}, JSON.parse(JSON.stringify(state)));
 
@@ -84,6 +95,7 @@ export default function user(
 					payload,
 					...newState.profile.user.allNotifications,
 				];
+				newState.profile.user.notificationCount++;
 			}
 			return newState;
 		case UPDATE_USER_IMAGE:

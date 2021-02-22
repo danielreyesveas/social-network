@@ -10,6 +10,7 @@ import { User } from "../../../types";
 import axios from "axios";
 import Image from "next/image";
 import { status_text } from "../../../utils";
+
 const EditSub = ({ sub, updateSub }) => {
 	const [ownSub, setOwnSub] = useState(false);
 	// Global state

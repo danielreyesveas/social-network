@@ -50,20 +50,12 @@ const createSub = async (request: Request, response: Response) => {
 		const sub = new Sub({ name, title, description, user });
 		await sub.save();
 
-		// TODO: trigger function
 		if (members.length) {
 			members.map(async (member: string) => {
-				const notification = new Notification({
-					username: member,
-					type: "invitation",
-					sender: user,
-					sub,
-				});
 				const subMember = new SubMember({
 					username: member,
 					sub,
 				});
-				await notification.save();
 				await subMember.save();
 			});
 		}
@@ -195,7 +187,6 @@ const updateSub = async (request: Request, response: Response) => {
 		sub.description = description;
 		await sub.save();
 
-		const user: User = response.locals.user;
 		const currentMembers = sub.members.map((m) => m.username);
 		const addedMembers = members.map((m: any) => m.username);
 

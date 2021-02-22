@@ -60,6 +60,10 @@ export default class Sub extends Entity {
 		return this.posts?.length;
 	}
 
+	@Expose() get subMembers(): SubMember[] {
+		return this.members?.filter((m) => m.status === "accepted");
+	}
+
 	@Expose() get followerCount(): number {
 		return this.followers?.length;
 	}

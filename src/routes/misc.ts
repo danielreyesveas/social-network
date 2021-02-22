@@ -9,6 +9,7 @@ import Follow from "../entities/Follow";
 import auth from "../middleware/auth";
 import user from "../middleware/user";
 import Bookmark from "../entities/Bookmark";
+import SubMember, { Status } from "../entities/SubMember";
 
 const router = Router();
 
@@ -192,6 +193,41 @@ const follow = async (request: Request, response: Response) => {
 	}
 };
 
+const responseInvitation = async (request: Request, response: Response) => {
+	const { identifier, value } = request.body;
+	const responseTypes = [-1, 1];
+
+	if (!responseTypes.includes(value)) {
+		return response
+			.status(400)
+			.json({ value: "El valor enviado debe ser -1 o 1." });
+	}
+
+	try {
+		const subMember = await SubMember.findOne(
+			{ identifier },
+			{ relations: ["sub"] }
+		);
+
+		if (!subMember) {
+			return response
+				.status(400)
+				.json({ error: "El dato no ha sido encontrado." });
+		}
+
+		const status = value === 1 ? Status.ACEPTED : Status.REJECTED;
+		subMember.status = status;
+		await subMember.save();
+
+		return response.json(subMember);
+	} catch (error) {
+		console.log(error);
+		return response
+			.status(500)
+			.json({ error: "Algo no ha salido bien..." });
+	}
+};
+
 const topSubs = async (_: Request, response: Response) => {
 	try {
 		const imageUrlExp = `COALESCE('${process.env.APP_URL}/images/' || s."imageUrn", 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y')`;
@@ -218,6 +254,7 @@ const topSubs = async (_: Request, response: Response) => {
 router.post("/vote", user, auth, vote);
 router.post("/bookmark", user, auth, bookmark);
 router.post("/follow", user, auth, follow);
+router.post("/response-invitation", user, auth, responseInvitation);
 router.get("/top-subs", topSubs);
 
 export default router;

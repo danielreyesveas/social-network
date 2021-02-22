@@ -3,8 +3,10 @@ import {
 	Column,
 	ManyToOne,
 	JoinColumn,
-	ManyToMany,
+	Index,
+	BeforeInsert,
 } from "typeorm";
+import { makeId } from "../utils/helpers";
 
 import Entity from "./Entity";
 import Sub from "./Sub";
@@ -22,6 +24,10 @@ export default class SubMember extends Entity {
 		super();
 		Object.assign(this, subMember);
 	}
+
+	@Index()
+	@Column()
+	identifier: string;
 
 	@Column({
 		type: "enum",
@@ -43,4 +49,9 @@ export default class SubMember extends Entity {
 	@ManyToOne(() => Sub)
 	@JoinColumn({ name: "subName", referencedColumnName: "name" })
 	sub: Sub;
+
+	@BeforeInsert()
+	makeIdAndSlug() {
+		this.identifier = makeId(8);
+	}
 }

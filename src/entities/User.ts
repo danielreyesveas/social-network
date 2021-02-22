@@ -112,7 +112,7 @@ export default class User extends Entity {
 	}
 
 	@Expose() get membersCount(): number {
-		return this.members?.length;
+		return this.members?.filter((m) => m.status === "accepted").length;
 	}
 
 	@Expose() get notificationCount(): number {
@@ -128,7 +128,14 @@ export default class User extends Entity {
 	}
 
 	@Expose() get membersPreview(): SubMember[] {
-		return this.members?.slice(-10).reverse();
+		return this.members
+			?.filter((m) => m.status === "accepted")
+			.slice(-10)
+			.reverse();
+	}
+
+	@Expose() get invitations(): SubMember[] {
+		return this.members?.filter((m) => m.status === "pending").reverse();
 	}
 
 	@Expose() get lastNotifications(): Notification[] {

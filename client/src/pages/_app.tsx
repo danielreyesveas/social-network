@@ -45,7 +45,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 					<AuthProvider>
 						<UIProvider>
 							{!authRoute && <Navbar />}
-							<div className={authRoute ? "" : "pt-12"}>
+							<div className={authRoute ? "" : "pt-12 h-full"}>
 								<Component {...pageProps} />
 							</div>
 						</UIProvider>

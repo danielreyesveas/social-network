@@ -6,7 +6,7 @@ import { gql, useSubscription } from "@apollo/client";
 import { useDispatch, useSelector } from "react-redux";
 import { useUIDispatch, useAuthDispatch } from "../context";
 import { logout } from "../redux/actions/userActions";
-import Notifications from "./Notifications";
+import NotificationMenu from "./NotificationMenu";
 
 const NEW_NOTIFICATION = gql`
 	subscription newNotification {
@@ -196,7 +196,7 @@ export default function ProfileMenu() {
 						</button>
 						<div
 							className={classNames(
-								"absolute right-0 z-50 w-60 pt-1 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 divide-y divide-gray-100",
+								"absolute z-50 w-80 pt-1 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 notifications-div",
 								{
 									block: showNotifications,
 									hidden: !showNotifications,
@@ -206,7 +206,7 @@ export default function ProfileMenu() {
 							aria-orientation="vertical"
 							aria-labelledby="user-menu"
 						>
-							<Notifications
+							<NotificationMenu
 								notifications={user.lastNotifications}
 							/>
 

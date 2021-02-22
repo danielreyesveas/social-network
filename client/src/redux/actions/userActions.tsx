@@ -4,7 +4,7 @@ import {
 	SET_ERRORS,
 	CLEAR_ERRORS,
 	LOADING_UI,
-	STOP_LOADING_UI,
+	RESPONSE_INVITATION,
 	SET_USER_PROFILE_DATA,
 } from "../types";
 import { Dispatch } from "redux";
@@ -44,4 +44,20 @@ export const logout = () => async (dispatch: Dispatch) => {
 			});
 			return Promise.reject(err.response.data);
 		});
+};
+
+export const responseInvitation = (invitation) => async (
+	dispatch: Dispatch
+) => {
+	axios
+		.post("/misc/response-invitation", invitation)
+		.then((response) => {
+			dispatch({ type: RESPONSE_INVITATION, payload: response.data });
+		})
+		.catch((error) =>
+			dispatch({
+				type: SET_ERRORS,
+				payload: error.response.data,
+			})
+		);
 };

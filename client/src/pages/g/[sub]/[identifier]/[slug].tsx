@@ -123,7 +123,7 @@ export default function PostPage() {
 				</div>
 			</div>
 
-			<div className="container flex pt-5">
+			<div className="container flex py-5">
 				{/* Post */}
 				<div className="w-full px-4 md:w-160 md:p-0">
 					<div className="bg-white rounded">

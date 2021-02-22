@@ -96,7 +96,7 @@ export default function Chat() {
 	// }, [reactionData, reactionError]);
 
 	return (
-		<div className="container h-screen">
+		<div className="container h-full">
 			<Head>
 				<title>{title}</title>
 				<meta name="description" content={description} />

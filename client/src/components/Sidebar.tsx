@@ -58,7 +58,7 @@ export default function Sidebar({ sub, hideCreate = false }: SidebarProps) {
 							</div>
 						</div>
 
-						{sub.members?.map((member) => (
+						{sub.subMembers?.map((member) => (
 							<div
 								key={member.username}
 								className="flex items-center cursor-pointer hover:bg-gray-200 hover:border-primary-4 group"
