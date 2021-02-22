@@ -79,8 +79,14 @@ export default function ProfileMenu() {
 			}
 		};
 
-		window.addEventListener("click", handleOutsideClick);
-		return () => window.removeEventListener("click", handleOutsideClick);
+		if (typeof window !== "undefined") {
+			window.addEventListener("click", handleOutsideClick);
+		}
+
+		if (typeof window !== "undefined") {
+			return () =>
+				window.removeEventListener("click", handleOutsideClick);
+		}
 	}, [showProfileMenu, profileMenuContainer]);
 
 	useEffect(() => {
@@ -104,8 +110,14 @@ export default function ProfileMenu() {
 			}
 		};
 
-		window.addEventListener("click", handleOutsideClick);
-		return () => window.removeEventListener("click", handleOutsideClick);
+		if (typeof window !== "undefined") {
+			window.addEventListener("click", handleOutsideClick);
+		}
+
+		if (typeof window !== "undefined") {
+			return () =>
+				window.removeEventListener("click", handleOutsideClick);
+		}
 	}, [showNotifications, notificationsContainer]);
 
 	useEffect(() => {
@@ -156,7 +168,9 @@ export default function ProfileMenu() {
 		await dispatch<any>(logout())
 			.then(() => {
 				authDispatch("LOGOUT");
-				window.location.reload();
+				if (typeof window !== "undefined") {
+					window.location.reload();
+				}
 			})
 			.catch((error) => {
 				console.log(error);

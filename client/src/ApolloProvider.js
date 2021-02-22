@@ -18,7 +18,10 @@ import { setContext } from "@apollo/client/link/context";
 // const wsUri = `ws://localhost:4000/graphql`;
 
 const uri = "/graphql/";
-const host = window.location.host;
+let host = "localhost:4000";
+if (typeof window !== "undefined") {
+	host = window.location.host;
+}
 const wssUri = `wss://${host}/graphql/`;
 
 let httpLink = createHttpLink({

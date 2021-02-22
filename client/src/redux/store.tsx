@@ -6,6 +6,7 @@ import userReducer from "./reducers/userReducer";
 import uiReducer from "./reducers/uiReducer";
 import chatReducer from "./reducers/chatReducer";
 
+const isDevelopment = process.env.NODE_ENV === "development";
 const initialState = {};
 
 const middleware = [thunk];
@@ -17,13 +18,17 @@ const reducers = combineReducers({
 	ui: uiReducer,
 });
 
-const composeEnhancers =
-	typeof (window as any) === "object" &&
-	(window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-		? (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
-		: compose;
-
-const enhancer = composeEnhancers(applyMiddleware(...middleware));
-const store = createStore(reducers, initialState, enhancer);
+const store = createStore(
+	reducers,
+	initialState,
+	compose(
+		applyMiddleware(...middleware),
+		isDevelopment &&
+			typeof (window as any) === "object" &&
+			typeof (window as any).__REDUX_DEVTOOLS_EXTENSION__ !== "undefined"
+			? (window as any).__REDUX_DEVTOOLS_EXTENSION__()
+			: (f) => f
+	)
+);
 
 export default store;

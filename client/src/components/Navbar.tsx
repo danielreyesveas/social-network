@@ -30,8 +30,14 @@ const Navbar: React.FC<NavbarProps> = ({ loading, authenticated }) => {
 			}
 		};
 
-		window.addEventListener("click", handleOutsideClick);
-		return () => window.removeEventListener("click", handleOutsideClick);
+		if (typeof window !== "undefined") {
+			window.addEventListener("click", handleOutsideClick);
+		}
+
+		if (typeof window !== "undefined") {
+			return () =>
+				window.removeEventListener("click", handleOutsideClick);
+		}
 	}, [showSearch, searchContainer]);
 
 	useEffect(() => {
