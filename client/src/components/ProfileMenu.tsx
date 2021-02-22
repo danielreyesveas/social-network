@@ -153,7 +153,7 @@ export default function ProfileMenu() {
 
 	const handleLogout = async () => {
 		setShowProfileMenu(false);
-		await dispatch(logout())
+		await dispatch<any>(logout())
 			.then(() => {
 				authDispatch("LOGOUT");
 				window.location.reload();
