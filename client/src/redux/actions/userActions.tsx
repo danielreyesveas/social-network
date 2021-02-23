@@ -16,6 +16,7 @@ export const login = (userData: User) => async (dispatch: Dispatch) => {
 	return axios
 		.post("/auth/login", userData)
 		.then((res) => {
+			localStorage.setItem("token", res.data.token);
 			dispatch({ type: CLEAR_ERRORS });
 			dispatch({ type: SET_USER, payload: res.data.user });
 			return res.data.user;

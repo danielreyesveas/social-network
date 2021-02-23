@@ -109,14 +109,7 @@ const login = async (request: Request, response: Response) => {
 				sameSite: "strict",
 				maxAge: 5 * 60 * 1000,
 				path: "/",
-			}),
-			cookie.serialize("public_token", token, {
-				httpOnly: false, // Can´t be access by JS.
-				secure: process.env.NODE_ENV === "production", // Can´t be access without https.
-				sameSite: "strict",
-				maxAge: 5 * 60 * 1000,
-				path: "/",
-			}),
+			}),		
 		]);
 		return response.json({ user, token });
 	} catch (error) {

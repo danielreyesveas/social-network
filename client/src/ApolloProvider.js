@@ -14,26 +14,20 @@ import { WebSocketLink } from "@apollo/client/link/ws";
 
 import { setContext } from "@apollo/client/link/context";
 
-// const uri = "http://localhost:4000/graphql";
-// const wsUri = `ws://localhost:4000/graphql`;
-
-const uri = "/graphql/";
-let host = "localhost:4000";
-if (typeof window !== "undefined") {
-	host = window.location.host;
-}
-const wssUri = `wss://${host}/graphql/`;
+const uri = process.env.NEXT_URI || "/graphql/";
+const wssUri = process.env.NEXT_WS_URI || "wss://www.chat.reciclatusanimales.com/graphql/";
 
 let httpLink = createHttpLink({
 	uri,
 });
 
 const authLink = setContext((_, { headers }) => {
-	const token = Cookies.get("public_token");
+	const token = localStorage.getItem("token");
+	
 	return {
 		headers: {
 			...headers,
-			authorization: token ? `Bearer ${Cookies.get("public_token")}` : "",
+			authorization: token ? `Bearer ${token}` : "",
 		},
 	};
 });
@@ -46,7 +40,7 @@ const wsLink = process.browser
 			options: {
 				reconnect: true,
 				connectionParams: {
-					Authorization: `Bearer ${Cookies.get("public_token")}`,
+					Authorization: `Bearer ${localStorage.getItem("token")}`,
 				},
 			},
 	  })
