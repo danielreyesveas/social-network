@@ -4,12 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import InputGroup from "../components/InputGroup";
 
-import { login } from "../redux/actions/userActions";
+import { login, loginWithGoogle } from "../redux/actions/userActions";
+import app, { googleAuthProvider } from "../firebase/config";
 
 import { useAuthState, useAuthDispatch } from "../context";
 import { connect } from "react-redux";
 
-const Login = ({ login, errors }) => {
+const Login = ({ login, loginWithGoogle, errors }) => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 
@@ -31,6 +32,29 @@ const Login = ({ login, errors }) => {
 				console.log(error);
 			});
 	};
+
+	const socialLogin = async (provider) => {
+		await app
+			.auth()
+			.signInWithPopup(provider)
+			.then(async (result) => {
+				const { displayName, email, photoURL } = result.user;
+				console.log(result);
+				console.log(displayName, email, photoURL);
+				await loginWithGoogle({ displayName, email, photoURL })
+					.then((response) => {
+						console.log(response);
+						dispatch("LOGIN", response).then(() => router.back());
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			})
+			.catch((error) => {
+				console.log(error.message);
+			});
+	};
+
 	return (
 		<div className="flex bg-primary-5">
 			<Head>
@@ -74,6 +98,13 @@ const Login = ({ login, errors }) => {
 						</button>
 					</form>
 
+					<button
+						className="w-full py-2 mb-4 text-xs font-bold text-white uppercase border rounded border-primary-1 bg-primary-1"
+						onClick={() => socialLogin(googleAuthProvider)}
+					>
+						Google
+					</button>
+
 					<small>
 						¿Eres nuevo en Clics?
 						<Link href="/register">
@@ -94,6 +125,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapActionsToProps = (dispatch) => ({
 	login: (userData) => dispatch(login(userData)),
+	loginWithGoogle: (userData) => dispatch(loginWithGoogle(userData)),
 });
 
 export default connect(mapStateToProps, mapActionsToProps)(Login);

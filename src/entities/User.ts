@@ -44,7 +44,7 @@ export default class User extends Entity {
 	username: string;
 
 	@Exclude()
-	@Column()
+	@Column({ nullable: true })
 	@Length(6, 255, {
 		message: "Debe ser de al menos 6 caracteres.",
 	})
@@ -163,6 +163,6 @@ export default class User extends Entity {
 
 	@BeforeInsert()
 	async hashPassword() {
-		this.password = await bcrypt.hash(this.password, 6);
+		if (this.password) this.password = await bcrypt.hash(this.password, 6);
 	}
 }

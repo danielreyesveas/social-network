@@ -30,6 +30,22 @@ export const login = (userData: User) => async (dispatch: Dispatch) => {
 		});
 };
 
+export const loginWithGoogle = (userData) => async (dispatch: Dispatch) => {
+	return axios
+		.post("/auth/login-with-google", userData)
+		.then((res) => {
+			console.log(res);
+			localStorage.setItem("token", res.data.token);
+			dispatch({ type: CLEAR_ERRORS });
+			dispatch({ type: SET_USER, payload: res.data.user });
+			return res.data.user;
+		})
+		.catch((err) => {
+			console.log(err);
+			return Promise.reject(err.response.data);
+		});
+};
+
 export const logout = () => async (dispatch: Dispatch) => {
 	return axios
 		.get("/auth/logout")

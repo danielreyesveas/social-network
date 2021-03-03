@@ -109,7 +109,74 @@ const login = async (request: Request, response: Response) => {
 				sameSite: "strict",
 				maxAge: 5 * 60 * 1000,
 				path: "/",
-			}),		
+			}),
+		]);
+		return response.json({ user, token });
+	} catch (error) {
+		console.error(error);
+		return response.json({ error: "Algo no ha salido bien..." });
+	}
+};
+
+const loginWithGoogle = async (request: Request, response: Response) => {
+	const { displayName, email, photoURL } = request.body;
+
+	try {
+		let user: User | undefined;
+
+		user = await User.findOne(
+			{ email },
+			{
+				relations: [
+					"notifications",
+					"notifications.sender",
+					"notifications.sub",
+					"notifications.post",
+					"notifications.comment",
+				],
+			}
+		);
+		console.log(user);
+
+		if (!user) {
+			const newUser = new User({ email, username: displayName });
+			await newUser.save();
+			console.log(newUser);
+			user = await User.findOne(
+				{ email },
+				{
+					relations: [
+						"notifications",
+						"notifications.sender",
+						"notifications.sub",
+						"notifications.post",
+						"notifications.comment",
+					],
+				}
+			);
+			console.log(user);
+		}
+
+		const token = jwt.sign(
+			{ username: displayName },
+			process.env.JWT_SECRET!
+		);
+
+		response.set("Set-Cookie", [
+			cookie.serialize("token", token, {
+				httpOnly: true, // Can´t be access by JS.
+				secure: process.env.NODE_ENV === "production", // Can´t be access without https.
+				sameSite: "strict",
+				maxAge: 5 * 60 * 1000,
+				path: "/",
+			}),
+			cookie.serialize("public_token", token, {
+				httpOnly: false, // Can´t be access by JS.
+				secure: process.env.NODE_ENV === "production", // Can´t be access without https.
+				sameSite: "strict",
+				maxAge: 5 * 60 * 1000,
+				path: "/",
+			}),
 		]);
 		return response.json({ user, token });
 	} catch (error) {
@@ -141,6 +208,7 @@ const router = Router();
 
 router.post("/register", register);
 router.post("/login", login);
+router.post("/login-with-google", loginWithGoogle);
 router.get("/me", user, auth, me);
 router.get("/logout", user, auth, logout);
 
