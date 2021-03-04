@@ -7,11 +7,6 @@ import {
 	JoinColumn,
 	BeforeInsert,
 	OneToMany,
-	AfterLoad,
-	AfterUpdate,
-	EventSubscriber,
-	EntitySubscriberInterface,
-	UpdateEvent,
 } from "typeorm";
 import { makeId, slugify } from "../utils/helpers";
 import Bookmark from "./Bookmark";

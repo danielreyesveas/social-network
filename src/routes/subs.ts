@@ -1,18 +1,12 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { isEmpty } from "class-validator";
-import {
-	Connection,
-	EntityManager,
-	getConnection,
-	getRepository,
-} from "typeorm";
+import { getRepository } from "typeorm";
 import multer, { FileFilterCallback } from "multer";
 import path from "path";
 import fs from "fs";
 
 import Sub from "../entities/Sub";
 import User from "../entities/User";
-import Notification from "../entities/Notification";
 
 import auth from "../middleware/auth";
 import user from "../middleware/user";

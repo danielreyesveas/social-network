@@ -6,7 +6,6 @@ import {
 	Index,
 	BeforeInsert,
 	OneToMany,
-	ManyToMany,
 } from "typeorm";
 
 import bcrypt from "bcrypt";
@@ -20,6 +19,11 @@ import Comment from "./Comment";
 import Notification from "./Notification";
 import SubMember from "./SubMember";
 import Sub from "./Sub";
+
+export enum AccountType {
+	EMAIL = "email",
+	GOOGLE = "google",
+}
 
 @TOEntity("users")
 export default class User extends Entity {
@@ -50,6 +54,13 @@ export default class User extends Entity {
 	})
 	password: string;
 
+	@Column({
+		type: "enum",
+		enum: AccountType,
+		default: AccountType.EMAIL,
+	})
+	accountType: AccountType;
+
 	@Column({ nullable: true, type: "text" })
 	bio: string;
 
@@ -58,9 +69,13 @@ export default class User extends Entity {
 
 	@Expose()
 	get imageUrl(): string {
-		return this.imageUrn
-			? `${process.env.APP_URL}/images/profiles/${this.imageUrn}`
-			: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+		if (this.accountType === AccountType.EMAIL) {
+			return this.imageUrn
+				? `${process.env.APP_URL}/images/profiles/${this.imageUrn}`
+				: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+		} else {
+			return this.imageUrn;
+		}
 	}
 
 	@Exclude()

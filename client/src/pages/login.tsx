@@ -39,11 +39,9 @@ const Login = ({ login, loginWithGoogle, errors }) => {
 			.signInWithPopup(provider)
 			.then(async (result) => {
 				const { displayName, email, photoURL } = result.user;
-				console.log(result);
-				console.log(displayName, email, photoURL);
+
 				await loginWithGoogle({ displayName, email, photoURL })
 					.then((response) => {
-						console.log(response);
 						dispatch("LOGIN", response).then(() => router.back());
 					})
 					.catch((err) => {

@@ -3,7 +3,7 @@ import { Request, Response, Router } from "express";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
 
-import User from "../entities/User";
+import User, { AccountType } from "../entities/User";
 
 import auth from "../middleware/auth";
 
@@ -136,12 +136,17 @@ const loginWithGoogle = async (request: Request, response: Response) => {
 				],
 			}
 		);
-		console.log(user);
 
 		if (!user) {
-			const newUser = new User({ email, username: displayName });
+			const newUser = new User({
+				email,
+				username: displayName,
+				accountType: AccountType.GOOGLE,
+				imageUrn: photoURL,
+			});
+
 			await newUser.save();
-			console.log(newUser);
+
 			user = await User.findOne(
 				{ email },
 				{
@@ -154,7 +159,6 @@ const loginWithGoogle = async (request: Request, response: Response) => {
 					],
 				}
 			);
-			console.log(user);
 		}
 
 		const token = jwt.sign(
@@ -178,6 +182,7 @@ const loginWithGoogle = async (request: Request, response: Response) => {
 				path: "/",
 			}),
 		]);
+
 		return response.json({ user, token });
 	} catch (error) {
 		console.error(error);
