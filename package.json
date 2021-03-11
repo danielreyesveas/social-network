@@ -41,7 +41,7 @@
 		"start": "node build/server.js",
 		"server": "nodemon --exec ts-node src/server.ts --ignore client",
 		"client": "cd client && npm run dev",
-		"chat": "cd ../chat-app && nodemon server.js --ignore client",
+		"chat": "cd ../chat-notifications && nodemon server.js --ignore client",
 		"dev": "concurrently --kill-others \"npm run server\"  \"npm run client\" -n server,client",
 		"full": "concurrently --kill-others \"npm run server\" \"npm run chat\"  \"npm run client\" -n server,chat,client",
 		"typeorm": "ts-node ./node_modules/typeorm/cli.js",
