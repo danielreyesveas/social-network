@@ -11,11 +11,6 @@ module.exports = {
 		return config;
 	},
 	images: {
-		domains: [
-			"www.gravatar.com",
-			"localhost",
-			"www.clics.reciclatusanimales.com",
-			"clics.reciclatusanimales.com",
-		],
+		domains: process.env.NEXT_PUBLIC_IMAGES_DOMAINS.split(","),
 	},
 };

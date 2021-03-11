@@ -5,12 +5,12 @@ let app;
 
 if (!firebase.apps.length) {
 	app = firebase.initializeApp({
-		apiKey: "AIzaSyCRCHS0TPhFYlTWxcE4xoPuVGa5uc7L5Ks",
-		authDomain: "clics-reciclatusanimales.firebaseapp.com",
-		projectId: "clics-reciclatusanimales",
-		storageBucket: "clics-reciclatusanimales.appspot.com",
-		messagingSenderId: "108227936926",
-		appId: "1:108227936926:web:4a3b14cc59ca7fd158718f",
+		apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+		authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+		projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+		storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+		messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+		appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 	});
 } else {
 	app = firebase.app();
