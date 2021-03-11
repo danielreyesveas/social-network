@@ -6,8 +6,7 @@ Clics is community of musical leseras. A social network. Work with three differe
 
 <div align="center"><img src="https://resources.reciclatusanimales.com/image/clics.png" width=700></div>
 <br />
-<div align="center"><img src="https://resources.reciclatusanimales.com/image/chat-notifications.png
-" width=700></div>
+<div align="center"><img src="https://resources.reciclatusanimales.com/image/chat-notifications.png" width=700></div>
 <br />
 
 ## Features 📋
