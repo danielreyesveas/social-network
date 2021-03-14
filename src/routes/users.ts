@@ -17,7 +17,14 @@ const getUserSubmissions = async (request: Request, response: Response) => {
 	try {
 		const user = await User.findOneOrFail({
 			where: { username: request.params.username },
-			select: ["id", "username", "email", "createdAt", "imageUrn"],
+			select: [
+				"id",
+				"username",
+				"email",
+				"createdAt",
+				"imageUrn",
+				"accountType",
+			],
 			relations: [
 				"follows",
 				"followers",
@@ -164,7 +171,15 @@ const profile = async (_: Request, response: Response) => {
 	try {
 		const user = await User.findOneOrFail({
 			where: { username: response.locals.user.username },
-			select: ["id", "username", "email", "bio", "createdAt", "imageUrn"],
+			select: [
+				"id",
+				"username",
+				"email",
+				"bio",
+				"createdAt",
+				"imageUrn",
+				"accountType",
+			],
 			relations: [
 				"notifications",
 				"notifications.sender",
