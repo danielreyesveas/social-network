@@ -76,6 +76,9 @@ const upload = multer({
 		destination: "public/images/profiles",
 		filename: (_, file, callback) => {
 			const name = makeId(15);
+			console.log(name);
+			console.log(path.extname);
+			console.log(file.originalname);
 			callback(null, name + path.extname(file.originalname));
 		},
 	}),
@@ -90,6 +93,7 @@ const upload = multer({
 
 const uploadUserImage = async (request: Request, response: Response) => {
 	const user: User = response.locals.user;
+	console.log(request.body.file);
 
 	try {
 		if (user.username !== request.params.username) {

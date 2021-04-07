@@ -8,10 +8,12 @@ import { Post, Sub } from "../../../types";
 import { useGetSub } from "../../../hooks";
 import { connect } from "react-redux";
 import { addPost } from "../../../redux/actions/dataActions";
+import FileUpload from "../../../components/FileUpload";
 
 const Submit = ({ sub, addPost }) => {
 	const [title, setTitle] = useState("");
 	const [body, setBody] = useState("");
+	const [image, setImage] = useState("");
 
 	const router = useRouter();
 	const { sub: subName } = router.query;
@@ -25,18 +27,21 @@ const Submit = ({ sub, addPost }) => {
 
 		if (title.trim() == "") return;
 
-		const postData = {
-			title: title.trim(),
-			body,
-			sub: subName,
-		};
-
-		addPost(postData).then((response) => {
+		const formData = new FormData();
+		formData.append("file", image);
+		formData.append("title", title.trim());
+		formData.append("body", body);
+		formData.append("sub", subName.toString());
+		addPost(formData).then((response) => {
 			console.log(response);
 			router.push(
 				`/g/${subName}/${response.identifier}/${response.slug}`
 			);
 		});
+	};
+
+	const updateUploadedFile = (image) => {
+		setImage(image);
 	};
 
 	return (
@@ -50,6 +55,10 @@ const Submit = ({ sub, addPost }) => {
 						Nueva entrada en /g/{subName}
 					</h1>
 					<form onSubmit={handleAddPost}>
+						<FileUpload
+							accept=".jpg,.png,.jpeg"
+							updateFileCb={updateUploadedFile}
+						/>
 						<div className="relative mb-2">
 							<input
 								type="text"

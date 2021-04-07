@@ -5,27 +5,56 @@ import Comment from "../entities/Comment";
 import Post from "../entities/Post";
 import Sub from "../entities/Sub";
 import User from "../entities/User";
+import multer, { FileFilterCallback } from "multer";
+import path from "path";
+import fs from "fs";
 
+import { makeId } from "../utils/helpers";
 import auth from "../middleware/auth";
 import user from "../middleware/user";
+
+const upload = multer({
+	storage: multer.diskStorage({
+		destination: "public/images/posts",
+		filename: (_, file, callback) => {
+			const name = makeId(15);
+			callback(null, name + path.extname(file.originalname));
+		},
+	}),
+	fileFilter: (_, file: any, callback: FileFilterCallback) => {
+		if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+			callback(null, true); // Accept file
+		} else {
+			callback(new Error("El archivo no es una imagen."));
+		}
+	},
+});
 
 const createPost = async (request: Request, response: Response) => {
 	const { title, body, sub } = request.body;
 
 	const user: User = response.locals.user;
 
-	if (title.trim() === "")
+	if (title.trim() === "") {
+		if (request.file) fs.unlinkSync(request.file.path);
 		return response.status(400).json({ title: "Campo requerido." });
+	}
 
 	try {
 		const subRecord = await Sub.findOneOrFail({ name: sub });
-		const post = new Post({ title, body, user, sub: subRecord });
+		const filename = request.file ? request.file.filename : "";
+		const post = new Post({
+			title,
+			body,
+			user,
+			sub: subRecord,
+			imageUrn: filename,
+		});
 
 		await post.save();
 
 		return response.json(post);
 	} catch (error) {
-		console.error(error);
 		return response
 			.status(500)
 			.json({ error: "Algo no ha salido bien..." });
@@ -148,15 +177,24 @@ const updatePost = async (request: Request, response: Response) => {
 		const post = await Post.findOneOrFail({ identifier, slug });
 
 		if (post.username !== user.username) {
+			if (request.file) fs.unlinkSync(request.file.path);
 			return response
 				.status(403)
 				.json({ error: "No puedes editar este Post." });
 		}
 
+		let oldImageUrn: string = "";
+		oldImageUrn = post.imageUrn || "";
+
+		post.imageUrn = request.file ? request.file.filename : "";
 		post.title = title;
 		post.body = body;
 
 		await post.save();
+
+		if (oldImageUrn) {
+			fs.unlinkSync(`public\\images\\posts\\${oldImageUrn}`);
+		}
 
 		return response.json(post);
 	} catch (error) {
@@ -221,11 +259,17 @@ const getPostComments = async (request: Request, response: Response) => {
 
 const router = Router();
 
-router.post("/", user, auth, createPost);
+router.post("/", user, auth, upload.single("file"), createPost);
 router.get("/", user, getPosts);
 router.get("/bookmarks", user, auth, getBookmarkPosts);
 router.get("/:identifier/:slug", user, getPost);
-router.post("/:identifier/:slug/update", user, auth, updatePost);
+router.post(
+	"/:identifier/:slug/update",
+	user,
+	auth,
+	upload.single("file"),
+	updatePost
+);
 router.post("/:identifier/:slug/comments", user, auth, commentOnPost);
 router.get("/:identifier/:slug/comments", user, getPostComments);
 

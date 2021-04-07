@@ -9,10 +9,12 @@ import { useAuthState } from "../../../../../context/auth";
 import { useGetSub, useGetPost } from "../../../../../hooks";
 import { connect } from "react-redux";
 import { updatePost } from "../../../../../redux/actions/dataActions";
+import FileUpload from "../../../../../components/FileUpload";
 
 const EditPost = ({ sub, post, updatePost }) => {
 	const [title, setTitle] = useState("");
 	const [body, setBody] = useState("");
+	const [image, setImage] = useState("");
 
 	const { authenticated, user } = useAuthState();
 
@@ -27,8 +29,11 @@ const EditPost = ({ sub, post, updatePost }) => {
 
 	useEffect(() => {
 		if (!post) return;
-		setTitle(post.title);
-		setBody(post.body);
+		if (!title && !body && !image) {
+			setTitle(post.title);
+			setBody(post.body);
+			setImage(post.imageUrl);
+		}
 	}, [post]);
 
 	const handleUpdatePost = (event: FormEvent) => {
@@ -36,20 +41,23 @@ const EditPost = ({ sub, post, updatePost }) => {
 
 		if (title.trim() == "") return;
 
-		const postData = {
-			identifier,
-			slug,
-			title: title.trim(),
-			body,
-			sub: subName,
-		};
+		const formData = new FormData();
+		formData.append("file", image);
+		formData.append("title", title.trim());
+		formData.append("body", body);
+		formData.append("identifier", identifier.toString());
+		formData.append("slug", slug.toString());
+		formData.append("sub", subName.toString());
 
-		updatePost(postData).then((response) => {
-			console.log(response);
+		updatePost(formData).then((response) => {
 			router.push(
 				`/g/${sub.name}/${response.identifier}/${response.slug}`
 			);
 		});
+	};
+
+	const updateUploadedFile = (image) => {
+		setImage(image);
 	};
 
 	return (
@@ -63,6 +71,11 @@ const EditPost = ({ sub, post, updatePost }) => {
 						Editar entrada en {sub?.url}
 					</h1>
 					<form onSubmit={handleUpdatePost}>
+						<FileUpload
+							accept=".jpg,.png,.jpeg"
+							updateFileCb={updateUploadedFile}
+							initialFile={image}
+						/>
 						<div className="relative mb-2">
 							<input
 								type="text"

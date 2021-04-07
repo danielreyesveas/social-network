@@ -167,8 +167,8 @@ export default function PostPage() {
 											></i>
 										</div>
 									</div>
-									<div className="py-2 pr-2">
-										<div className="flex items-center">
+									<div className="p-2">
+										<div className="flex items-center justify-between">
 											<p className="text-xs text-gray-500">
 												Por
 												<Link
@@ -184,16 +184,24 @@ export default function PostPage() {
 													</a>
 												</Link>
 											</p>
+											{ownPost && (
+												<Link href={`${post.url}/edit`}>
+													<a className="hollow primary button">
+														editar
+													</a>
+												</Link>
+											)}
 										</div>
 										{/* Post title */}
 										<h1 className="my-1 mt-3 text-xl font-medium">
 											{post.title}
-											{ownPost && (
-												<Link href={`${post.url}/edit`}>
-													<a className="px-4 py-1 ml-3 hollow primary button">
-														editar
-													</a>
-												</Link>
+											{post.imageUrl && (
+												<div className="p-6">
+													<img
+														src={post.imageUrl}
+														className="object-contain"
+													/>
+												</div>
 											)}
 										</h1>
 

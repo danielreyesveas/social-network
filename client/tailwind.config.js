@@ -84,6 +84,12 @@ module.exports = {
 			},
 			container: false,
 		},
+		scale: {
+			102: "1.02",
+			105: "1.05",
+			110: "1.10",
+			125: "1.25",
+		},
 	},
 	variants: {
 		extend: {

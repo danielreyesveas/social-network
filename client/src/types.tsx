@@ -3,6 +3,8 @@ export interface Post {
 	title: string;
 	slug: string;
 	body?: string;
+	imageUrn?: string;
+	imageUrl: string;
 	subName: string;
 	username: string;
 	user: User;

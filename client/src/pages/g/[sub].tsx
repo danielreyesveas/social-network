@@ -62,7 +62,7 @@ const SubPage = ({ sub, posts, uploadSubImage, follow }) => {
 		formData.append("file", file);
 		formData.append("type", fileInputRef.current.name);
 		formData.append("subName", sub.name);
-
+		console.log(formData);
 		uploadSubImage(formData);
 	};
 

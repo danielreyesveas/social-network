@@ -56,10 +56,11 @@ export default function ProfilePage() {
 
 	const uploadImage = async (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files[0];
+		console.log(file);
 		const formData = new FormData();
 		formData.append("file", file);
 		formData.append("username", user.username);
-
+		console.log(formData);
 		dispatch(uploadUserImage(formData));
 	};
 
@@ -268,5 +269,3 @@ export default function ProfilePage() {
 		</>
 	);
 }
-
-

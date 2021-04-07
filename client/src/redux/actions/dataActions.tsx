@@ -76,9 +76,11 @@ export const uploadUserImage = (formData: any) => async (
 		});
 };
 
-export const addPost = (postData: Post) => async (dispatch: Dispatch) => {
+export const addPost = (postData: any) => async (dispatch: Dispatch) => {
 	return axios
-		.post<Post>("/posts", postData)
+		.post<Post>("/posts", postData, {
+			headers: { "Content-Type": "multipart/form-data" },
+		})
 		.then((response) => {
 			dispatch({ type: ADD_POST, payload: response.data });
 			return response.data;
@@ -88,10 +90,17 @@ export const addPost = (postData: Post) => async (dispatch: Dispatch) => {
 		});
 };
 
-export const updatePost = (postData: Post) => async (dispatch: Dispatch) => {
-	const { identifier, slug } = postData;
+export const updatePost = (formData: any) => async (dispatch: Dispatch) => {
 	return axios
-		.post<Post>(`/posts/${identifier}/${slug}/update`, postData)
+		.post<Post>(
+			`/posts/${formData.get("identifier")}/${formData.get(
+				"slug"
+			)}/update`,
+			formData,
+			{
+				headers: { "Content-Type": "multipart/form-data" },
+			}
+		)
 		.then((response) => {
 			dispatch({ type: UPDATE_POST, payload: response.data });
 			return response.data;

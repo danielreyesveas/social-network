@@ -25,6 +25,7 @@ export default function PostCard({
 		userVote,
 		userBookmark,
 		commentCount,
+		imageUrl,
 		url,
 		username,
 		user,
@@ -136,6 +137,11 @@ export default function PostCard({
 					<Link href={url}>
 						<a className="my-1 text-lg font-medium">{title}</a>
 					</Link>
+					{imageUrl && (
+						<div className="p-6">
+							<img src={imageUrl} className="object-contain" />
+						</div>
+					)}
 				</div>
 
 				<div className="mb-3">

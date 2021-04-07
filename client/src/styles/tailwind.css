@@ -82,4 +82,39 @@
 	.notifications-div {
 		right: -3.25rem;
 	}
+
+	.upload-button {
+		content: "";
+		position: absolute;
+		display: block;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 0;
+		height: 100%;
+		background: #3498db;
+		z-index: -1;
+		transition: width 250ms ease-in-out;
+	}
+
+	.upload-button:hover {
+		color: #fff;
+		outline: 0;
+		background: transparent;
+	}
+
+	.upload-button:hover .upload-button:after {
+		width: 110%;
+	}
+
+	.upload-button:focus {
+		outline: 0;
+		background: transparent;
+	}
+
+	.upload-button:disabled {
+		opacity: 0.4;
+		filter: grayscale(100%);
+		pointer-events: none;
+	}
 }

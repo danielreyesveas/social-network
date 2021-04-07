@@ -31,6 +31,9 @@ export default class Post extends Entity {
 	@Column()
 	title: string;
 
+	@Column({ nullable: true })
+	imageUrn?: string;
+
 	@Index()
 	@Column()
 	slug: string;
@@ -77,6 +80,13 @@ export default class Post extends Entity {
 
 	@Expose() get url(): string {
 		return `/g/${this.subName}/${this.identifier}/${this.slug}`;
+	}
+
+	@Expose()
+	get imageUrl(): string | undefined {
+		return this.imageUrn
+			? `${process.env.APP_URL}/images/posts/${this.imageUrn}`
+			: undefined;
 	}
 
 	protected userVote: number;
