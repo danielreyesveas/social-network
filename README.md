@@ -10,16 +10,15 @@ Clics is community of musical leseras. A social network. Work with three differe
 <br />
 
 ## Features 📋
-* Thematic commmunities.
-* Posts with comments, likes & dislikes, follows and groups invitations.
-* Infinite scroll.
-* Realtime chat module.
-* Realtime notifications.
-* Login with Google.
 
+-   Thematic commmunities.
+-   Posts with comments, likes & dislikes, follows and groups invitations.
+-   Infinite scroll.
+-   Realtime chat module.
+-   Realtime notifications.
+-   Login with Google.
 
 ## Setup 🚀
-
 
 To clone and run this application, you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
 
@@ -37,13 +36,13 @@ $ cd clics
 $ npm install
 
 # Go into the client folder
-$ cd ../client
+$ cd client
 
 # Install client dependencies
 $ npm install
 
 # Go into the chat-notifications folder
-$ cd ../chat-notifications
+$ cd ../../chat-notifications
 
 # Install chat-notifications dependencies
 $ npm install
@@ -65,20 +64,20 @@ You might want to look into package.json to make change the port you want to use
 
 Live Demo: [https://clics.reciclatusanimales.com/](https://clics.reciclatusanimales.com/)
 
-
 ## Built with 🛠️
-* [TypeScript](https://www.typescriptlang.org/) - v4.1.3
-* [Expres.js](https://expressjs.com/) - v4.17.1
-* [TypeORM](https://typeorm.io/) - v0.2.30
-* [Next.js](https://nextjs.org/) - v10.0.5
-* [SWR](https://swr.vercel.app/) - v0.4.2
-* [ReactJS](https://reactjs.org/) - v17.0.1
-* [Redux](https://redux.js.org/) - v4.0.5
-* [Firebase](https://firebase.google.com/) - v8.2.9
-* [TailwindCSS](https://tailwindcss.com/) - v2.0.3
-* [ApolloServer](https://www.apollographql.com/docs/apollo-server/) - v2.19.2
-* [GraphQL](https://graphql.org/) - v15.4.0
-* [Sequelize](https://sequelize.org/) - v6.3.5
+
+-   [TypeScript](https://www.typescriptlang.org/) - v4.1.3
+-   [Expres.js](https://expressjs.com/) - v4.17.1
+-   [TypeORM](https://typeorm.io/) - v0.2.30
+-   [Next.js](https://nextjs.org/) - v10.0.5
+-   [SWR](https://swr.vercel.app/) - v0.4.2
+-   [ReactJS](https://reactjs.org/) - v17.0.1
+-   [Redux](https://redux.js.org/) - v4.0.5
+-   [Firebase](https://firebase.google.com/) - v8.2.9
+-   [TailwindCSS](https://tailwindcss.com/) - v2.0.3
+-   [ApolloServer](https://www.apollographql.com/docs/apollo-server/) - v2.19.2
+-   [GraphQL](https://graphql.org/) - v15.4.0
+-   [Sequelize](https://sequelize.org/) - v6.3.5
 
 <br />
 <br />
